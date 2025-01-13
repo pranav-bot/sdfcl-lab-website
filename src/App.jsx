@@ -32,7 +32,7 @@ function App() {
       <Nbar />
       <div className="main-content">
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="" element={<HomePage />} />
         <Route path="/research" element={<ResearchPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/publications" element={<PublicationsPage />} />
