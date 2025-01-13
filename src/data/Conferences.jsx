@@ -1,0 +1,113 @@
+const conferences = {
+    2024: [
+      {
+        authors: "Basak, K., and Giri, D. K.",
+        title: "Dual-Spin Attitude Stabilization of Magneto-Coulombic Satellite Using Linear Time-Variant Model Predictive Control",
+        conference: "AIAA SciTech Forum",
+        location: "Orlando",
+        date: "8-12 January, 2024",
+        status: "Accepted",
+      },
+      {
+        authors: "Kumar, G., and Giri, D. K.",
+        title: "Novel Coulomb Staged-Rendezvous with Bipolar Electrospray Thrusters using Predefined-Time Sliding Mode Control",
+        conference: "AIAA SciTech Forum",
+        location: "Orlando",
+        date: "8-12 January, 2024",
+        status: "Accepted",
+      },
+      {
+        authors: "Agarwal, S., Basak, K., and Giri, D. K.",
+        title: "Attitude Control of Magnetically Actuated Satellite in Circular Orbit: A Controllability Analysis",
+        conference: "AIAA SciTech Forum",
+        location: "Orlando",
+        date: "8-12 January, 2024",
+        status: "Accepted",
+      },
+      {
+        authors: "Prakash, A., Basak, K., and Giri, D. K.",
+        title: "Coordinated Control using Multi-Agent Reinforcement Learning for transfer of payload between skyhook and launch vehicle",
+        conference: "AIAA SciTech Forum",
+        location: "Orlando",
+        date: "8-12 January, 2024",
+        status: "Accepted",
+      },
+      {
+        authors: "Gupta, A., Giri, D. K., and Tripathy, T.",
+        title: "Detection and Tracking of Uncooperative Unmanned Aerial Vehicle using a 2-DoF Robotic Manipulator",
+        conference: "ACODS",
+        date: "2024",
+        status: "Accepted",
+      },
+      {
+        authors: "Shinde, G., and Giri, D. K.",
+        title: "UKF Based Relative Attitude Estimation of Two Spacecrafts Flying in Formation",
+        conference: "ACODS",
+        date: "2024",
+        status: "Accepted",
+      },
+    ],
+    2023: [
+      {
+        authors: "Singh, P., Giri, D. K., and Ghosh, A.",
+        title: "Neuro-Backstepping Sliding Mode Flight Control using Asymmetric Barrier Lyapunov Function",
+        conference: "AIAA Aviation",
+        location: "San Diego, CA",
+        date: "12th June - 16th June, 2023",
+        status: "Accepted",
+      },
+      {
+        authors: "Salahudden, Sanwale, J., Giri, D. K., Ghosh, A. K.",
+        title: "Aircraft Flat-Spin Recovery with Noisy Feedback Using Robust Control",
+        conference: "AIAA Aviation",
+        location: "San Diego, CA",
+        date: "12th June - 16th June, 2023",
+        status: "Accepted",
+      },
+      {
+        authors: "Singh, P., Giri, D. K., and Ghosh, A.",
+        title: "Arbitrary Prescribed-Time Disturbance Observer-Based Neural Backstepping using Time-Varying Asymmetric BLF",
+        conference: "AIAA Aviation",
+        location: "San Diego, CA",
+        date: "12th June - 16th June, 2023",
+        status: "Accepted",
+      },
+      {
+        authors: "Singh, P., Giri, D. K., and Ghosh, A.",
+        title: "Dynamic Surface Neuro-Backstepping based Flight Control with Asymmetric Output Constraints",
+        conference: "AIAA SciTech",
+        location: "MD, USA",
+        date: "23-27th January, 2023",
+        status: "Accepted",
+      },
+      {
+        authors: "Saini, V., and Giri, D. K.",
+        title: "Prescribed Time Spacecraft Attitude Control Using Time-Varying State-Feedback",
+        conference: "AIAA SciTech",
+        location: "MD, USA",
+        date: "23-27th January, 2023",
+        status: "Accepted",
+      },
+      {
+        authors: "Basak, K., Saini, V., and Giri, D. K.",
+        title: "Spin-Stabilization and Attitude Tracking of a Spacecraft Simulator using MPC: Experimentation and Validation",
+        conference: "AIAA SciTech",
+        location: "MD, USA",
+        date: "23-27th January, 2023",
+        status: "Accepted",
+      },
+    ],
+    2022: [
+      {
+        authors: "Saini, V., and Giri, D. K.",
+        title: "Spacecraft Attitude Control using NSTSM and RW Desaturation via Magnetorquer",
+        conference: "8th Indian Control Conference",
+        location: "IIT Madras, India",
+        date: "14th-16th December, 2022",
+        status: "Accepted",
+      },
+    ],
+  };
+  
+  export default conferences;
+  

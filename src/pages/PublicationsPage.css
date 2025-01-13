@@ -1,0 +1,178 @@
+h1{
+  text-align: center;
+}
+
+body {
+  background-color: #011317;
+}
+
+.publications-page {
+  background-color: #011317;
+  min-height: 100vh;
+  color: white;
+  padding: 20px;
+  /* We'll remove the base font-family here 
+     since we apply headingfont / contentFont inline 
+  */
+}
+
+/* Keyframe for fade-in-up animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Generic fade-in-up class to apply the animation */
+.fade-in-up {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Slider Container */
+.slider-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 40px;
+  height: 150px; /* Adjust as needed */
+}
+
+.slider {
+  display: flex;
+  animation: slide 20s linear infinite;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%); 
+  }
+}
+
+.slider-placeholder {
+  width: 200px;
+  height: 100px;
+  margin: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.slider-placeholder img {
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Publications List Styles */
+.publications-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: left; /* override center if needed */
+}
+
+.year-section {
+  margin-bottom: 30px;
+}
+
+.year-section h2 {
+  border-bottom: 2px solid #7FFFD4;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+.year-section ol {
+  list-style-type: decimal;
+  padding-left: 20px;
+}
+
+.year-section li {
+  margin-bottom: 10px;
+  text-align: justify;
+}
+
+/* Navigation Buttons */
+.nav-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.nav-buttons button {
+  background-color: #0b3d2e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.nav-buttons button:hover {
+  background-color: #1d5f42;
+}
+
+.nav-buttons button.active {
+  background-color: #7FFFD4;
+  color: #15301f;
+  font-weight: bold;
+}
+
+/* Section Content */
+.section-content {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+/* Search Container */
+.search-container {
+  margin-bottom: 30px;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  .slider-placeholder {
+    width: 150px;
+    height: 80px;
+  }
+  .year-section h2 {
+    font-size: 1.3rem;
+  }
+  .nav-buttons button {
+    font-size: 0.9rem;
+    margin: 0 5px;
+  }
+  .slider-container {
+    height: 100px; /* shorter for small screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .slider-placeholder {
+    width: 120px;
+    height: 60px;
+  }
+  .year-section h2 {
+    font-size: 1.15rem;
+  }
+  .nav-buttons {
+    flex-wrap: wrap;
+  }
+  .nav-buttons button {
+    margin: 5px;
+  }
+  .slider-container {
+    height: 80px; 
+  }
+}

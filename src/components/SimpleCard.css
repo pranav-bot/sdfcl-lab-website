@@ -1,0 +1,14 @@
+/* SimpleCard.css */
+
+/* Add transition for smooth scaling */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
+  }
+  
+  /* Apply the scaling effect when hovered */
+  .card:hover {
+    transform: scale(1.05); /* Slightly enlarge the card */
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2); /* Optional: Add a subtle shadow */
+  }
+  

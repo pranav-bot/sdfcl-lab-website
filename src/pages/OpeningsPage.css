@@ -1,0 +1,53 @@
+.openings-page {
+    padding: 2rem;
+    background-color: #011317;
+  }
+  
+  .page-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .page-description {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .opening-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+  }
+  
+  .opening-title {
+    font-size: 1.5rem;
+  }
+  
+  .opening-description {
+    font-size: 1rem;
+  }
+  
+  .apply-button {
+    margin-top: 1rem;
+  }
+  
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: 2rem;
+    }
+  
+    .page-description {
+      font-size: 1rem;
+    }
+  
+    .apply-button {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .opening-card {
+      padding: 0.5rem;
+    }
+  }
+  

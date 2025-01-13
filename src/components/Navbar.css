@@ -1,0 +1,54 @@
+/* Reset margins and padding */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Custom Navbar */
+.custom-navbar {
+  background-color: black;
+  border-bottom: 2px solid white;
+  box-shadow: none;
+  border-style: solid;
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margin */
+  position: sticky;
+}
+
+/* Logo */
+.navbar-logo {
+  max-height: 80px;
+  width: auto;
+  height: auto;
+}
+
+/* Nav button styles */
+.nav-button {
+  background-color: transparent;
+  border: none;
+  border-radius: 100px;
+  width: 110px;
+  height: 50px;
+  margin: 0 0.5rem;
+}
+
+.nav-link-custom {
+  text-decoration: none;
+  color: white;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+}
+
+/* Responsive adjustments (example) */
+@media (max-width: 768px) {
+  .nav-button {
+    width: 90px;
+    height: 40px;
+  }
+  .nav-link-custom {
+    font-size: 18px;
+  }
+}

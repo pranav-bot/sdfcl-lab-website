@@ -1,0 +1,81 @@
+/* TeamPage.css */
+
+/* Container / Page styling */
+.team-page {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+/* The wavy border styling from your snippet */
+.wavy-border {
+  width: 100%;
+  height: 2px; /* Height of the bold line */
+  background-color: white; /* Color of the bold line */
+  margin: 50px 0; /* Space above/below the separator */
+}
+
+/* ---------- FADE-IN-UP ANIMATION ---------- */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Basic bootstrap + spacing adjustments */
+.d-flex {
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.gap-3 {
+  gap: 1rem;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* RESPONSIVE ADJUSTMENTS */
+@media (max-width: 992px) {
+  h1 {
+    font-size: 2.2rem !important;
+  }
+  h2 {
+    font-size: 1.8rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem !important;
+  }
+  h2 {
+    font-size: 1.6rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  h1 {
+    font-size: 1.8rem !important;
+  }
+  h2 {
+    font-size: 1.4rem !important;
+  }
+}

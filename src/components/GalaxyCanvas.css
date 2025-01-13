@@ -1,0 +1,8 @@
+/* src/components/GalaxyCanvas.css */
+
+.galaxy-canvas {
+    width: 100%;
+    height: 100%;
+    display: block; /* Removes any extra space at the bottom */
+    /* No z-index here; stacking is managed by the parent container */
+  }
