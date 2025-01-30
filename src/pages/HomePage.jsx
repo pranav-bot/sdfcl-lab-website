@@ -6,7 +6,7 @@ import topicsData from '../data/Topics';
 
 // List of background videos
 const backgroundVideos = [
-  '/src/assets/Videos/FourArms.MOV',
+  '/sdfcl-lab-website/src/assets/Videos/FourArms.MOV',
   '/src/assets/Videos/KiranWorking2.MOV', 
   '/src/assets/Videos/Drone1.MOV', 
   '/src/assets/Videos/Simulation1.MOV',
