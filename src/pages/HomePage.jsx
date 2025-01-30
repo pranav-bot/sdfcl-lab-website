@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react';
 import './HomePage.css';
 import topicsData from '../data/Topics';
-import FourArms from '/src/assets/Videos/FourArms.MOV'
 
 // List of background videos
 const backgroundVideos = [
-  FourArms,
+  '/src/assets/Videos/FourArms.MOV',
   '/src/assets/Videos/KiranWorking2.MOV', 
   '/src/assets/Videos/Drone1.MOV', 
   '/src/assets/Videos/Simulation1.MOV',

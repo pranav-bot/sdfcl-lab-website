@@ -10,6 +10,14 @@ const researchInterns = [
       websiteLink: "https://medium.com/@trulycosmogenic",
     },
     {
+      name: "Kiran Kumar Das ",
+      content:"",
+      image: "src/assets/LabMembers/KiranDas.jpg",
+      email: "kirankumardas2002@gmail.com",
+      linkedinLink: "linkedin.com/in/kirankumardas2002",
+      githubLink: "https://github.com/KD201102",
+    },
+    {
       name: "Pranav Advani",
       content:
         "Pranav is currently reengineering object detection frameworks for tracking uncooperative targets and optimizing satellite constellation management using reinforcement learning and genetic algorithms.His interests include optimization, reinforcement learning, genetic algorithms, computer vision, NLP, and autonomous systems.",
@@ -17,6 +25,15 @@ const researchInterns = [
       email: "pranav23advani@gmail.com",
       linkedinLink: "https://www.linkedin.com/in/pranav-advani-845615227/",
       githubLink: "https://github.com/pranav-bot",
+    },
+    {
+      name: "Sayandev Som",
+      content:
+        "",
+      image: "src/assets/LabMembers/Sayandev.jpg",
+      email: "sayandevs@iitk.ac.in",
+      linkedinLink: "https://www.linkedin.com/in/sayandev-som-7454961b0/",
+      githubLink: "https://github.com/Sayandev-pixel",
     },
   ];
 

@@ -9,7 +9,7 @@ const ONGOING_PROJECTS = [
   id: 2,
   name: "AI based Pose Estimation and Tracking of Uncooperative Airborne Vehicle",
   content: "This project focuses on vision-based detection, classification, and tracking of UAVs, with an additional objective of determining their orientation during tracking which can be used for neutralizing or jamming of potential targets.",
-  image: "https://picsum.photos/800/600?random=2",
+  image: "src/assets/ProjectPhotos/DroneProject.jpg",
   },
   {
   id: 3,
@@ -29,6 +29,12 @@ const ONGOING_PROJECTS = [
   content: "",
   image: "https://picsum.photos/800/600?random=5",
   },
+  {
+    id: 6,
+    name: "Orbital and Attitude Motion Control of Charged Satellites",
+    content: "The project aims to explore the orbital and attitude motion control of charged spacecraft interacting with Earth's magnetic field and, the development and testing of control strategies for obtaining the optimum performance. ",
+    image: "https://picsum.photos/800/600?random=6",
+    },
   ];
 
   export default ONGOING_PROJECTS

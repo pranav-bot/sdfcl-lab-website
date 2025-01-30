@@ -9,6 +9,16 @@ const phdStudents = [
       linkedinLink: "https://www.linkedin.com/in/aryadas98/",
       githubLink: "https://github.com/aryadas98",
       websiteLink: "https://aryadas.dev/",
+    },    
+    {
+      name: "Keziah Elizabeth George",
+      content: 'Keziah is a PhD student working on the orbital control of a charged satellite, in the presence of orbital perturbations like Lorentz force and J2 perturbation. Her area of interest includes satellites, control systems, and orbital dynamics.',
+      image: "https://via.placeholder.com/150",
+      googleScholarLink:
+        "https://scholar.google.com/citations?user=3bxgTq8AAAAJ&hl=en",
+      email: "keziahelza513@gmail.com",
+      linkedinLink:
+        "https://www.linkedin.com/in/keziah-e-767833172/",
     },
     {
       name: "Nitika Jaggi",
@@ -16,8 +26,8 @@ const phdStudents = [
         "Nitika is a PhD student working to develop a planar spacecraft close proximity operations test facility at IITK. She has a background in instrumentation.  Her interests include sensor integration, robotics, spacecraft testbeds, multi spacecraft close proximity operations and amateur astronomy. ",
       image: "https://via.placeholder.com/150",
       googleScholarLink:
-        "https://scholar.google.com/citations?hl=en&user=n6OaxLgAAAAJ ",
-      email: "nitikaj21@iitk.ac.in ",
+        "https://scholar.google.com/citations?hl=en&user=n6OaxLgAAAAJ",
+      email: "nitikaj21@iitk.ac.in",
       linkedinLink:
         "https://www.linkedin.com/in/nitika-jaggi-705155b0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       githubLink: "https://github.com/NitikaJaggi",
