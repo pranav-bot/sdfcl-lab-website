@@ -1,4 +1,5 @@
 //TODO: add animations
+//TODO: MOV to MP4
 
 import { useState, useEffect } from 'react';
 import './HomePage.css';
