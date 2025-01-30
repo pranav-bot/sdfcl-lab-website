@@ -7,16 +7,16 @@ import topicsData from '../data/Topics';
 // List of background videos
 const backgroundVideos = [
   '/sdfcl-lab-website/assets/Videos/FourArms.MOV',
-  '/sdfcl-lab-website/src/assets/Videos/KiranWorking2.MOV', 
-  '/sdfcl-lab-website/src/assets/Videos/Drone1.MOV', 
-  '/sdfcl-lab-website/src/assets/Videos/Simulation1.MOV',
-  '/sdfcl-lab-website/src/assets/Videos/Coding.MOV',
-  '/sdfcl-lab-website/src/assets/Videos/KiranWorking2.MOV',
-  '/sdfcl-lab-website/src/assets/Videos/Drone2.MOV',
-  '/sdfcl-lab-website/src/assets/Videos/FourArms2.MOV',
-  '/sdfcl-lab-website/src/assets/Videos/LabVid.MOV',
-  '/sdfcl-lab-website/src/assets/Videos/FourArms2.MOV',
-  '/sdfcl-lab-website/src/assets/Videos/NitikaWorking.MOV'
+  '/sdfcl-lab-website/assets/Videos/KiranWorking2.MOV', 
+  '/sdfcl-lab-website/assets/Videos/Drone1.MOV', 
+  '/sdfcl-lab-website/assets/Videos/Simulation1.MOV',
+  '/sdfcl-lab-website/assets/Videos/Coding.MOV',
+  '/sdfcl-lab-website/assets/Videos/KiranWorking2.MOV',
+  '/sdfcl-lab-website/assets/Videos/Drone2.MOV',
+  '/sdfcl-lab-website/assets/Videos/FourArms2.MOV',
+  '/sdfcl-lab-website/assets/Videos/LabVid.MOV',
+  '/sdfcl-lab-website/assets/Videos/FourArms2.MOV',
+  '/sdfcl-lab-website/assets/Videos/NitikaWorking.MOV'
 ];
 
 function HomePage() {
