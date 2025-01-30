@@ -24,7 +24,7 @@ function Nbar() {
   return (
     <Navbar expand="md" className="custom-navbar">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/">
+        <Navbar.Brand as={Link} to="/sdfcl-lab-website/">
           <img
             src={labLogo}
             alt="Lab Logo"

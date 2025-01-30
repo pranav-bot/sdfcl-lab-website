@@ -33,13 +33,13 @@ function App() {
       <div className="main-content">
       <Routes>
         <Route path="/sdfcl-lab-website/" element={<HomePage />} />
-        <Route path="/sdfcl-lab-website//research" element={<ResearchPage />} />
-        <Route path="/sdfcl-lab-website//gallery" element={<GalleryPage />} />
-        <Route path="/sdfcl-lab-website//publications" element={<PublicationsPage />} />
-        <Route path="/sdfcl-lab-website//ourteam" element={<TeamPage />} />
-        <Route path="/sdfcl-lab-website//openings" element={<OpeningsPage />} />
-        <Route path="/sdfcl-lab-website//aboutus" element={<AboutPage />} />
-        <Route path="/sdfcl-lab-website//project1" element={<Project1 />} />
+        <Route path="/sdfcl-lab-website/research" element={<ResearchPage />} />
+        <Route path="/sdfcl-lab-website/gallery" element={<GalleryPage />} />
+        <Route path="/sdfcl-lab-website/publications" element={<PublicationsPage />} />
+        <Route path="/sdfcl-lab-website/ourteam" element={<TeamPage />} />
+        <Route path="/sdfcl-lab-website/openings" element={<OpeningsPage />} />
+        <Route path="/sdfcl-lab-website/aboutus" element={<AboutPage />} />
+        <Route path="/sdfcl-lab-website/project1" element={<Project1 />} />
       <Route path="/project2" element={<Project2 />} />
       <Route path="/project3" element={<Project3 />} />
       <Route path="/project4" element={<Project4 />} />
