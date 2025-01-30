@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import labLogo from "../assets/Picture1.png";
+//import labLogo from "/sdfcl-lab-website/assets/Picture1.png";
 import './Navbar.css'; // Make sure you have your CSS here
 
 function Nbar() {
@@ -26,7 +26,7 @@ function Nbar() {
       <Container fluid>
         <Navbar.Brand as={Link} to="/sdfcl-lab-website/">
           <img
-            src={labLogo}
+            src='/sdfcl-lab-website/assets/Picture1.png'
             alt="Lab Logo"
             className="navbar-logo img-fluid"
           />
