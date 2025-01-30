@@ -43,7 +43,7 @@ function Nbar() {
                 className="nav-button"
               >
                 <Link
-                  to={`/${item.toLowerCase().replace(/\s/g, "")}`}
+                  to={`/sdfcl-lab-website/${item.toLowerCase().replace(/\s/g, "")}`}
                   className="nav-link-custom"
                 >
                   {item}
