@@ -3,7 +3,7 @@ const topicsData = [
     title: 'Spacecraft Attitude Control',
     description:
       'Research on the dynamics and control mechanisms that manage the orientation of spacecraft in space.',
-    image: 'src/assets/Topics/t1.jpg',
+    image: '/sdfcl-lab-website/src/assets/Topics/t1.jpg',
   },
   {
     title: 'Orbit Control for Space Flights',

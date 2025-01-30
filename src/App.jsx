@@ -32,14 +32,14 @@ function App() {
       <Nbar />
       <div className="main-content">
       <Routes>
-        <Route path="" element={<HomePage />} />
-        <Route path="/research" element={<ResearchPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/publications" element={<PublicationsPage />} />
-        <Route path="/ourteam" element={<TeamPage />} />
-        <Route path="/openings" element={<OpeningsPage />} />
-        <Route path="/aboutus" element={<AboutPage />} />
-        <Route path="/project1" element={<Project1 />} />
+        <Route path="/sdfcl-lab-website/" element={<HomePage />} />
+        <Route path="/sdfcl-lab-website//research" element={<ResearchPage />} />
+        <Route path="/sdfcl-lab-website//gallery" element={<GalleryPage />} />
+        <Route path="/sdfcl-lab-website//publications" element={<PublicationsPage />} />
+        <Route path="/sdfcl-lab-website//ourteam" element={<TeamPage />} />
+        <Route path="/sdfcl-lab-website//openings" element={<OpeningsPage />} />
+        <Route path="/sdfcl-lab-website//aboutus" element={<AboutPage />} />
+        <Route path="/sdfcl-lab-website//project1" element={<Project1 />} />
       <Route path="/project2" element={<Project2 />} />
       <Route path="/project3" element={<Project3 />} />
       <Route path="/project4" element={<Project4 />} />
