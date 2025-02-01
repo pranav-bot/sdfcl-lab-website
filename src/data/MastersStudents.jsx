@@ -12,7 +12,7 @@ const mastersStudents = [
       name: "Ayush Agrawal",
       content:
         "Ayush is a BT-MT Dual Degree student who joined the lab in January 2024 for his Undergraduate Project (UGP), focusing on Natural Terrain Generation and Path Planning for Planetary Rovers. Currently, his thesis centers on Slip Estimation and Mitigation for Planetary Rovers in collaboration with ISRO. His work involves both comprehensive simulation and single-wheel physical modeling and testing.",
-      image: "/sdfcl-lab-website/assets/LabMembers/WhatsApp Image 2025-01-15 at 11.53.45.JPG",
+      image: "/sdfcl-lab-website/assets/LabMembers/Aayush.JPG",
       email: "ayushag20@iitk.ac.in",
       linkedinLink: "https://www.linkedin.com/in/ayush-agrawal-/",
     },

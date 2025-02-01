@@ -22,7 +22,7 @@ function PublicationsPage() {
   // Search bar
   const [searchTerm, setSearchTerm] = useState("");
 
-  const placeholders = ['src/assets/Logos/acta.jpg', 'src/assets/Logos/aess.jpg', 'src/assets/Logos/asjc.jpg', 'src/assets/Logos/ast.jpg', 'src/assets/Logos/ifac.gif', 'src/assets/Logos/jae.jpg', 'src/assets/Logos/jgcd.jpg', 'src/assets/Logos/jsr.jpg', 'src/assets/Logos/seriesc.jpg'];
+  const placeholders = ['/sdfcl-lab-website/assets/Logos/acta.jpg', '/sdfcl-lab-website/assets/Logos/aess.jpg', '/sdfcl-lab-website/assets/Logos/asjc.jpg', '/sdfcl-lab-website/assets/Logos/ast.jpg', '/sdfcl-lab-website/assets/Logos/ifac.gif', '/sdfcl-lab-website/assets/Logos/jae.jpg', '/sdfcl-lab-website/assets/Logos/jgcd.jpg', '/sdfcl-lab-website/assets/Logos/jsr.jpg', '/sdfcl-lab-website/assets/Logos/seriesc.jpg'];
 
   // Helper to see if a publication matches the search term
   const matchesSearch = (pub) => {
