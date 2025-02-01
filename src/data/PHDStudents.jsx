@@ -42,7 +42,7 @@ const phdStudents = [
       linkedinLink: "https://in.linkedin.com/in/sudhansu-sahu-769b89156",
     },
     {
-      name: "Sudhansu Sahu",
+      name: "Tanya Krishna Kumar",
       content:
         "Tanya is a Ph.D. student working on the relative orbit and attitude control of satellites for rendezvous and docking using hybrid actuators. Her work also focuses on orbit estimation of maneuvering targets using a swarm of satellites and exploring ways to improve accuracy and coordination in satellite operations.",
       image: "/sdfcl-lab-website/assets/LabMembers/Tanya.jpg",
