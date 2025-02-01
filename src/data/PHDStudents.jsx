@@ -3,7 +3,7 @@ const phdStudents = [
       name: "Arya Das",
       content:
         "Arya is a PhD student working on rendezvous guidance of low-thrust satellites using machine learning techniques. In addition to this, he is also involved in the development a planetary rover test facility for research on autonomous rover algorithms. His interests are in spacecrafts, control systems, robotics and autonomy.",
-      image: "src/assets/LabMembers/AryaDas.jpg",
+      image: "/sdfcl-lab-website/assets/LabMembers/AryaDas.jpg",
       googleScholarLink: "https://scholar.google.com/citations?user=k-t9EigAAAAJ&hl=en",
       email: "aryadas98@gmail.com",
       linkedinLink: "https://www.linkedin.com/in/aryadas98/",
@@ -37,7 +37,7 @@ const phdStudents = [
       name: "Sudhansu Sahu",
       content:
         "Sudhansu is a PhD student working on control design of spacecraft-manipulator systems used for on orbit servicing. His areas of interests include robotics, control and motion planning. ",
-      image: "src/assets/LabMembers/SudanshuSahu.jpg",
+      image: "/sdfcl-lab-website/assets/LabMembers/SudanshuSahu.jpg",
       email: "ssahu20@iitk.ac.in",
       linkedinLink: "https://in.linkedin.com/in/sudhansu-sahu-769b89156",
     },

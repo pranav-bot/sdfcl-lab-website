@@ -12,7 +12,7 @@ const mastersStudents = [
       name: "Mridul Sengupta",
       content:
         "Mridul is a M.Tech student with a background of Aerospace Engineering with Specialization in Avionics, working various Aerospace Systems such as Satellite Attitude Determination and Control System and Unmanned Aerial Systems. His Area of Interests comprises of Designing, Prototyping, System Integration, Controls, Embedded systems of Satellite and Unmanned Aerial Systems ",
-      image: "src/assets/LabMembers/MridulSengupta.jpeg",
+      image: "/sdfcl-lab-website/assets/LabMembers/MridulSengupta.jpeg",
       email: "mridulsen23@iitk.ac.in",
       linkedinLink: "www.linkedin.com/in/mridul-sengupta-7b188947",
       githubLink: "https://github.com/MridulSengupta",
@@ -21,7 +21,7 @@ const mastersStudents = [
       name: "Pavan Varma",
       content:
         "Pavan Varma, an MSR student, is engaged in the detection and tracking of uncooperative targets using deep learning algorithms. His areas of interest include deep learning, control systems, target estimation, and space debris.",
-      image: "src/assets/LabMembers/PavanVarma.jpg",
+      image: "/sdfcl-lab-website/assets/LabMembers/PavanVarma.jpg",
       email: "pavankumar23@iitk.ac.in",
       linkedinLink: "https://www.linkedin.com/in/pavan-verma-89871716a/",
     },
