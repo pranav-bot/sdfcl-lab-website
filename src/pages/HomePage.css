@@ -1,6 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Agu+Display&display=swap');
 
 
+h3{
+    font-family: 'Space Mono';
+    font-weight: 800;
+}
+
+p{
+        font-family: 'Roboto Mono';
+        font-weight: 200;
+      
+}
+
 /*
 Container that holds all sections
 - Removed scroll-snap and now just normal scrolling
@@ -191,3 +202,79 @@ flex: 1 1 100%;
 }
 }
 
+/* Topics section styling remains unchanged */
+.topics-scroll-container {
+    overflow-x: auto;
+  }
+  
+  /* Research & Teaching Summary Section Styling */
+  .research-teaching-summary {
+    padding: 40px 20px;
+    background-color: #0c0c0f;
+    text-align: center;
+    color: white;
+  }
+  
+  .research-teaching-summary h1 {
+    margin-bottom: 30px;
+    color: white;
+  }
+  
+  .research-boxes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    background-color: #0c0c0f;
+  }
+  
+  .research-box {
+    background-color: #0b3d2e;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    text-align: left;
+    color: white;
+    
+  }
+  
+  .research-box h2 {
+    margin-top: 0;
+    color: white;
+  }
+  
+  .research-box p,
+  .research-box ul {
+    color: white;
+    font-size: 0.95em;
+    line-height: 1.4;
+  }
+  
+  .research-box ul {
+    padding-left: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .research-box {
+      width: 90%;
+    }
+  }
+
+  .slider-placeholder {
+    width: 200px;
+    height: 100px;
+    margin: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+  }
+  
+  .slider-placeholder img {
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  

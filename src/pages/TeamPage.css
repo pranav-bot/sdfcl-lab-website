@@ -79,3 +79,18 @@
     font-size: 1.4rem !important;
   }
 }
+
+.timeline {
+  margin-top: 40px;
+}
+
+.timeline-item {
+  flex: 1;
+}
+
+.timeline-circle {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -4,6 +4,15 @@ import "./TeamPage.css";
 import researchInterns from "../data/ResearchInterns";
 import mastersStudents from "../data/MastersStudents";
 import phdStudents from "../data/PHDStudents";
+import {
+  VerticalTimeline,
+  VerticalTimelineElement,
+} from "react-vertical-timeline-component";
+import "react-vertical-timeline-component/style.min.css";
+import { PiBooks } from "react-icons/pi";
+import { PiChalkboardTeacherFill } from "react-icons/pi";
+import { MdEngineering } from "react-icons/md";
+import { HiAcademicCap } from "react-icons/hi2";
 
 const headingfont = {
   fontFamily: "Space Mono",
@@ -14,7 +23,6 @@ const contentFont = {
   fontFamily: "Poppins",
   fontWeight: 200,
 };
-
 
 function TeamPage() {
   const Separator = () => (
@@ -76,8 +84,92 @@ function TeamPage() {
     </div>
   );
 
+  function AcademicTimeline() {
+    const timelineElements = [
+      {
+        date: "2003-2016",
+        title: "BE (2003-07) - University of Burdwan",
+        title2: "Mtech (2007-09)- Jadavpur University",
+        title3: "PhD (2011-16)- IIT Kharagpur",
+        icon: <PiBooks />
+      },
+      {
+        date: "2009-2011",
+        title: "Erasmundus Fellowship by European Union",
+        icon: <HiAcademicCap />
+      },
+      {
+        date: "2015-2016",
+        title: "Research Engineer IIT Kharagpur",
+        icon: <MdEngineering />
+      },
+      {
+        date: "2016-2017",
+        title: "Postdoctoral Fellow UNIST, South Korea",
+        icon: <HiAcademicCap />
+      },
+      {
+        date: "2017-2018",
+        title:
+          "Postdoctoral Fellow Singapore-Massachusetts Institute Alliance for Research and Technology",
+          icon: <HiAcademicCap />
+      },
+      {
+        date: "2018-2020",
+        title:
+          "DST INSPIRE Fellow Department of Aerospace Engineering, IIT Kanpur",
+          icon: <HiAcademicCap />
+      },
+      {
+        date: "2020-Present",
+        title:
+          "Assistant Professor Department of Aerospace Engineering, IIT Kanpur",
+          icon: <PiChalkboardTeacherFill />
+      },
+    ];
+
+    return (
+      <div style={{ padding: "20px 0", backgroundColor: "#011317" }}>
+        <h2 style={{ ...headingfont, color: "white", textAlign: "center" }}>
+          Academic Journey
+        </h2>
+        <VerticalTimeline>
+          {timelineElements.map((element, index) => (
+            <VerticalTimelineElement
+              key={index}
+              date={element.date}
+              contentStyle={{ background: "#2e2c29", color: "#fff" }}
+              contentArrowStyle={{ borderRight: "7px solid  #2e2c29" }}
+              iconStyle={{ background: "#2e2c29", color: "#fff" }}
+              icon={element.icon}
+            >
+              <ul>
+                <li>
+                  <p style={headingfont}>{element.title}</p>{" "}
+                </li>
+                {element.title2 && (
+                  <li>
+                    <p style={headingfont}>{element.title2}</p>
+                  </li>
+                )}
+                {element.title3 && (
+                  <li>
+                    <p style={headingfont}>{element.title3}</p>
+                  </li>
+                )}
+              </ul>
+            </VerticalTimelineElement>
+          ))}
+        </VerticalTimeline>
+      </div>
+    );
+  }
+
   return (
-    <div className="team-page fade-in-up" style={{ backgroundColor: "#011317" }}>
+    <div
+      className="team-page fade-in-up"
+      style={{ backgroundColor: "#011317" }}
+    >
       {/* Spacing at the top */}
       <div style={{ height: "50px" }}></div>
 
@@ -97,13 +189,21 @@ function TeamPage() {
         />
       </div>
 
+      {/* Academic Timeline */}
+      <AcademicTimeline />
+
       {/* Lab Members */}
       <div style={{ backgroundColor: "#2e2c29" }} className="fade-in-up">
         <div style={{ color: "white" }} className="wavy-border fade-in-up" />
 
         <h1
           className="fade-in-up text-center"
-          style={{ ...headingfont, fontSize: "60px", paddingTop: "50px", color: "white" }}
+          style={{
+            ...headingfont,
+            fontSize: "60px",
+            paddingTop: "50px",
+            color: "white",
+          }}
         >
           Lab Members
         </h1>
@@ -112,7 +212,12 @@ function TeamPage() {
         {/* PhD Students */}
         <h2
           className="fade-in-up text-center"
-          style={{ ...headingfont, color: "white", paddingTop: "50px", paddingBottom: "50px" }}
+          style={{
+            ...headingfont,
+            color: "white",
+            paddingTop: "50px",
+            paddingBottom: "50px",
+          }}
         >
           PhD Students
         </h2>

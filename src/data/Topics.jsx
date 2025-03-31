@@ -1,28 +1,30 @@
 const topicsData = [
   {
-    title: 'Spacecraft Attitude Control',
+    title: "Attitude Dynamics and Control",
     description:
-      'Research on the dynamics and control mechanisms that manage the orientation of spacecraft in space.',
-    image: '/sdfcl-lab-website/assets/Topics/t1.jpg',
+      "The study and application of controlling the orientation of a spacecraft relative to a reference frame using various control methods.",
+    image: "/sdfcl-lab-website/assets/Topics/t1.jpg",
   },
   {
-    title: 'Orbit Control for Space Flights',
+    title: "Combined Attitude and Orbit Control",
     description:
-      'Developing precise control algorithms to manage and adjust spacecraft orbits for various missions.',
-    image: '/sdfcl-lab-website/assets/Topics/t1.jpg',
+      "The integration of both attitude control (orientation) and orbit control (position and velocity) to efficiently manage spacecraft motion and trajectory.",
+    image:
+      "/sdfcl-lab-website/assets/Topics/Combined Attitude and Orbit Control.jpg",
   },
   {
-    title: 'UAV Nonlinear Dynamics',
+    title: "Linear and Nonlinear Control",
     description:
-      'Studying the complex behaviors and control strategies for Unmanned Aerial Vehicles in dynamic environments.',
-    image: '/sdfcl-lab-website/assets/Topics/t1.jpg',
+      "Control strategies that address system dynamics; linear control deals with systems exhibiting linear behaviors, while nonlinear control handles more complex, nonlinear dynamics.",
+    image: "/sdfcl-lab-website/assets/Topics/Linear and Nonlinear Control.jpeg",
   },
   {
-    title: 'AI-based Control Algorithms',
+    title: "Rendezvous and Docking Problem",
     description:
-      'Integrating artificial intelligence to enhance the efficiency and adaptability of control systems in aerospace applications.',
-    image: '/sdfcl-lab-website/assets/Topics/t1.jpg',
+      "The challenge of bringing two spacecraft together in space, aligning their positions and velocities, and safely docking them without collision.",
+    image:
+      "/sdfcl-lab-website/assets/Topics/Rendezvous and Docking Problem.jpg",
   },
 ];
 
-export default topicsData
+export default topicsData;

@@ -134,7 +134,7 @@ function ResearchPage() {
             {filteredOngoing.map((project) => (
               <div key={project.id} className="card-wrapper fade-in-up">
                 <Link
-                  to={`/project${project.id}`}
+                  to={`/sdfcl-lab-website/${project.name}`}
                   style={{ textDecoration: "none" }}
                 >
                   <SimpleCard

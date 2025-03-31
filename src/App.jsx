@@ -13,15 +13,6 @@ import Project3 from './pages/projectPages/project3';
 import Project4 from './pages/projectPages/project4';
 import Project5 from './pages/projectPages/project5';
 import Project6 from './pages/projectPages/project6';
-import Project7 from './pages/projectPages/project7';
-import Project8 from './pages/projectPages/project8';
-import Project9 from './pages/projectPages/project9';
-import Project10 from './pages/projectPages/project10';
-import Project11 from './pages/projectPages/project11';
-import Project12 from './pages/projectPages/project12';
-import Project13 from './pages/projectPages/project13';
-import Project14 from './pages/projectPages/project14';
-import Project15 from './pages/projectPages/project15';
 import Footer from './components/Footer';
 import './App.css'
 
@@ -39,21 +30,12 @@ function App() {
         <Route path="/sdfcl-lab-website/ourteam" element={<TeamPage />} />
         <Route path="/sdfcl-lab-website/openings" element={<OpeningsPage />} />
         <Route path="/sdfcl-lab-website/aboutus" element={<AboutPage />} />
-        <Route path="/sdfcl-lab-website/project1" element={<Project1 />} />
-      <Route path="/project2" element={<Project2 />} />
-      <Route path="/project3" element={<Project3 />} />
-      <Route path="/project4" element={<Project4 />} />
-      <Route path="/project5" element={<Project5 />} />
-      <Route path="/project6" element={<Project6 />} />
-      <Route path="/project7" element={<Project7 />} />
-      <Route path="/project8" element={<Project8 />} />
-      <Route path="/project9" element={<Project9 />} />
-      <Route path="/project10" element={<Project10 />} />
-      <Route path="/project11" element={<Project11 />} />
-      <Route path="/project12" element={<Project12 />} />
-      <Route path="/project13" element={<Project13 />} />
-      <Route path="/project14" element={<Project14 />} />
-      <Route path="/project15" element={<Project15 />} />
+        <Route path="/sdfcl-lab-website/Spacecraft Attitude Control Testbed for Testing and Validating Maneuvering Controls" element={<Project1 />} />
+      <Route path="/sdfcl-lab-website/Magneto-electric effects in the dynamics and motion control problems of telecommunication spacecraft" element={<Project2 />} />
+      <Route path="/sdfcl-lab-website/6D Pose-estimation of Uncooperative Airborne Vehicle" element={<Project3 />} />
+      <Route path="/sdfcl-lab-website/Slip Estimation, Slip Mitigation, and Path Planning Techniques of Planetary Exploration Rovers" element={<Project4 />} />
+      <Route path="/sdfcl-lab-website/Design and Development of Ground Robots for Autonomous Navigation System in Collaboration with Armatirx" element={<Project5 />} />
+      <Route path="/sdfcl-lab-website/MASCOT : Multiple Autonomous Spacecraft Close proximity Operations Test facility" element={<Project6 />} />
       </Routes>
       </div>
       <Footer></Footer>
