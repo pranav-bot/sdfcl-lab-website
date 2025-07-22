@@ -21,6 +21,18 @@ const phdStudents = [
         "https://www.linkedin.com/in/keziah-e-767833172/",
     },
     {
+      name: "Kripesh Singh",
+      content: 'Kripesh is a PhD student with experience in pose estimation of uncooperative targets and is currently working on Mars rover development. Additionally, he is working on the autonomy of a stubble harvester. His interests lie in computer vision, robotics, control systems, and autonomy.',
+      image: "/sdfcl-lab-website/assets/LabMembers/kripesh.jpeg",
+      googleScholarLink:
+        "https://scholar.google.com/citations?user=3bxgTq8AAAAJ&hl=en",
+      email: "kripeshs22@iitk.ac.in",
+      linkedinLink:
+        "https://www.linkedin.com/in/kripesh-singh-a1912b174/",
+        githubLink: 'https://github.com/kripeshcode',
+
+    },
+    {
       name: "Nitika Jaggi",
       content:
         "Nitika is a PhD student working to develop a planar spacecraft close proximity operations test facility at IITK. She has a background in instrumentation.  Her interests include sensor integration, robotics, spacecraft testbeds, multi spacecraft close proximity operations and amateur astronomy. ",
@@ -32,6 +44,15 @@ const phdStudents = [
         "https://www.linkedin.com/in/nitika-jaggi-705155b0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       githubLink: "https://github.com/NitikaJaggi",
       websiteLink: "https://indianspacegirl.wordpress.com/",
+    },
+    {
+      name: "Prabhjeet Singh",
+      content:
+        "Dr. Prabhjeet Singh is an assistant professor in the department of aerospace engineering at Punjab Engineering College, Chandigarh. His specialization is in aircraft flight dynamics and control from IIT, Kanpur. He has enriched experience working in aerospace industries as well as in academia. His current research interest includes the robust control of unstable aircrafts having nonlinear characteristics using various techniques such as backstepping, sliding mode, neural network, adaptive control to name a few.",
+      image: "/sdfcl-lab-website/assets/LabMembers/Prabh.jpg",
+      email: "prabhiitk@gmail.com",
+      linkedinLink: "https://www.linkedin.com/in/dr-prabhjeet-singh-367266ba/",
+      googleScholarLink: 'https://scholar.google.com/citations?user=GXndmJYAAAAJ&hl=en&authuser=1'
     },
     {
       name: "Sudhansu Sahu",
@@ -48,6 +69,15 @@ const phdStudents = [
       image: "/sdfcl-lab-website/assets/LabMembers/Tanya.jpg",
       email: "tanyakk20@iitk.ac.in",
       linkedinLink: "www.linkedin.com/in/tanya-k-kumar-5060b6134",
+    },
+    {
+      name: "Vikram Kumar Saini",
+      content:
+        "Vikram Saini is PhD student working on Variable Speed Control Moment Gyroscope actuated spacecraft. Formulation of new control and control allocation schemes are his primary work. He is also working in the private industry while pursuing PhD. In the industry he has worked on Flight Dynamics and Control of High Altitude Psuedo-Satelllite, Formation Flying of satellites and Rendezvous. ",
+      image: "/sdfcl-lab-website/assets/LabMembers/vikram.jpg",
+      email: "vksaini20@iitk.ac.in",
+      linkedinLink: "https://www.linkedin.com/in/iamvksaini/",
+      googleScholarLink: 'https://scholar.google.com/citations?user=2Qgc_FIAAAAJ&hl=en'
     },
   ];
 

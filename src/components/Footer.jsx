@@ -1,10 +1,6 @@
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
-  FaTwitter,
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
   FaMinus,
 } from 'react-icons/fa'; // <-- React Icons
 import './Footer.css';
@@ -30,7 +26,7 @@ const Footer = () => {
             {/* Footer Info */}
             <div className="col-lg-5 col-md-12 footer-info fade-in-up">
               <Link
-                to="/"
+                to="/sdfcl-lab-website/"
                 className="logo d-flex align-items-center"
                 style={headingfont}
               >
@@ -45,20 +41,6 @@ const Footer = () => {
                 Control of dynamical systems are welcome to join the group
                 through NPDF and Institutional Postdoctoral Fellowship.
               </p>
-              <div className="social-links d-flex mt-3 fade-in-up">
-                <a href="#" className="twitter">
-                  <FaTwitter />
-                </a>
-                <a href="#" className="facebook">
-                  <FaFacebook />
-                </a>
-                <a href="#" className="instagram">
-                  <FaInstagram />
-                </a>
-                <a href="#" className="linkedin">
-                  <FaLinkedin />
-                </a>
-              </div>
             </div>
 
             {/* Phone Section */}

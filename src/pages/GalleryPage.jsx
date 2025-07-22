@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import allImages from '../data/Gallery';
 import './GalleryPage.css';
 
 // 1) Define heading and content fonts
@@ -12,60 +13,10 @@ const contentFont = {
   fontWeight: 200,
 };
 
-// Sample images with categories
-const allImages = [
-  {
-    id: 1,
-    src: 'https://picsum.photos/800/600?random=1',
-    caption: 'Majestic Waterfall',
-    category: 'Nature',
-  },
-  {
-    id: 2,
-    src: 'https://picsum.photos/800/600?random=2',
-    caption: 'Serene Mountains',
-    category: 'Nature',
-  },
-  {
-    id: 3,
-    src: 'https://picsum.photos/800/600?random=3',
-    caption: 'Starry Sky',
-    category: 'Sky',
-  },
-  {
-    id: 4,
-    src: 'https://picsum.photos/800/600?random=4',
-    caption: 'Mystic Forest',
-    category: 'Forest',
-  },
-  {
-    id: 5,
-    src: 'https://picsum.photos/800/600?random=5',
-    caption: 'Sunny Beach',
-    category: 'Beach',
-  },
-  {
-    id: 6,
-    src: 'https://picsum.photos/800/600?random=6',
-    caption: 'Urban Skyline',
-    category: 'City',
-  },
-  {
-    id: 7,
-    src: 'https://picsum.photos/800/600?random=7',
-    caption: 'City at Night',
-    category: 'City',
-  },
-  {
-    id: 8,
-    src: 'https://picsum.photos/800/600?random=8',
-    caption: 'Snowy Valley',
-    category: 'Nature',
-  },
-];
+
 
 // 2) Define categories (plus “All”)
-const categories = ['All', 'Nature', 'City', 'Sky', 'Beach', 'Forest'];
+const categories = ['All', 'Events', 'Lab', 'Projects'];
 
 function GalleryPage() {
   const [selectedImage, setSelectedImage] = useState(null);

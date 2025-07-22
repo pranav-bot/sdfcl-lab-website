@@ -17,6 +17,14 @@ const mastersStudents = [
       linkedinLink: "https://www.linkedin.com/in/ayush-agrawal-/",
     },
     {
+      name: "Doddi Sarath Kumar",
+      content:
+        "",
+      image: "/sdfcl-lab-website/assets/LabMembers/Sarath.jpg",
+      email: "doddisk22@iitk.ac.in",
+      linkedinLink: "https://www.linkedin.com/in/sarath-kumar-ab0305144/",
+    },
+    {
       name: "Mridul Sengupta",
       content:
         "Mridul is a M.Tech student with a background of Aerospace Engineering with Specialization in Avionics, working various Aerospace Systems such as Satellite Attitude Determination and Control System and Unmanned Aerial Systems. His Area of Interests comprises of Designing, Prototyping, System Integration, Controls, Embedded systems of Satellite and Unmanned Aerial Systems ",

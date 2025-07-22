@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './AboutPage.css';  // <-- Import your CSS (see below)
+import './AboutPage.css';
 
 // Define the heading and content fonts
 const headingfont = {
@@ -19,17 +20,7 @@ function AboutPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Message sent:', { name, email, message });
-    alert('Your message has been sent!');
-    // Reset form fields
-    setName('');
-    setEmail('');
-    setMessage('');
-  };
+  const [sending, setSending] = useState(false);
 
   // Change background color on mount
   useEffect(() => {
@@ -39,6 +30,39 @@ function AboutPage() {
       // document.body.style.backgroundColor = '';
     };
   }, []);
+
+  // Handle form submission using EmailJS
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSending(true);
+
+    // EmailJS configuration - replace these with your actual EmailJS values.
+    const serviceID = 'service_clkyt9s';
+    const templateID = 'template_oxl2e2s';
+    const userID = '-V6-uGEZ533Aj9mUY';
+
+    const templateParams = {
+      to_email: 'pranav23advani@gmail.com', // Recipient email
+      from_name: name,
+      from_email: email,
+      message: message,
+    };
+
+    emailjs.send(serviceID, templateID, templateParams, userID)
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        alert('Your message has been sent!');
+        // Reset form fields
+        setName('');
+        setEmail('');
+        setMessage('');
+        setSending(false);
+      }, (err) => {
+        console.error('FAILED...', err);
+        alert('Failed to send your message. Please try again later.');
+        setSending(false);
+      });
+  };
 
   return (
     <div className="container py-5 fade-in-up" style={contentFont}>
@@ -63,7 +87,7 @@ function AboutPage() {
           <p style={{ textAlign: 'left' }}>
             <strong>Email:</strong>{' '}
             <a href="mailto:dkgiri@iitk.ac.in" style={{ color: 'white' }}>
-            dkgiri@iitk.ac.in
+              dkgiri@iitk.ac.in
             </a>
           </p>
           <p style={{ textAlign: 'left' }}>
@@ -100,7 +124,7 @@ function AboutPage() {
                 onChange={(e) => setName(e.target.value)}
                 className="form-control"
                 required
-                style={contentFont}
+                style={{color: 'black'}}
               />
             </div>
 
@@ -115,16 +139,12 @@ function AboutPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="form-control"
                 required
-                style={contentFont}
+                style={{color: 'black'}}
               />
             </div>
 
             <div className="mb-3">
-              <label
-                htmlFor="message"
-                className="form-label"
-                style={contentFont}
-              >
+              <label htmlFor="message" className="form-label" style={contentFont}>
                 Message
               </label>
               <textarea
@@ -134,12 +154,12 @@ function AboutPage() {
                 className="form-control"
                 rows="4"
                 required
-                style={contentFont}
+                style={{color: 'black'}}
               ></textarea>
             </div>
 
-            <button type="submit" className="btn btn-primary w-100 fade-in-up">
-              Send Message
+            <button type="submit" className="btn btn-primary w-100 fade-in-up" disabled={sending}>
+              {sending ? 'Sending...' : 'Send Message'}
             </button>
           </form>
         </div>
