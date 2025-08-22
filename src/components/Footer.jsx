@@ -85,6 +85,11 @@ const Footer = () => {
                 <br />
                 <br />
               </p>
+              <div style={{ marginTop: 8 }}>
+                <Link to="/sdfcl-lab-website/login" style={{ textDecoration: 'none' }}>
+                  <button style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #d1d5db', background: '#111827', color: '#fff', cursor: 'pointer' }}>Login</button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
