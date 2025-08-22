@@ -1,0 +1,49 @@
+/* Minimal styles for EditPage to avoid import errors and provide basic layout */
+
+.editpage-container {
+  padding: 2rem;
+}
+
+.editpage-nav {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.editpage-nav button {
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.editpage-editor {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1rem;
+}
+
+.editpage-editor section,
+.editpage-editor aside {
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.editpage-editor section {
+  background: #fff;
+}
+
+.editpage-editor aside {
+  background: #f8fafc;
+}
+
+/* Responsive fallback for small screens */
+@media (max-width: 900px) {
+  .editpage-editor {
+    grid-template-columns: 1fr;
+  }
+}

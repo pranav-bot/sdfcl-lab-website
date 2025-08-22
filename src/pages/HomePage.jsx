@@ -1,26 +1,149 @@
 import { useState, useEffect } from 'react';
 import './HomePage.css';
 import topicsData from '../data/Topics';
+import { createClient } from '@supabase/supabase-js'
 
-const backgroundVideos = [
-  '/sdfcl-lab-website/assets/Videos/FourArms.mp4',
-  '/sdfcl-lab-website/assets/Videos/KiranWorking2.mp4',
-  '/sdfcl-lab-website/assets/Videos/Drone1.mp4',
-  '/sdfcl-lab-website/assets/Videos/Simulation1.mp4',
-  '/sdfcl-lab-website/assets/Videos/Coding.mp4',
-  '/sdfcl-lab-website/assets/Videos/KiranWorking2.mp4',
-  '/sdfcl-lab-website/assets/Videos/Drone2.mp4',
-  '/sdfcl-lab-website/assets/Videos/FourArms2.mp4',
-  '/sdfcl-lab-website/assets/Videos/LabVid.mp4',
-  '/sdfcl-lab-website/assets/Videos/FourArms2.mp4',
-  '/sdfcl-lab-website/assets/Videos/NitikaWorking.mp4'
+// fallback hardcoded videos (used if storage listing fails)
+const fallbackBackgroundVideos = [
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/FourArms.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/KiranWorking2.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/Drone1.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/Simulation1.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/Coding.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/KiranWorking2.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/Drone2.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/FourArms2.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/LabVid.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/FourArms2.mp4',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Videos/NitikaWorking.mp4'
+]
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+)
+
+// fallback hardcoded logos (used if storage listing fails)
+const fallbackLogos = [
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Logos/iitklogo2.jpg',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Logos/drdo.png',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Logos/isro.jpg',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Logos/dhruva.png',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Logos/armatrix2.jpg',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Logos/mit.jpg',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Logos/tih.jpg',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Logos/unist.png',
+  'https://cfzpbqckajonaovzekah.supabase.co/storage/v1/object/public/assets/Logos/manastu_space_logo.jpg'
 ];
 
-const placeholders = ['/sdfcl-lab-website/assets/Logos/iitklogo2.jpg', '/sdfcl-lab-website/assets/Logos/drdo.png', '/sdfcl-lab-website/assets/Logos/isro.jpg', '/sdfcl-lab-website/assets/Logos/dhruva.png', '/sdfcl-lab-website/assets/Logos/armatrix2.jpg', '/sdfcl-lab-website/assets/Logos/mit.jpg', '/sdfcl-lab-website/assets/Logos/tih.jpg', '/sdfcl-lab-website/assets/Logos/unist.png', '/sdfcl-lab-website/assets/Logos/manastu_space_logo.jpg'];
+// dynamic logos will be loaded inside the component (useState/hooks must be inside the component)
 
 
 function HomePage() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [backgroundVideos, setBackgroundVideos] = useState(fallbackBackgroundVideos)
+  const [videoError, setVideoError] = useState(null)
+
+  // logos state and loader
+  const [logosList, setLogosList] = useState([])
+  const [logosError, setLogosError] = useState(null)
+
+  // topics state + loader (new)
+  const [topics, setTopics] = useState(null)
+  const [topicsError, setTopicsError] = useState(null)
+
+  async function loadLogos() {
+    setLogosError(null)
+    try {
+      const res = await supabase.storage.from('assets').list('Logos', { limit: 500 })
+      if (!res.error && res.data && res.data.length > 0) {
+        const urls = res.data.map((f) => supabase.storage.from('assets').getPublicUrl(`Logos/${f.name}`).data.publicUrl)
+        setLogosList(urls)
+        return
+      }
+      // otherwise keep fallback
+    } catch (err) {
+      setLogosError(String(err))
+    }
+  }
+
+  async function loadBackgroundVideos() {
+    setVideoError(null)
+    try {
+      // try manifest first
+      const manifestRes = await supabase.storage.from('assets').download('Videos/index.json')
+      if (!manifestRes.error && manifestRes.data) {
+        const txt = await manifestRes.data.text()
+        try {
+          const names = JSON.parse(txt)
+          const urls = names.map((n) => supabase.storage.from('assets').getPublicUrl(`Videos/${n}`).data.publicUrl)
+          setBackgroundVideos(urls)
+          return
+        } catch {
+          setVideoError('Videos/index.json invalid; falling back to listing')
+        }
+      }
+
+      // fallback: try listing
+      const res = await supabase.storage.from('assets').list('Videos', { limit: 200 })
+      if (!res.error && res.data && res.data.length > 0) {
+        const urls = res.data.map((f) => supabase.storage.from('assets').getPublicUrl(`Videos/${f.name}`).data.publicUrl)
+        setBackgroundVideos(urls)
+        return
+      }
+
+      // last resort: keep existing fallbackBackgroundVideos
+    } catch (err) {
+      setVideoError(String(err))
+    }
+  }
+
+  async function loadTopics() {
+    setTopicsError(null)
+    try {
+      const { data, error } = await supabase.from('topics').select('*')
+      if (error) {
+        setTopicsError(error.message || String(error))
+        return
+      }
+      if (!data || data.length === 0) {
+        // keep fallback (topicsData)
+        return
+      }
+
+      // Resolve storage public URLs (if image_path is a storage path)
+      const resolved = await Promise.all(
+        data.map(async (t) => {
+          // decide property names based on your table schema
+          const title = t.title || t.name || t.topic || ''
+          const description = t.description || t.content || ''
+          let image = t.image || t.image_path || t.image_url || ''
+
+          if (image && !image.startsWith('http')) {
+            // assume storage path like 'Topics/t1.jpg' or 'Topics/t1.jpg'
+            try {
+              const { data: urlData } = await supabase.storage.from('assets').getPublicUrl(image)
+              image = urlData?.publicUrl || image
+            } catch {
+              // fallback keep original string
+            }
+          }
+
+          return {
+            title,
+            description,
+            image,
+            // keep any other fields if needed
+            ...t,
+          }
+        })
+      )
+
+      setTopics(resolved)
+    } catch (err) {
+      setTopicsError(String(err))
+    }
+  }
 
   const Separator = () => (
     <div
@@ -60,12 +183,21 @@ function HomePage() {
     </div>
   );
 
+  // load videos & logos & topics once on mount
   useEffect(() => {
+    loadBackgroundVideos()
+    loadLogos()
+    loadTopics() // <-- added
+  }, [])
+
+  // rotate videos whenever the list length changes
+  useEffect(() => {
+    if (!backgroundVideos || backgroundVideos.length === 0) return
     const interval = setInterval(() => {
       setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % backgroundVideos.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [backgroundVideos]);
 
   return (
     <>
@@ -83,6 +215,9 @@ function HomePage() {
             />
           ))}
         </div>
+        {videoError && (
+          <div style={{ color: 'red', padding: '8px 0', textAlign: 'center' }}>{videoError}</div>
+        )}
 
         <div className="parallax-section who-we-are fade-in-up">
           <div className="parallax-content fade-in-up">
@@ -103,7 +238,8 @@ function HomePage() {
               {/* Slider */}
       <div className="slider-container fade-in-up">
         <div className="slider">
-          {placeholders.concat(placeholders).map((image, index) => (
+          {logosError && <div style={{ color: 'red', textAlign: 'center' }}>{logosError}</div>}
+          {(logosList.length ? logosList.concat(logosList) : fallbackLogos.concat(fallbackLogos)).map((image, index) => (
             <div key={index} className="slider-placeholder">
               <img src={image} alt="" />
             </div>
@@ -179,16 +315,19 @@ function HomePage() {
         <div className="parallax-section topics fade-in-up" style={{ backgroundColor: '#011317' }}>
           <h1 style={headingfont}>Topics That Fascinate Us</h1>
           <Separator></Separator>
+
+          {topicsError && <div style={{ color: 'red', textAlign: 'center' }}>{topicsError}</div>}
+
           <div className="topics-scroll-container fade-in-up">
             <div className="topics-container">
-              {topicsData.map((topic, index) => (
+              {(topics || topicsData).map((topic, index) => (
                 <div key={index} className={`topic-item fade-in-up ${index % 2 === 1 ? 'reverse' : ''}`}>
                   <div className="topic-image fade-in-up">
-                    <img src={topic.image} alt={topic.title} />
+                    <img src={topic.image || topic.image_url || topic.image_path} alt={topic.title || topic.name} />
                   </div>
                   <div className="topic-content fade-in-up">
-                    <h2 style={subHeadingFont}>{topic.title}</h2>
-                    <p style={subContentFont}>{topic.description}</p>
+                    <h2 style={subHeadingFont}>{topic.title || topic.name}</h2>
+                    <p style={subContentFont}>{topic.description || topic.content}</p>
                   </div>
                 </div>
               ))}

@@ -14,6 +14,8 @@ import Project4 from './pages/projectPages/project4';
 import Project5 from './pages/projectPages/project5';
 import Project6 from './pages/projectPages/project6';
 import Footer from './components/Footer';
+import LoginPage from './pages/LoginPage';
+import EditPage from './pages/EditPage';
 import './App.css'
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
         <Route path="/sdfcl-lab-website/ourteam" element={<TeamPage />} />
         <Route path="/sdfcl-lab-website/openings" element={<OpeningsPage />} />
         <Route path="/sdfcl-lab-website/aboutus" element={<AboutPage />} />
+        <Route path="/sdfcl-lab-website/login" element={<LoginPage />} />
+  <Route path="/sdfcl-lab-website/edit" element={<EditPage />} />
         <Route path="/sdfcl-lab-website/Spacecraft Attitude Control Testbed for Testing and Validating Maneuvering Controls" element={<Project1 />} />
       <Route path="/sdfcl-lab-website/Magneto-electric effects in the dynamics and motion control problems of telecommunication spacecraft" element={<Project2 />} />
       <Route path="/sdfcl-lab-website/6D Pose-estimation of Uncooperative Airborne Vehicle" element={<Project3 />} />
