@@ -20,6 +20,11 @@ function HomePage() {
   const [videoError, setVideoError] = useState(null)
   const [loadingVideos, setLoadingVideos] = useState(false)
 
+  // Home title/content from DB
+  const [homeTitle, setHomeTitle] = useState('')
+  const [homeContent, setHomeContent] = useState('')
+  const [homeLoading, setHomeLoading] = useState(true)
+
   // logos state and loader
   const [logosList, setLogosList] = useState([])
   const [logosError, setLogosError] = useState(null)
@@ -30,7 +35,6 @@ function HomePage() {
   const [topicsError, setTopicsError] = useState(null)
   const [loadingTopics, setLoadingTopics] = useState(false)
   // home page data from DB
-  // home page data from DB (moved: Research & Teaching Summary now on Research page)
 
   async function loadLogos() {
     setLogosError(null)
@@ -180,7 +184,29 @@ function HomePage() {
     loadBackgroundVideos()
     loadLogos()
   loadTopics() // <-- added
+  loadHomeFromDB()
   }, [])
+
+  async function loadHomeFromDB() {
+    setHomeLoading(true)
+    try {
+      const res = await supabase.from('home_page').select('*').order('created_at', { ascending: false }).limit(1)
+      if (res.error) {
+        console.error(res.error)
+      } else if (Array.isArray(res.data) && res.data.length > 0) {
+        const row = res.data[0]
+        setHomeTitle(row.title ?? row.who_title ?? '')
+        setHomeContent(row.content ?? row.who_paragraph ?? '')
+      } else {
+        setHomeTitle('')
+        setHomeContent('')
+      }
+    } catch (err) {
+      console.error('loadHomeFromDB error', err)
+    } finally {
+      setHomeLoading(false)
+    }
+  }
 
   // rotate videos whenever the list length changes
   useEffect(() => {
@@ -219,11 +245,9 @@ function HomePage() {
 
         <div className="parallax-section who-we-are fade-in-up">
           <div className="parallax-content fade-in-up">
-            <h1 style={headingfont}>Who We Are</h1>
+            <h1 style={headingfont}>{homeLoading ? 'Loading...' : homeTitle || 'Who We Are'}</h1>
             <Separator></Separator>
-            <p style={contentFont}>
-            The Space Dynamics and Flight Control Laboratory (SDFCL) is a research and development laboratory of the Department of Aerospace Engineering at the Indian Institute of Technology, Kanpur. SDFCL carries out fundamental and applied research activities in the convergence of Astrodynamics and Control to enable future aggregated and disaggregated satellite missions. These include but are not limited to spacecraft attitude dynamics, combined attitude and orbit control, spacecraft formation flying, rendezvous – docking and berthing of cooperative and non-cooperative targets, as well as pose estimation of moving targets. The vision of SDFCL is to ensure that control algorithms are used as effectively as possible for small satellite on-orbit operations, which will advance robotic and human space exploration. SDFCL is responsible for designing, developing, validating, and embedding the necessary cutting-edge technologies for on-orbit servicing for future space missions. To achieve the same, a first-generation spacecraft simulator testbed at IIT Kanpur is under development that would be used to test and validate new maneuvering controls for rendezvous and docking, new mission concepts for on-orbit servicing, and new algorithms for GN&C.
-            </p>
+            <p style={contentFont}>{homeLoading ? 'Loading content...' : (homeContent || '')}</p>
           </div>
         </div>
 

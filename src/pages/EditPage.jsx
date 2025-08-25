@@ -101,23 +101,12 @@ export default function EditPage() {
 
 // Simple Home editor component
 function HomeEditor() {
-  // default values taken from src/pages/HomePage.jsx (core sections)
-  const defaultWhoTitle = 'Who We Are'
-  const defaultWhoParagraph = `The Space Dynamics and Flight Control Laboratory (SDFCL) is a research and development laboratory of the Department of Aerospace Engineering at the Indian Institute of Technology, Kanpur. SDFCL carries out fundamental and applied research activities in the convergence of Astrodynamics and Control to enable future aggregated and disaggregated satellite missions. These include but are not limited to spacecraft attitude dynamics, combined attitude and orbit control, spacecraft formation flying, rendezvous – docking and berthing of cooperative and non-cooperative targets, as well as pose estimation of moving targets. The vision of SDFCL is to ensure that control algorithms are used as effectively as possible for small satellite on-orbit operations, which will advance robotic and human space exploration. SDFCL is responsible for designing, developing, validating, and embedding the necessary cutting-edge technologies for on-orbit servicing for future space missions. To achieve the same, a first-generation spacecraft simulator testbed at IIT Kanpur is under development that would be used to test and validate new maneuvering controls for rendezvous and docking, new mission concepts for on-orbit servicing, and new algorithms for GN&C.`
-
-  const defaultResearchBoxes = [
-    { title: 'Lab Development', body: 'Space Dynamics and Flight Control Lab.' },
-    { title: 'Total Funding', body: '7.27 Cr (Including external and internal)' },
-    { title: 'Publications', body: '27 Journals, 70 Conferences' },
-  ]
-
-  // home content (migrated from localStorage -> DB-backed)
-  const [whoTitle, setWhoTitle] = useState(defaultWhoTitle)
-  const [whoParagraph, setWhoParagraph] = useState(defaultWhoParagraph)
-  const [researchBoxesJSON, setResearchBoxesJSON] = useState(JSON.stringify(defaultResearchBoxes, null, 2))
+  // home content (DB-backed only; no hardcoded defaults)
+  const [whoTitle, setWhoTitle] = useState('')
+  const [whoParagraph, setWhoParagraph] = useState('')
+  const [whoLoading, setWhoLoading] = useState(true)
+  // research boxes removed from editor (migrated to Research page)
   const [homeRow, setHomeRow] = useState(null)
-  const [loadingHome, setLoadingHome] = useState(false)
-  const [homeError, setHomeError] = useState(null)
   const [saved, setSaved] = useState(false)
   const [videos, setVideos] = useState([])
   const [loadingVideos, setLoadingVideos] = useState(false)
@@ -136,31 +125,14 @@ function HomeEditor() {
   const [topicsError, setTopicsError] = useState(null)
 
   async function handleSave() {
-    setHomeError(null)
-    setLoadingHome(true)
+  // save basic home fields
     try {
-      let parsed
-      try {
-        parsed = JSON.parse(researchBoxesJSON)
-      } catch (e) {
-        throw new Error('Research boxes JSON is invalid', e)
-      }
-
-      // convert array [{title,body}] -> object { title: body }
-      let summaryToSave = parsed
-      if (Array.isArray(parsed)) {
-        const obj = {}
-        parsed.forEach((b, i) => {
-          const key = (b && b.title) ? b.title : `Box ${i + 1}`
-          obj[key] = b && b.body !== undefined ? b.body : ''
-        })
-        summaryToSave = obj
-      }
-
       const payload = {
+        // write both common variants so whichever column exists will be updated
+        title: whoTitle,
+        content: whoParagraph,
         who_title: whoTitle,
         who_paragraph: whoParagraph,
-        research_and_training_summary: summaryToSave,
       }
       if (homeRow && homeRow.id) payload.id = homeRow.id
 
@@ -173,16 +145,14 @@ function HomeEditor() {
       setSaved(true)
       setTimeout(() => setSaved(false), 1500)
     } catch (err) {
-      setHomeError(err.message || String(err))
-    } finally {
-      setLoadingHome(false)
+      console.error('handleSave error', err)
     }
   }
 
   function handleReset() {
-    setWhoTitle(defaultWhoTitle)
-    setWhoParagraph(defaultWhoParagraph)
-    setResearchBoxesJSON(JSON.stringify(defaultResearchBoxes, null, 2))
+  // Reset to values loaded from the DB (no hardcoded fallbacks)
+  setWhoTitle(homeRow?.who_title ?? '')
+  setWhoParagraph(homeRow?.who_paragraph ?? '')
   }
 
   // --- Background videos management ---
@@ -284,42 +254,34 @@ function HomeEditor() {
     loadVideos()
     loadLogos()
     loadTopicsFromDB()
-    loadHomeFromDB()
+    // inline loadHomeFromDB to avoid dependency warnings
+  ;(async () => {
+      try {
+        setWhoLoading(true)
+        const res = await supabase.from('home_page').select('*').order('created_at', { ascending: false }).limit(1)
+        if (res.error) {
+          console.error(res.error)
+        } else if (Array.isArray(res.data) && res.data.length > 0) {
+          const row = res.data[0]
+          setHomeRow(row)
+          // Populate editor fields strictly from DB values (prefer title/content, fallback to who_* names)
+          setWhoTitle(row.title ?? row.who_title ?? '')
+          setWhoParagraph(row.content ?? row.who_paragraph ?? '')
+        } else {
+          // no row found -> clear fields
+          setHomeRow(null)
+          setWhoTitle('')
+          setWhoParagraph('')
+        }
+        setWhoLoading(false)
+      } catch (err) {
+        console.error('loadHomeFromDB error', err)
+      }
+    })()
   }, [])
 
   // --- Home page DB loader ---
-  async function loadHomeFromDB() {
-    setLoadingHome(true)
-    setHomeError(null)
-    try {
-      const res = await supabase.from('home_page').select('*').order('id', { ascending: false }).limit(1)
-      if (res.error) throw res.error
-      const row = Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : null
-      setHomeRow(row)
-      if (row) {
-        setWhoTitle(row.who_title || defaultWhoTitle)
-        setWhoParagraph(row.who_paragraph || defaultWhoParagraph)
-        const summary = row.research_and_training_summary || row.researchAndTrainingSummary || null
-        if (summary) {
-          if (Array.isArray(summary)) {
-            setResearchBoxesJSON(JSON.stringify(summary, null, 2))
-          } else if (typeof summary === 'object') {
-            // convert {title: body} -> [{title, body}]
-            const arr = Object.entries(summary).map(([title, body]) => ({ title, body }))
-            setResearchBoxesJSON(JSON.stringify(arr, null, 2))
-          } else {
-            setResearchBoxesJSON(JSON.stringify(defaultResearchBoxes, null, 2))
-          }
-        } else {
-          setResearchBoxesJSON(JSON.stringify(defaultResearchBoxes, null, 2))
-        }
-      }
-    } catch (err) {
-      setHomeError(err.message || String(err))
-    } finally {
-      setLoadingHome(false)
-    }
-  }
+  // loadHomeFromDB removed (inline used in useEffect)
 
   // --- Topics (DB) management ---
   async function loadTopicsFromDB() {
@@ -390,8 +352,8 @@ function HomeEditor() {
     setTopicsError(null)
     try {
       // upsert all topics. New records without id will be inserted.
-      const { data, error } = await supabase.from('topics').upsert(topics).select()
-      if (error) throw error
+  const { error } = await supabase.from('topics').upsert(topics).select()
+  if (error) throw error
       // refresh from DB to get assigned ids and normalized rows
       await loadTopicsFromDB()
     } catch (err) {
@@ -401,29 +363,12 @@ function HomeEditor() {
     }
   }
 
-  let previewBoxes = []
-  try {
-    previewBoxes = JSON.parse(researchBoxesJSON)
-  } catch {
-    previewBoxes = []
-  }
+  // research boxes preview removed
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1rem' }}>
       <section style={{ padding: '1rem', borderRadius: 8, background: '#fff' }}>
-        <h2 style={{ marginTop: 0 }}>{whoTitle}</h2>
-        <p style={{ whiteSpace: 'pre-wrap' }}>{whoParagraph}</p>
-
-        <h3 style={{ marginTop: 24 }}>Research & Teaching Summary (preview)</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-          {previewBoxes.map((b, i) => (
-            <div key={i} style={{ padding: 10, border: '1px solid #eee', borderRadius: 6 }}>
-              <h4 style={{ margin: '0 0 6px 0' }}>{b.title}</h4>
-              <p style={{ margin: 0 }}>{b.body}</p>
-            </div>
-          ))}
-        </div>
-        
+        {/* Who We Are preview removed from editor — editing controls are in the aside */}
         <h3 style={{ marginTop: 24 }}>Background Videos (from storage)</h3>
         <div style={{ marginBottom: 12 }}>
         </div>
@@ -475,14 +420,16 @@ function HomeEditor() {
 
       <aside style={{ padding: '1rem', borderRadius: 8, background: '#f8fafc' }}>
         <h4 style={{ marginTop: 0 }}>Edit Home Content</h4>
-        <label style={{ fontSize: 13, color: '#333' }}>Who we are title</label>
-        <input value={whoTitle} onChange={(e) => setWhoTitle(e.target.value)} style={{ width: '100%', padding: '8px', margin: '6px 0 12px 0' }} />
+        <label style={{ fontSize: 13, color: '#333' }}>Title</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <input value={whoTitle} onChange={(e) => setWhoTitle(e.target.value)} disabled={whoLoading} style={{ width: '100%', padding: '8px', margin: '6px 0 12px 0' }} />
+          {whoLoading && <small style={{ color: '#666' }}>Loading...</small>}
+        </div>
 
-        <label style={{ fontSize: 13, color: '#333' }}>Who we are paragraph</label>
-        <textarea value={whoParagraph} onChange={(e) => setWhoParagraph(e.target.value)} rows={8} style={{ width: '100%', padding: '8px', margin: '6px 0 12px 0' }} />
+        <label style={{ fontSize: 13, color: '#333' }}>Content</label>
+  <textarea value={whoParagraph} onChange={(e) => setWhoParagraph(e.target.value)} rows={8} disabled={whoLoading} style={{ width: '100%', padding: '8px', margin: '6px 0 12px 0' }} />
 
-        <label style={{ fontSize: 13, color: '#333' }}>Research boxes (JSON)</label>
-        <textarea value={researchBoxesJSON} onChange={(e) => setResearchBoxesJSON(e.target.value)} rows={8} style={{ width: '100%', padding: '8px', margin: '6px 0 12px 0', fontFamily: 'monospace', fontSize: 13 }} />
+  {/* Research boxes editor removed */}
 
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={handleSave} style={{ padding: '8px 12px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 6 }}>Save</button>
