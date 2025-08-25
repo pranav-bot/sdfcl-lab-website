@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 import './EditPage.css'
 import HomeEditor from './edits/HomeEditor'
 import ProjectsEditor from './edits/ProjectsEditor'
+import GalleryEditor from './edits/GalleryEditor'
 
 // Supabase client (matches LoginPage usage)
 const supabase = createClient(
@@ -75,6 +76,9 @@ export default function EditPage() {
                     } else if (item === 'Projects') {
                       // open Projects editor in-place
                       setSelectedPage('projects')
+                    } else if (item === 'Gallery') {
+                      // open Gallery editor in-place
+                      setSelectedPage('gallery')
                     } else {
                       navigate(path)
                       setSelectedPage(null)
@@ -101,6 +105,8 @@ export default function EditPage() {
           <HomeEditor />
         ) : selectedPage === 'projects' ? (
           <ProjectsEditor />
+        ) : selectedPage === 'gallery' ? (
+          <GalleryEditor />
         ) : (
           <p style={{ color: '#666' }}>Select a page button above to edit its content.</p>
         )}

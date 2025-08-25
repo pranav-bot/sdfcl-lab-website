@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
-import allImages from '../data/Gallery';
 import './GalleryPage.css';
+import { createClient } from '@supabase/supabase-js'
+
+// supabase client
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
 
 // 1) Define heading and content fonts
 const headingfont = {
@@ -15,24 +18,54 @@ const contentFont = {
 
 
 
-// 2) Define categories (plus “All”)
-const categories = ['All', 'Events', 'Lab', 'Projects'];
+// 2) Define categories (plus “All”) - categories are derived from DB rows
+
 
 function GalleryPage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeCategory, setActiveCategory] = useState('All');
-  const [filteredImages, setFilteredImages] = useState(allImages);
+  const [images, setImages] = useState([])
+  const [filteredImages, setFilteredImages] = useState([])
+  const [categories, setCategories] = useState(['All'])
+  const [loading, setLoading] = useState(false)
 
-  // 3) Filter images when category changes
+  // load gallery rows from DB on mount
   useEffect(() => {
-    if (activeCategory === 'All') {
-      setFilteredImages(allImages);
-    } else {
-      setFilteredImages(
-        allImages.filter((img) => img.category === activeCategory)
-      );
-    }
-  }, [activeCategory]);
+    let mounted = true
+    ;(async () => {
+      setLoading(true)
+      try {
+        const { data, error } = await supabase.from('gallery').select('*').order('created_at', { ascending: false })
+        if (error) throw error
+        const mapped = (data || []).map((r) => {
+          const isUrl = r.src?.startsWith('http')
+          return {
+            id: r.id,
+            src: isUrl ? r.src : supabase.storage.from('assets').getPublicUrl(r.src).data.publicUrl,
+            caption: r.caption || '',
+            category: r.category || 'Uncategorized'
+          }
+        })
+        if (!mounted) return
+        setImages(mapped)
+        setFilteredImages(mapped)
+        // derive categories from rows
+        const derived = Array.from(new Set(['All', ...mapped.map((m) => m.category)]))
+        setCategories(derived)
+      } catch (err) {
+        console.error('Gallery load error', err)
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
+  // filter when activeCategory changes
+  useEffect(() => {
+    if (activeCategory === 'All') setFilteredImages(images)
+    else setFilteredImages(images.filter((img) => img.category === activeCategory))
+  }, [activeCategory, images])
 
   // 4) Modal open/close
   const handleImageClick = (image) => {
@@ -83,25 +116,29 @@ function GalleryPage() {
         </div>
 
         {/* Image Gallery Grid */}
-        <div className="gallery-grid fade-in-up">
-          {filteredImages.map((img) => (
-            <div
-              key={img.id}
-              className="gallery-item fade-in-up"
-              onClick={() => handleImageClick(img)}
-            >
-              <img
-                src={img.src}
-                alt={img.caption}
-                className="gallery-image"
-                style={contentFont}
-              />
-              <div className="caption-overlay" style={contentFont}>
-                <div className="caption-text">{img.caption}</div>
+        {loading ? (
+          <p>Loading gallery...</p>
+        ) : (
+          <div className="gallery-grid fade-in-up">
+            {filteredImages.map((img) => (
+              <div
+                key={img.id}
+                className="gallery-item fade-in-up"
+                onClick={() => handleImageClick(img)}
+              >
+                <img
+                  src={img.src}
+                  alt={img.caption}
+                  className="gallery-image"
+                  style={contentFont}
+                />
+                <div className="caption-overlay" style={contentFont}>
+                  <div className="caption-text">{img.caption}</div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Modal (shown only if selectedImage != null) */}

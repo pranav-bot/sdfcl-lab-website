@@ -2,9 +2,6 @@ import { useState, useEffect } from "react";
 import "./ResearchPage.css";
 import { createClient } from '@supabase/supabase-js'
 
-
-
-
 // Define heading + content fonts
 const headingfont = {
   fontFamily: "Space Mono",
