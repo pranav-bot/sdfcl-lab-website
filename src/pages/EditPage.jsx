@@ -108,6 +108,8 @@ function HomeEditor() {
   // research boxes removed from editor (migrated to Research page)
   const [homeRow, setHomeRow] = useState(null)
   const [saved, setSaved] = useState(false)
+  const [whoSaving, setWhoSaving] = useState(false)
+  const [whoError, setWhoError] = useState(null)
   const [videos, setVideos] = useState([])
   const [loadingVideos, setLoadingVideos] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -127,32 +129,57 @@ function HomeEditor() {
   async function handleSave() {
   // save basic home fields
     try {
-      const payload = {
+  setWhoError(null)
+  setWhoSaving(true)
+  const payload = {
         // write both common variants so whichever column exists will be updated
         title: whoTitle,
         content: whoParagraph,
-        who_title: whoTitle,
-        who_paragraph: whoParagraph,
+        // preserve research summary column to avoid NOT NULL constraint errors
+        research_and_training_summary: homeRow?.research_and_training_summary
       }
       if (homeRow && homeRow.id) payload.id = homeRow.id
 
       const { data, error } = await supabase.from('home_page').upsert(payload).select()
-      if (error) throw error
+  if (error) throw error
       // upsert returns array; take the first row if present
       const row = Array.isArray(data) && data.length > 0 ? data[0] : null
-      if (row) setHomeRow(row)
+      if (row) {
+        setHomeRow(row)
+        // reflect persisted values (prefer title/content if present)
+        setWhoTitle(row.title ?? '')
+        setWhoParagraph(row.content ?? '')
+      }
 
       setSaved(true)
       setTimeout(() => setSaved(false), 1500)
     } catch (err) {
-      console.error('handleSave error', err)
+  console.error('handleSave error', err)
+  setWhoError(err.message || String(err))
     }
+  setWhoSaving(false)
   }
 
-  function handleReset() {
-  // Reset to values loaded from the DB (no hardcoded fallbacks)
-  setWhoTitle(homeRow?.who_title ?? '')
-  setWhoParagraph(homeRow?.who_paragraph ?? '')
+  async function handleReset() {
+    // Reload latest values from DB and populate editor (do not clear inputs)
+    try {
+      setWhoLoading(true)
+      const res = await supabase.from('home_page').select('*').order('created_at', { ascending: false }).limit(1)
+      if (res.error) {
+        console.error(res.error)
+      } else if (Array.isArray(res.data) && res.data.length > 0) {
+        const row = res.data[0]
+        setHomeRow(row)
+        setWhoTitle(row.title ?? '')
+        setWhoParagraph(row.content ?? '')
+      } else {
+        // no DB row found — keep current input values (do not clear)
+      }
+    } catch (err) {
+      console.error('handleReset error', err)
+    } finally {
+      setWhoLoading(false)
+    }
   }
 
   // --- Background videos management ---
@@ -265,8 +292,8 @@ function HomeEditor() {
           const row = res.data[0]
           setHomeRow(row)
           // Populate editor fields strictly from DB values (prefer title/content, fallback to who_* names)
-          setWhoTitle(row.title ?? row.who_title ?? '')
-          setWhoParagraph(row.content ?? row.who_paragraph ?? '')
+          setWhoTitle(row.title ?? '')
+          setWhoParagraph(row.content ?? '')
         } else {
           // no row found -> clear fields
           setHomeRow(null)
@@ -431,11 +458,12 @@ function HomeEditor() {
 
   {/* Research boxes editor removed */}
 
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={handleSave} style={{ padding: '8px 12px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 6 }}>Save</button>
-          <button onClick={handleReset} style={{ padding: '8px 12px', background: '#fff', border: '1px solid #d1d5db', borderRadius: 6 }}>Reset</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <button onClick={handleSave} disabled={whoLoading || whoSaving} style={{ padding: '8px 12px', background: whoLoading || whoSaving ? '#93c5fd' : '#2563eb', color: 'white', border: 'none', borderRadius: 6 }}>{whoSaving ? 'Saving...' : 'Save'}</button>
+          <button onClick={handleReset} disabled={whoLoading || whoSaving} style={{ padding: '8px 12px', background: '#fff', border: '1px solid #d1d5db', borderRadius: 6 }}>Reset</button>
           {saved && <span style={{ marginLeft: 8, color: 'green' }}>Saved</span>}
         </div>
+        {whoError && <div style={{ color: 'red', marginTop: 8 }}>{whoError}</div>}
         <hr style={{ margin: '12px 0' }} />
         <h4 style={{ marginTop: 0 }}>Manage Background Videos</h4>
         <input type="file" accept="video/*" multiple onChange={(e) => handleUploadFiles(e.target.files)} />
