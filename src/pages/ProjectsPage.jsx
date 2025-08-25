@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import SimpleCard from '../components/SimpleCard'
 import { Link } from 'react-router-dom'
-import COMPLETED_PROJECTS from '../data/CompletedProjects'
+// completed projects will be loaded from DB
 import './ProjectsPage.css'
 import { createClient } from '@supabase/supabase-js'
 
@@ -49,7 +49,36 @@ export default function ProjectsPage() {
     p.name.toLowerCase().includes(lowerSearch) || p.content.toLowerCase().includes(lowerSearch)
   )
 
-  const filteredCompleted = COMPLETED_PROJECTS.filter((p) =>
+  // completed projects loaded from DB
+  const [completedProjects, setCompletedProjects] = useState([])
+  const [loadingCompleted, setLoadingCompleted] = useState(false)
+  const [completedError, setCompletedError] = useState(null)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      setLoadingCompleted(true)
+      setCompletedError(null)
+      try {
+        const { data, error } = await supabase.from('completed_projects').select('*').order('created_at', { ascending: false })
+        if (error) throw error
+        const withUrls = data.map((row) => ({
+          ...row,
+          image: supabase.storage.from('assets').getPublicUrl(row.image_path).data.publicUrl
+        }))
+        if (mounted) setCompletedProjects(Array.isArray(withUrls) ? withUrls : [])
+      } catch (err) {
+        if (mounted) setCompletedError(err.message || String(err))
+      } finally {
+        if (mounted) setLoadingCompleted(false)
+      }
+    })()
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const filteredCompleted = completedProjects.filter((p) =>
     p.name.toLowerCase().includes(lowerSearch) || p.content.toLowerCase().includes(lowerSearch)
   )
 
@@ -64,7 +93,11 @@ export default function ProjectsPage() {
         />
       </div>
 
-      {filteredCompleted.length > 0 && (
+      {loadingCompleted ? (
+        <p style={{ color: 'white' }}>Loading completed projects...</p>
+      ) : completedError ? (
+        <p style={{ color: 'salmon' }}>Error loading completed projects: {completedError}</p>
+      ) : filteredCompleted.length > 0 && (
         <>
           <h2 style={{ ...headingfont, color: 'white' }}>Completed Projects</h2>
           <div className="d-flex flex-wrap justify-content-center gap-4">
