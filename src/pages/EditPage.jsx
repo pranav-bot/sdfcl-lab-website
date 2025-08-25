@@ -111,9 +111,13 @@ function HomeEditor() {
     { title: 'Publications', body: '27 Journals, 70 Conferences' },
   ]
 
-  const [whoTitle, setWhoTitle] = useState(() => localStorage.getItem('home_who_title') || defaultWhoTitle)
-  const [whoParagraph, setWhoParagraph] = useState(() => localStorage.getItem('home_who_paragraph') || defaultWhoParagraph)
-  const [researchBoxesJSON, setResearchBoxesJSON] = useState(() => localStorage.getItem('home_research_boxes') || JSON.stringify(defaultResearchBoxes, null, 2))
+  // home content (migrated from localStorage -> DB-backed)
+  const [whoTitle, setWhoTitle] = useState(defaultWhoTitle)
+  const [whoParagraph, setWhoParagraph] = useState(defaultWhoParagraph)
+  const [researchBoxesJSON, setResearchBoxesJSON] = useState(JSON.stringify(defaultResearchBoxes, null, 2))
+  const [homeRow, setHomeRow] = useState(null)
+  const [loadingHome, setLoadingHome] = useState(false)
+  const [homeError, setHomeError] = useState(null)
   const [saved, setSaved] = useState(false)
   const [videos, setVideos] = useState([])
   const [loadingVideos, setLoadingVideos] = useState(false)
@@ -131,21 +135,54 @@ function HomeEditor() {
   const [savingTopics, setSavingTopics] = useState(false)
   const [topicsError, setTopicsError] = useState(null)
 
-  function handleSave() {
-    localStorage.setItem('home_who_title', whoTitle)
-    localStorage.setItem('home_who_paragraph', whoParagraph)
-    localStorage.setItem('home_research_boxes', researchBoxesJSON)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 1500)
+  async function handleSave() {
+    setHomeError(null)
+    setLoadingHome(true)
+    try {
+      let parsed
+      try {
+        parsed = JSON.parse(researchBoxesJSON)
+      } catch (e) {
+        throw new Error('Research boxes JSON is invalid', e)
+      }
+
+      // convert array [{title,body}] -> object { title: body }
+      let summaryToSave = parsed
+      if (Array.isArray(parsed)) {
+        const obj = {}
+        parsed.forEach((b, i) => {
+          const key = (b && b.title) ? b.title : `Box ${i + 1}`
+          obj[key] = b && b.body !== undefined ? b.body : ''
+        })
+        summaryToSave = obj
+      }
+
+      const payload = {
+        who_title: whoTitle,
+        who_paragraph: whoParagraph,
+        research_and_training_summary: summaryToSave,
+      }
+      if (homeRow && homeRow.id) payload.id = homeRow.id
+
+      const { data, error } = await supabase.from('home_page').upsert(payload).select()
+      if (error) throw error
+      // upsert returns array; take the first row if present
+      const row = Array.isArray(data) && data.length > 0 ? data[0] : null
+      if (row) setHomeRow(row)
+
+      setSaved(true)
+      setTimeout(() => setSaved(false), 1500)
+    } catch (err) {
+      setHomeError(err.message || String(err))
+    } finally {
+      setLoadingHome(false)
+    }
   }
 
   function handleReset() {
     setWhoTitle(defaultWhoTitle)
     setWhoParagraph(defaultWhoParagraph)
     setResearchBoxesJSON(JSON.stringify(defaultResearchBoxes, null, 2))
-    localStorage.removeItem('home_who_title')
-    localStorage.removeItem('home_who_paragraph')
-    localStorage.removeItem('home_research_boxes')
   }
 
   // --- Background videos management ---
@@ -247,7 +284,42 @@ function HomeEditor() {
     loadVideos()
     loadLogos()
     loadTopicsFromDB()
+    loadHomeFromDB()
   }, [])
+
+  // --- Home page DB loader ---
+  async function loadHomeFromDB() {
+    setLoadingHome(true)
+    setHomeError(null)
+    try {
+      const res = await supabase.from('home_page').select('*').order('id', { ascending: false }).limit(1)
+      if (res.error) throw res.error
+      const row = Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : null
+      setHomeRow(row)
+      if (row) {
+        setWhoTitle(row.who_title || defaultWhoTitle)
+        setWhoParagraph(row.who_paragraph || defaultWhoParagraph)
+        const summary = row.research_and_training_summary || row.researchAndTrainingSummary || null
+        if (summary) {
+          if (Array.isArray(summary)) {
+            setResearchBoxesJSON(JSON.stringify(summary, null, 2))
+          } else if (typeof summary === 'object') {
+            // convert {title: body} -> [{title, body}]
+            const arr = Object.entries(summary).map(([title, body]) => ({ title, body }))
+            setResearchBoxesJSON(JSON.stringify(arr, null, 2))
+          } else {
+            setResearchBoxesJSON(JSON.stringify(defaultResearchBoxes, null, 2))
+          }
+        } else {
+          setResearchBoxesJSON(JSON.stringify(defaultResearchBoxes, null, 2))
+        }
+      }
+    } catch (err) {
+      setHomeError(err.message || String(err))
+    } finally {
+      setLoadingHome(false)
+    }
+  }
 
   // --- Topics (DB) management ---
   async function loadTopicsFromDB() {

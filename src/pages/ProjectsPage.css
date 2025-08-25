@@ -1,0 +1,71 @@
+/* ProjectsPage styles */
+
+.projects-page-container {
+  background-color: #011317;
+  color: #ffffff;
+  padding: 2rem 1.25rem;
+  min-height: 80vh;
+  box-sizing: border-box;
+}
+
+.projects-page-container h2 {
+  font-family: 'Space Mono', monospace;
+  font-weight: 800;
+  color: #ffffff;
+  text-align: center;
+  margin: 0.5rem 0 1rem;
+  letter-spacing: 0.2px;
+}
+
+/* Search input (overrides inline defaults) */
+.projects-page-container > div > input,
+.projects-page-container input[type="text"] {
+  width: 100%;
+  max-width: 640px;
+  display: block;
+  margin: 0 auto;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: #071618;
+  color: #ffffff;
+  outline: none;
+  transition: box-shadow .12s ease, border-color .12s ease;
+}
+
+.projects-page-container input:focus {
+  box-shadow: 0 0 0 4px rgba(0,150,136,0.06);
+  border-color: rgba(0,150,136,0.6);
+}
+
+/* Card wrapper sizing and hover */
+.card-wrapper {
+  width: 300px;
+  margin: 8px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.card-wrapper:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+}
+
+/* Layout helpers (works with existing bootstrap utilities) */
+.d-flex.flex-wrap.justify-content-center {
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .card-wrapper { width: 90%; max-width: 420px; }
+  .projects-page-container { padding: 1rem; }
+  .projects-page-container h2 { font-size: 1.3rem; }
+}
+
+@media (max-width: 480px) {
+  .card-wrapper { width: 100%; margin: 6px 0; }
+  .projects-page-container h2 { font-size: 1.05rem; }
+}

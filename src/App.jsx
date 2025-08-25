@@ -17,6 +17,7 @@ import Footer from './components/Footer';
 import LoginPage from './pages/LoginPage';
 import EditPage from './pages/EditPage';
 import './App.css'
+import ProjectsPage from './pages/ProjectsPage';
 
 function App() {
   return (
@@ -27,9 +28,10 @@ function App() {
       <Routes>
         <Route path="/sdfcl-lab-website/" element={<HomePage />} />
         <Route path="/sdfcl-lab-website/research" element={<ResearchPage />} />
+  <Route path="/sdfcl-lab-website/projects" element={<ProjectsPage />} />
         <Route path="/sdfcl-lab-website/gallery" element={<GalleryPage />} />
         <Route path="/sdfcl-lab-website/publications" element={<PublicationsPage />} />
-        <Route path="/sdfcl-lab-website/ourteam" element={<TeamPage />} />
+        <Route path="/sdfcl-lab-website/group" element={<TeamPage />} />
         <Route path="/sdfcl-lab-website/openings" element={<OpeningsPage />} />
         <Route path="/sdfcl-lab-website/aboutus" element={<AboutPage />} />
         <Route path="/sdfcl-lab-website/login" element={<LoginPage />} />

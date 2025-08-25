@@ -13,11 +13,13 @@ function Nbar() {
   }, [location.pathname]);
 
   const navItems = [
+    "Group",
     "Research",
     "Publications",
-    "Openings",
-    "Our Team",
+    "Projects",
     "Gallery",
+    "Citations",
+    "Collaborators",
     "About Us",
   ];
 
