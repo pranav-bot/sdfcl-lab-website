@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { createClient } from '@supabase/supabase-js'
 import './EditPage.css'
 import HomeEditor from './edits/HomeEditor'
+import ProjectsEditor from './edits/ProjectsEditor'
 
 // Supabase client (matches LoginPage usage)
 const supabase = createClient(
@@ -48,13 +49,13 @@ export default function EditPage() {
 
       {/* Navigation buttons same as Navbar */}
       <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-        {[
+                {[
           // keep Home so the in-place Home editor stays available, then mirror the site navbar
           'Home',
           'Group',
           'Research',
           'Publications',
-          'Projects',
+                  'Projects',
           'Gallery',
           'Citations',
           'Collaborators',
@@ -65,16 +66,19 @@ export default function EditPage() {
               ? '/sdfcl-lab-website/'
               : `/sdfcl-lab-website/${item.toLowerCase().replace(/\s/g, '')}`
           return (
-            <button
+                <button
               key={item}
               onClick={() => {
-                if (item === 'Home') {
-                  // do not navigate away from /edit; open Home editor in-place
-                  setSelectedPage('home')
-                } else {
-                  navigate(path)
-                  setSelectedPage(null)
-                }
+                    if (item === 'Home') {
+                      // open Home editor in-place
+                      setSelectedPage('home')
+                    } else if (item === 'Projects') {
+                      // open Projects editor in-place
+                      setSelectedPage('projects')
+                    } else {
+                      navigate(path)
+                      setSelectedPage(null)
+                    }
               }}
               style={{
                 padding: '0.5rem 0.8rem',
@@ -95,6 +99,8 @@ export default function EditPage() {
       <div style={{ marginTop: '1.5rem' }}>
         {selectedPage === 'home' ? (
           <HomeEditor />
+        ) : selectedPage === 'projects' ? (
+          <ProjectsEditor />
         ) : (
           <p style={{ color: '#666' }}>Select a page button above to edit its content.</p>
         )}

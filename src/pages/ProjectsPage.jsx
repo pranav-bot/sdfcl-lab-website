@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SimpleCard from '../components/SimpleCard'
 import { Link } from 'react-router-dom'
-import ONGOING_PROJECTS from '../data/OngoingProjects'
 import COMPLETED_PROJECTS from '../data/CompletedProjects'
 import './ProjectsPage.css'
+import { createClient } from '@supabase/supabase-js'
+
+// supabase client
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
 
 const headingfont = { fontFamily: 'Space Mono', fontWeight: 800 }
 const contentFont = { fontFamily: 'Poppins', fontWeight: 200 }
@@ -13,7 +16,36 @@ export default function ProjectsPage() {
 
   const lowerSearch = searchTerm.toLowerCase()
 
-  const filteredOngoing = ONGOING_PROJECTS.filter((p) =>
+  // ongoing projects loaded from DB
+  const [ongoingProjects, setOngoingProjects] = useState([])
+  const [loadingOngoing, setLoadingOngoing] = useState(false)
+  const [ongoingError, setOngoingError] = useState(null)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      setLoadingOngoing(true)
+      setOngoingError(null)
+      try {
+        const { data, error } = await supabase.from('ongoing_projects').select('*').order('created_at', { ascending: false })
+        if (error) throw error
+        const withUrls = data.map((row) => ({
+          ...row,
+          image: supabase.storage.from('assets').getPublicUrl(row.image_path).data.publicUrl
+        }))
+        if (mounted) setOngoingProjects(Array.isArray(withUrls) ? withUrls : [])
+      } catch (err) {
+        if (mounted) setOngoingError(err.message || String(err))
+      } finally {
+        if (mounted) setLoadingOngoing(false)
+      }
+    })()
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const filteredOngoing = ongoingProjects.filter((p) =>
     p.name.toLowerCase().includes(lowerSearch) || p.content.toLowerCase().includes(lowerSearch)
   )
 
@@ -47,7 +79,11 @@ export default function ProjectsPage() {
         </>
       )}
 
-      {filteredOngoing.length > 0 && (
+      {loadingOngoing ? (
+        <p style={{ color: 'white' }}>Loading ongoing projects...</p>
+      ) : ongoingError ? (
+        <p style={{ color: 'salmon' }}>Error loading ongoing projects: {ongoingError}</p>
+      ) : filteredOngoing.length > 0 && (
         <>
           <h2 style={{ ...headingfont, color: 'white', marginTop: 32 }}>Ongoing Projects</h2>
           <div className="d-flex flex-wrap justify-content-center gap-4">
