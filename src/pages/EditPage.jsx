@@ -5,6 +5,7 @@ import './EditPage.css'
 import HomeEditor from './edits/HomeEditor'
 import ProjectsEditor from './edits/ProjectsEditor'
 import GalleryEditor from './edits/GalleryEditor'
+import TeamEditor from './edits/TeamEditor'
 
 // Supabase client (matches LoginPage usage)
 const supabase = createClient(
@@ -76,6 +77,9 @@ export default function EditPage() {
                     } else if (item === 'Projects') {
                       // open Projects editor in-place
                       setSelectedPage('projects')
+                    } else if (item === 'Group') {
+                      // open Group (team) editor in-place
+                      setSelectedPage('group')
                     } else if (item === 'Gallery') {
                       // open Gallery editor in-place
                       setSelectedPage('gallery')
@@ -105,6 +109,8 @@ export default function EditPage() {
           <HomeEditor />
         ) : selectedPage === 'projects' ? (
           <ProjectsEditor />
+        ) : selectedPage === 'group' ? (
+          <TeamEditor />
         ) : selectedPage === 'gallery' ? (
           <GalleryEditor />
         ) : (
