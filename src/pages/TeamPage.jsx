@@ -32,10 +32,17 @@ function TeamPage() {
   const [mastersStudents, setMastersStudents] = useState([])
   const [researchInterns, setResearchInterns] = useState([])
   const [masterCardRow, setMasterCardRow] = useState(null)
+  // alumni lists
+  const [alumniPhdStudents, setAlumniPhdStudents] = useState([])
+  const [alumniMastersStudents, setAlumniMastersStudents] = useState([])
+  const [alumniResearchInterns, setAlumniResearchInterns] = useState([])
+  // view mode: 'current' or 'alumni'
+  const [viewMode, setViewMode] = useState('current')
   const [loadingPhd, setLoadingPhd] = useState(false)
   const [loadingMasters, setLoadingMasters] = useState(false)
   const [loadingInterns, setLoadingInterns] = useState(false)
   const [loadingMasterCard, setLoadingMasterCard] = useState(false)
+  const [loadingAlumni, setLoadingAlumni] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -44,18 +51,24 @@ function TeamPage() {
   setError(null)
   setLoadingPhd(true); setLoadingMasters(true); setLoadingInterns(true); setLoadingMasterCard(true)
       try {
-        const [phdRes, mastersRes, internsRes, masterRes] = await Promise.all([
+        const [phdRes, mastersRes, internsRes, alumniPhdRes, alumniMastersRes, alumniInternsRes, masterRes] = await Promise.all([
           supabase.from('phd_students').select('*').order('id', { ascending: true }),
           supabase.from('masters_students').select('*').order('id', { ascending: true }),
           supabase.from('research_interns').select('*').order('id', { ascending: true }),
+          supabase.from('alumini_phd_students').select('*').order('id', { ascending: true }),
+          supabase.from('alumini_masters_students').select('*').order('id', { ascending: true }),
+          supabase.from('alumini_research_interns').select('*').order('id', { ascending: true }),
           supabase.from('master_card').select('*').order('id', { ascending: false }).limit(1)
         ])
 
         if (!mounted) return
 
-        if (phdRes.error) throw phdRes.error
-        if (mastersRes.error) throw mastersRes.error
-        if (internsRes.error) throw internsRes.error
+  if (phdRes.error) throw phdRes.error
+  if (mastersRes.error) throw mastersRes.error
+  if (internsRes.error) throw internsRes.error
+  if (alumniPhdRes.error) throw alumniPhdRes.error
+  if (alumniMastersRes.error) throw alumniMastersRes.error
+  if (alumniInternsRes.error) throw alumniInternsRes.error
 
         const mapImage = (img) => {
           if (!img) return ''
@@ -65,7 +78,10 @@ function TeamPage() {
 
         setPhdStudents((phdRes.data || []).map(p => ({ ...p, image: mapImage(p.image) })))
         setMastersStudents((mastersRes.data || []).map(m => ({ ...m, image: mapImage(m.image) })))
-        setResearchInterns((internsRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
+  setResearchInterns((internsRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
+  setAlumniPhdStudents((alumniPhdRes.data || []).map(p => ({ ...p, image: mapImage(p.image) })))
+  setAlumniMastersStudents((alumniMastersRes.data || []).map(m => ({ ...m, image: mapImage(m.image) })))
+  setAlumniResearchInterns((alumniInternsRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
         // master card (PI) — take first row if present
         if (masterRes && masterRes.data && masterRes.data.length > 0) {
           const m = masterRes.data[0]
@@ -83,7 +99,7 @@ function TeamPage() {
         if (mounted) setError(err.message || String(err))
       } finally {
         if (mounted) {
-          setLoadingPhd(false); setLoadingMasters(false); setLoadingInterns(false); setLoadingMasterCard(false)
+          setLoadingPhd(false); setLoadingMasters(false); setLoadingInterns(false); setLoadingMasterCard(false); setLoadingAlumni(false)
         }
       }
     })()
@@ -263,19 +279,50 @@ function TeamPage() {
       <div style={{ backgroundColor: "#2e2c29" }} className="fade-in-up">
         <div style={{ color: "white" }} className="wavy-border fade-in-up" />
 
-  <h1
-          className="fade-in-up text-center"
-          style={{
-            ...headingfont,
-            fontSize: "60px",
-            paddingTop: "50px",
-            color: "white",
-          }}
-        >
-          Lab Members
-        </h1>
-  {(loadingPhd || loadingMasters || loadingInterns) && <p style={{ color: 'white', textAlign: 'center' }}>Loading members...</p>}
-  {error && <p style={{ color: 'salmon', textAlign: 'center' }}>{error}</p>}
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+    <h1
+      className="fade-in-up text-center"
+      style={{
+        ...headingfont,
+        fontSize: "60px",
+        paddingTop: "50px",
+        color: "white",
+      }}
+    >
+      Lab Members
+    </h1>
+
+    <div style={{ marginTop: 16 }}>
+      <button
+        onClick={() => setViewMode('current')}
+        style={{
+          marginRight: 8,
+          padding: '8px 12px',
+          backgroundColor: viewMode === 'current' ? '#ffd700' : '#333',
+          color: viewMode === 'current' ? '#000' : '#fff',
+          border: 'none',
+          cursor: 'pointer'
+        }}
+      >
+        Current
+      </button>
+      <button
+        onClick={() => setViewMode('alumni')}
+        style={{
+          padding: '8px 12px',
+          backgroundColor: viewMode === 'alumni' ? '#ffd700' : '#333',
+          color: viewMode === 'alumni' ? '#000' : '#fff',
+          border: 'none',
+          cursor: 'pointer'
+        }}
+      >
+        Alumni
+      </button>
+    </div>
+
+    {(loadingPhd || loadingMasters || loadingInterns || (viewMode === 'alumni' && loadingAlumni)) && <p style={{ color: 'white', textAlign: 'center' }}>Loading members...</p>}
+    {error && <p style={{ color: 'salmon', textAlign: 'center' }}>{error}</p>}
+  </div>
         <Separator />
 
         {/* PhD Students */}
@@ -290,29 +337,29 @@ function TeamPage() {
         >
           PhD Students
         </h2>
-        {renderCards(phdStudents)}
+        {viewMode === 'current' ? renderCards(phdStudents) : renderCards(alumniPhdStudents)}
 
         <Separator />
 
-        {/* Masters Students */}
+  {/* Masters Students */}
         <h2
           className="fade-in-up text-center"
           style={{ ...headingfont, color: "white", paddingBottom: "50px" }}
         >
           Masters Students
         </h2>
-        {renderCards(mastersStudents)}
+  {viewMode === 'current' ? renderCards(mastersStudents) : renderCards(alumniMastersStudents)}
 
         <Separator />
 
-        {/* Research Interns */}
+  {/* Research Interns */}
         <h2
           className="fade-in-up text-center"
           style={{ ...headingfont, color: "white", paddingBottom: "50px" }}
         >
           Research Interns
         </h2>
-        {renderCards(researchInterns)}
+  {viewMode === 'current' ? renderCards(researchInterns) : renderCards(alumniResearchInterns)}
         <div style={{ height: "50px" }}></div>
       </div>
     </div>
