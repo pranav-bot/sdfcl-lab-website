@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Nbar from './components/Navbar';
 import ResearchPage from './pages/ResearchPage';  
 import PublicationsPage from './pages/PublicationsPage';
+import CitationsPage from './pages/CitationsPage';
 import OpeningsPage from './pages/OpeningsPage';
 import AboutPage from './pages/AboutPage';
 import HomePage from './pages/HomePage';
@@ -31,6 +32,7 @@ function App() {
   <Route path="/sdfcl-lab-website/projects" element={<ProjectsPage />} />
         <Route path="/sdfcl-lab-website/gallery" element={<GalleryPage />} />
         <Route path="/sdfcl-lab-website/publications" element={<PublicationsPage />} />
+  <Route path="/sdfcl-lab-website/citations" element={<CitationsPage />} />
         <Route path="/sdfcl-lab-website/group" element={<TeamPage />} />
         <Route path="/sdfcl-lab-website/openings" element={<OpeningsPage />} />
         <Route path="/sdfcl-lab-website/aboutus" element={<AboutPage />} />
