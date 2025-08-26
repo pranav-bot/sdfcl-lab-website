@@ -38,15 +38,17 @@ function ResearchPage() {
     setTeachingError(null)
     try {
       const [homeRes, teachRes] = await Promise.all([
-        supabase.from('home_page').select('*').order('id', { ascending: false }).limit(1),
+        supabase.from('research_summary').select('*').order('id', { ascending: false }).limit(1),
         supabase.from('teaching').select('*').order('year', { ascending: false })
       ])
 
       if (homeRes.error) throw homeRes.error
       if (teachRes.error) throw teachRes.error
 
-      const row = Array.isArray(homeRes.data) && homeRes.data.length > 0 ? homeRes.data[0] : null
-      setHomeData(row)
+  const row = Array.isArray(homeRes.data) && homeRes.data.length > 0 ? homeRes.data[0] : null
+  // some installs keep the summary nested under `research_and_training_summary`; prefer that if present
+  const summaryObj = row ? (row.research_and_training_summary || row) : null
+  setHomeData(summaryObj)
       setTeachingData(Array.isArray(teachRes.data) ? teachRes.data : [])
     } catch (err) {
       const s = String(err)
@@ -69,7 +71,7 @@ function ResearchPage() {
       style={{
         backgroundColor: "#011317",
         padding: "",
-        paddingBottom: "500px",
+        paddingBottom: "50px",
       }}
     >
       {/* Research & Teaching Summary (moved from HomePage) */}
@@ -83,11 +85,13 @@ function ResearchPage() {
               <div style={{ textAlign: 'center', width: '100%' }}>Loading summary...</div>
             ) : homeError ? (
               <div style={{ color: 'red', textAlign: 'center' }}>{homeError}</div>
-            ) : homeData && homeData.research_and_training_summary ? (
+            ) : homeData ? (
               <div className="research-boxes">
-                {Object.entries(homeData.research_and_training_summary).map(([k, v], i) => (
+                  {Object.entries(homeData)
+                    .filter(([k]) => !['id', 'created_at', 'createdAt'].includes(k))
+                    .map(([k, v], i) => (
                   <div className="research-box" key={i}>
-                    <h3 style={headingfont}>{k}</h3>
+                    <h3 style={headingfont}>{k.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</h3>
                     {Array.isArray(v) ? (
                       <ul>
                         {v.map((item, idx) => (

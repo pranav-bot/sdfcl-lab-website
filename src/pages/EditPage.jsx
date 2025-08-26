@@ -6,6 +6,7 @@ import HomeEditor from './edits/HomeEditor'
 import ProjectsEditor from './edits/ProjectsEditor'
 import GalleryEditor from './edits/GalleryEditor'
 import TeamEditor from './edits/TeamEditor'
+import ResearchEditor from './edits/ResearchEditor'
 
 // Supabase client (matches LoginPage usage)
 const supabase = createClient(
@@ -74,6 +75,9 @@ export default function EditPage() {
                     if (item === 'Home') {
                       // open Home editor in-place
                       setSelectedPage('home')
+                    } else if (item === 'Research') {
+                      // open Research editor in-place
+                      setSelectedPage('research')
                     } else if (item === 'Projects') {
                       // open Projects editor in-place
                       setSelectedPage('projects')
@@ -111,6 +115,8 @@ export default function EditPage() {
           <ProjectsEditor />
         ) : selectedPage === 'group' ? (
           <TeamEditor />
+        ) : selectedPage === 'research' ? (
+          <ResearchEditor />
         ) : selectedPage === 'gallery' ? (
           <GalleryEditor />
         ) : (
