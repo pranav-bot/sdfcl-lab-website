@@ -56,7 +56,7 @@ export default function EditPage() {
           'Group',
           'Research',
           'Publications',
-                  'Projects',
+          'Projects',
           'Gallery',
           'Citations',
           'Collaborators',

@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react'
 import MasterCard from "../components/MasterCard";
 import SimpleCard from "../components/SimpleCard";
 import "./TeamPage.css";
-import researchInterns from "../data/ResearchInterns";
-import mastersStudents from "../data/MastersStudents";
-import phdStudents from "../data/PHDStudents";
+import { createClient } from '@supabase/supabase-js'
+
+// supabase client
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
 import {
   VerticalTimeline,
   VerticalTimelineElement,
@@ -25,6 +27,68 @@ const contentFont = {
 };
 
 function TeamPage() {
+  // DB-driven lists
+  const [phdStudents, setPhdStudents] = useState([])
+  const [mastersStudents, setMastersStudents] = useState([])
+  const [researchInterns, setResearchInterns] = useState([])
+  const [masterCardRow, setMasterCardRow] = useState(null)
+  const [loadingPhd, setLoadingPhd] = useState(false)
+  const [loadingMasters, setLoadingMasters] = useState(false)
+  const [loadingInterns, setLoadingInterns] = useState(false)
+  const [loadingMasterCard, setLoadingMasterCard] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+  setError(null)
+  setLoadingPhd(true); setLoadingMasters(true); setLoadingInterns(true); setLoadingMasterCard(true)
+      try {
+        const [phdRes, mastersRes, internsRes, masterRes] = await Promise.all([
+          supabase.from('phd_students').select('*').order('id', { ascending: true }),
+          supabase.from('masters_students').select('*').order('id', { ascending: true }),
+          supabase.from('research_interns').select('*').order('id', { ascending: true }),
+          supabase.from('master_card').select('*').order('id', { ascending: false }).limit(1)
+        ])
+
+        if (!mounted) return
+
+        if (phdRes.error) throw phdRes.error
+        if (mastersRes.error) throw mastersRes.error
+        if (internsRes.error) throw internsRes.error
+
+        const mapImage = (img) => {
+          if (!img) return ''
+          if (img.startsWith('http') || img.startsWith('/')) return img
+          return supabase.storage.from('assets').getPublicUrl(img).data.publicUrl
+        }
+
+        setPhdStudents((phdRes.data || []).map(p => ({ ...p, image: mapImage(p.image) })))
+        setMastersStudents((mastersRes.data || []).map(m => ({ ...m, image: mapImage(m.image) })))
+        setResearchInterns((internsRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
+        // master card (PI) — take first row if present
+        if (masterRes && masterRes.data && masterRes.data.length > 0) {
+          const m = masterRes.data[0]
+          setMasterCardRow({
+            title: m.title || '',
+            content: m.content || '',
+            image: mapImage(m.image || m.image_path || ''),
+            email: m.email || '',
+            linkedinLink: m.linkedinLink || m.linkedin || '',
+            googleScholarLink: m.googleScholarLink || ''
+          })
+        }
+      } catch (err) {
+        console.error('Team load error', err)
+        if (mounted) setError(err.message || String(err))
+      } finally {
+        if (mounted) {
+          setLoadingPhd(false); setLoadingMasters(false); setLoadingInterns(false); setLoadingMasterCard(false)
+        }
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
   const Separator = () => (
     <div
       className="fade-in-up"
@@ -173,15 +237,18 @@ function TeamPage() {
       {/* Spacing at the top */}
       <div style={{ height: "50px" }}></div>
 
-      {/* Principal Investigator */}
+      {/* Principal Investigator (MasterCard from DB, fallback to hard-coded) */}
       <div className="fade-in-up" style={{ padding: "0 20px" }}>
+        {loadingMasterCard && (
+          <p style={{ color: 'white', textAlign: 'center' }}>Loading principal investigator...</p>
+        )}
         <MasterCard
-          googleScholarLink="https://scholar.google.com/citations?user=example"
-          email="john.doe@example.com"
-          linkedinLink="https://www.linkedin.com/in/johndoe/"
-          title="Dipak Kumar Giri"
-          image="/sdfcl-lab-website/assets/LabMembers/GiriSir.jpg"
-          content={
+          googleScholarLink={masterCardRow?.googleScholarLink || "https://scholar.google.com/citations?user=example"}
+          email={masterCardRow?.email || "john.doe@example.com"}
+          linkedinLink={masterCardRow?.linkedinLink || "https://www.linkedin.com/in/johndoe/"}
+          title={masterCardRow?.title || "Dipak Kumar Giri"}
+          image={masterCardRow?.image || "/sdfcl-lab-website/assets/LabMembers/GiriSir.jpg"}
+          content={masterCardRow?.content ||
             "I am working as an Assistant Professor in the Department of Aerospace Engineering since November 2020. Previously, I was DST INSPIRE Faculty at the Department of Aerospace Engineering, IIT Kanpur (2018-2020). Before this, I was a postdoctoral research associate (2017-2018) at Singapore-Massachusetts Institute of Technology (MIT) Alliance for Research and Technology (SMART) and worked in the field of space systems with Prof. Daniel E. Hastings, Aerospace and Astronautics, MIT, USA. Before this, I was a postdoc fellow (2016-2017) at Ulsan National Institute of Science and Technology, South Korea, and worked on nonlinear control of quadrotor UAVs with Prof. Hungsun Son, MANE, UNIST. Prior to this, I was a research engineer at the Department of Aerospace Engineering, IIT Kharagpur. I have my Ph.D. from Department of Aerospace Engineering, IIT Kharagpur. Before Ph.D., I was in the Department of Electrical and Electronics Engineering at Middle East Technical University, Ankara through Erasmus Mundus Fellowship by the European Union (2009-2011). My current research work involves studying the control synthesis of nonlinear dynamical systems. I am using linear and nonlinear control algorithms for aerospace dynamical systems- spacecraft attitude control, orbit control for space flights, and on-orbit servicing for future aerospace systems. "
           }
           headingStyle={headingfont}
@@ -196,7 +263,7 @@ function TeamPage() {
       <div style={{ backgroundColor: "#2e2c29" }} className="fade-in-up">
         <div style={{ color: "white" }} className="wavy-border fade-in-up" />
 
-        <h1
+  <h1
           className="fade-in-up text-center"
           style={{
             ...headingfont,
@@ -207,6 +274,8 @@ function TeamPage() {
         >
           Lab Members
         </h1>
+  {(loadingPhd || loadingMasters || loadingInterns) && <p style={{ color: 'white', textAlign: 'center' }}>Loading members...</p>}
+  {error && <p style={{ color: 'salmon', textAlign: 'center' }}>{error}</p>}
         <Separator />
 
         {/* PhD Students */}
