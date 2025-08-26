@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from '@supabase/supabase-js'
 import "./PublicationsPage.css";
-import publications from "../data/Publications"; // Adjust the path as necessary
-import conferences from "../data/Conferences";
-import congressPresentations from "../data/IAC";
+// data will be loaded from Supabase instead of local files
 import { FaSearch } from "react-icons/fa";
 
 // Font styles
@@ -22,7 +21,32 @@ function PublicationsPage() {
   // Search bar
   const [searchTerm, setSearchTerm] = useState("");
 
-  const placeholders = ['/sdfcl-lab-website/assets/Logos/acta.jpg', '/sdfcl-lab-website/assets/Logos/aess.jpg', '/sdfcl-lab-website/assets/Logos/asjc.jpg', '/sdfcl-lab-website/assets/Logos/ast.jpg', '/sdfcl-lab-website/assets/Logos/ifac.gif', '/sdfcl-lab-website/assets/Logos/jae.jpg', '/sdfcl-lab-website/assets/Logos/jgcd.jpg', '/sdfcl-lab-website/assets/Logos/jsr.jpg', '/sdfcl-lab-website/assets/Logos/seriesc.jpg'];
+  // Supabase client (shared across pages in this app)
+  // Supabase client (shared across pages in this app)
+  const [logos, setLogos] = useState([])
+  const [logosLoading, setLogosLoading] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+    const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
+    ;(async () => {
+      setLogosLoading(true)
+      try {
+        const { data, error } = await supabase.storage.from('assets').list('Logos')
+        if (error) throw error
+        if (!mounted) return
+        const urls = (data || []).map(f => supabase.storage.from('assets').getPublicUrl(`Logos/${f.name}`).data.publicUrl)
+        if (mounted) setLogos(urls)
+      } catch (err) {
+        console.warn('Failed to load logos from storage', err)
+        if (mounted) setLogos([])
+      } finally {
+        if (mounted) setLogosLoading(false)
+      }
+    })()
+    return () => { mounted = false }
+    // intentionally no deps: run once on mount
+  }, [])
 
   // Helper to see if a publication matches the search term
   const matchesSearch = (pub) => {
@@ -38,6 +62,52 @@ function PublicationsPage() {
       (pub.status && pub.status.toLowerCase().includes(lowerSearch))
     );
   };
+
+  // Data loaded from Supabase
+  const [publications, setPublications] = useState({})
+  const [conferences, setConferences] = useState({})
+  const [congressPresentations, setCongressPresentations] = useState({})
+  const [dataLoading, setDataLoading] = useState(true)
+  const [dataError, setDataError] = useState(null)
+
+  useEffect(() => {
+    let mounted = true
+    const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
+    ;(async () => {
+      setDataLoading(true)
+      try {
+        const [pubRes, confRes, iacRes] = await Promise.all([
+          supabase.from('publications').select('*').order('year', { ascending: false }),
+          supabase.from('conferences').select('*').order('year', { ascending: false }),
+          supabase.from('congress_presentations').select('*').order('year', { ascending: false })
+        ])
+
+        if (!mounted) return
+        if (pubRes.error) throw pubRes.error
+        if (confRes.error) throw confRes.error
+        if (iacRes.error) throw iacRes.error
+
+        const groupByYear = (rows) => rows.reduce((acc, r) => {
+          const y = String(r.year || new Date().getFullYear())
+          acc[y] = acc[y] || []
+          acc[y].push(r)
+          return acc
+        }, {})
+
+        if (mounted) {
+          setPublications(groupByYear(pubRes.data || []))
+          setConferences(groupByYear(confRes.data || []))
+          setCongressPresentations(groupByYear(iacRes.data || []))
+        }
+      } catch (err) {
+        console.error('Failed to load publications data', err)
+        if (mounted) setDataError(String(err))
+      } finally {
+        if (mounted) setDataLoading(false)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
 
   // Render Journals
   const renderJournals = () => (
@@ -145,11 +215,17 @@ function PublicationsPage() {
       {/* Slider */}
       <div className="slider-container fade-in-up">
         <div className="slider">
-          {placeholders.concat(placeholders).map((image, index) => (
-            <div key={index} className="slider-placeholder">
-              <img src={image} alt="" />
-            </div>
-          ))}
+          {logosLoading ? (
+            <div style={{ color: '#999', padding: 20 }}>Loading logos...</div>
+          ) : logos && logos.length > 0 ? (
+            logos.concat(logos).map((image, index) => (
+              <div key={index} className="slider-placeholder">
+                <img src={image} alt="" />
+              </div>
+            ))
+          ) : (
+            <div style={{ color: '#999', padding: 20 }}>No logos found.</div>
+          )}
         </div>
       </div>
 
@@ -219,7 +295,13 @@ function PublicationsPage() {
 
       {/* Section Content */}
       <div className="section-content fade-in-up" style={contentFont}>
-        {renderSection()}
+        {dataLoading ? (
+          <div style={{ color: '#999', padding: 12 }}>Loading publications...</div>
+        ) : dataError ? (
+          <div style={{ color: 'salmon', padding: 12 }}>{dataError}</div>
+        ) : (
+          renderSection()
+        )}
       </div>
     </div>
   );
