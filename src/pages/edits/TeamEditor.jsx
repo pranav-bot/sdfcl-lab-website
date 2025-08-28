@@ -25,6 +25,21 @@ function TeamEditor() {
   const [loadingLists, setLoadingLists] = useState(false)
   const [viewMode, setViewMode] = useState('current')
 
+  // shared styles to improve UI/UX
+  const styles = {
+    container: { color: '#000' },
+    heading: { color: '#000', marginBottom: 8 },
+    section: { background: '#fff', color: '#000', padding: 16, borderRadius: 8, marginBottom: 12, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' },
+    card: { background: '#f8fafc', padding: 12, borderRadius: 8, display: 'flex', gap: 12, alignItems: 'flex-start' },
+    input: { width: '100%', padding: 8, border: '1px solid #d1d5db', borderRadius: 6, boxSizing: 'border-box' },
+    textarea: { width: '100%', padding: 8, marginTop: 8, minHeight: 120, border: '1px solid #d1d5db', borderRadius: 6, boxSizing: 'border-box' },
+    imgPreview: { width: '100%', height: 'auto', borderRadius: 6, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' },
+    btnPrimary: { padding: '8px 12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' },
+    btnSecondary: { padding: '6px 10px', background: '#fff', border: '1px solid #d1d5db', borderRadius: 6, cursor: 'pointer' },
+    btnDanger: { padding: '6px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' },
+    btnAccent: { padding: '6px 10px', background: '#ffd700', border: 'none', borderRadius: 6, cursor: 'pointer' }
+  }
+
   useEffect(() => {
     let mounted = true
     ;(async () => {
@@ -160,34 +175,33 @@ function TeamEditor() {
   if (loading) {
     return (
       <div style={{ color: '#fff' }}>
-        <h2>Team Editor</h2>
         <p>Loading team data...</p>
       </div>
     )
   }
 
   return (
-    <div style={{ color: '#fff' }}>
-      <h2>Team Editor</h2>
+    <div style={styles.container}>
       {error && <p style={{ color: 'salmon' }}>{error}</p>}
 
-      <section style={{ background: '#fff', color: '#000', padding: 12, borderRadius: 8, marginBottom: 12 }}>
-        <h3>Principal Investigator (Master Card)</h3>
+      <section style={styles.section}>
+        <h2 style={styles.heading}>Team Editor</h2>
+        <h3 style={styles.heading}>Principal Investigator (Master Card)</h3>
   {loadingMaster && <p>Loading master card...</p>}
-  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+  <div style={styles.card}>
           <div style={{ flex: 1 }}>
-            <input placeholder="Title" value={master.title || ''} onChange={e => setMaster(prev => ({ ...prev, title: e.target.value }))} style={{ width: '100%', padding: 8 }} />
-            <textarea placeholder="Content" value={master.content || ''} onChange={e => setMaster(prev => ({ ...prev, content: e.target.value }))} style={{ width: '100%', padding: 8, marginTop: 8, minHeight: 120 }} />
-            <input placeholder="Email" value={master.email || ''} onChange={e => setMaster(prev => ({ ...prev, email: e.target.value }))} style={{ width: '100%', padding: 8, marginTop: 8 }} />
-            <input placeholder="LinkedIn" value={master.linkedinLink || ''} onChange={e => setMaster(prev => ({ ...prev, linkedinLink: e.target.value }))} style={{ width: '100%', padding: 8, marginTop: 8 }} />
-            <input placeholder="Google Scholar" value={master.googleScholarLink || ''} onChange={e => setMaster(prev => ({ ...prev, googleScholarLink: e.target.value }))} style={{ width: '100%', padding: 8, marginTop: 8 }} />
+            <input placeholder="Title" value={master.title || ''} onChange={e => setMaster(prev => ({ ...prev, title: e.target.value }))} style={styles.input} />
+            <textarea placeholder="Content" value={master.content || ''} onChange={e => setMaster(prev => ({ ...prev, content: e.target.value }))} style={styles.textarea} />
+            <input placeholder="Email" value={master.email || ''} onChange={e => setMaster(prev => ({ ...prev, email: e.target.value }))} style={{ ...styles.input, marginTop: 8 }} />
+            <input placeholder="LinkedIn" value={master.linkedinLink || ''} onChange={e => setMaster(prev => ({ ...prev, linkedinLink: e.target.value }))} style={{ ...styles.input, marginTop: 8 }} />
+            <input placeholder="Google Scholar" value={master.googleScholarLink || ''} onChange={e => setMaster(prev => ({ ...prev, googleScholarLink: e.target.value }))} style={{ ...styles.input, marginTop: 8 }} />
             <div style={{ marginTop: 8 }}>
-              <button onClick={saveMaster} disabled={savingMaster || loadingMaster} style={{ padding: '8px 12px' }}>{savingMaster ? 'Saving...' : 'Save Master Card'}</button>
+              <button onClick={saveMaster} disabled={savingMaster || loadingMaster} style={styles.btnPrimary}>{savingMaster ? 'Saving...' : 'Save Master Card'}</button>
             </div>
           </div>
           <div style={{ width: 220 }}>
             <div style={{ marginBottom: 8 }}>
-              <img src={master.image || ''} alt="preview" style={{ width: '100%', height: 'auto', display: master.image ? 'block' : 'none' }} />
+              <img src={master.image || ''} alt="preview" style={{ ...styles.imgPreview, display: master.image ? 'block' : 'none' }} />
             </div>
             <input type="file" accept="image/*" onChange={async (e) => {
               const f = e.target.files?.[0]
@@ -200,10 +214,10 @@ function TeamEditor() {
       </section>
 
       <section style={{ marginBottom: 12 }}>
-        <h3>Members</h3>
+        <h3 style={{color: 'white'}}>Members</h3>
         <div style={{ marginBottom: 8 }}>
-          <button onClick={() => setViewMode('current')} style={{ marginRight: 8, padding: '6px 10px', background: viewMode === 'current' ? '#ffd700' : '#ccc' }}>Current</button>
-          <button onClick={() => setViewMode('alumni')} style={{ padding: '6px 10px', background: viewMode === 'alumni' ? '#ffd700' : '#ccc' }}>Alumni</button>
+          <button onClick={() => setViewMode('current')} style={{ marginRight: 8, ...styles.btnAccent, background: viewMode === 'current' ? '#ffd700' : '#ccc' }}>Current</button>
+          <button onClick={() => setViewMode('alumni')} style={{ ...styles.btnAccent, background: viewMode === 'alumni' ? '#ffd700' : '#ccc' }}>Alumni</button>
         </div>
 
         {/* helper to render an editable list */}
@@ -217,34 +231,46 @@ function TeamEditor() {
 
           return (
             <div key={label} style={{ background: '#fff', color: '#000', padding: 12, borderRadius: 8, marginBottom: 12 }}>
-              <h4>{label} ({rows.length})</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {rows.map((r, i) => (
-                  <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-                    <div style={{ width: 160 }}>
-                      <img src={r.image || ''} alt="preview" style={{ width: '100%', display: r.image ? 'block' : 'none' }} />
-                      <input type="file" accept="image/*" onChange={async (e) => {
-                        const f = e.target.files?.[0]; if (!f) return
-                        const path = await uploadImage(f)
-                        if (path) setRows(prev => prev.map((p, idx) => idx === i ? { ...p, image: path } : p))
-                      }} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <input placeholder="Name" value={r.name || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, name: e.target.value } : p))} style={{ width: '100%', padding: 8 }} />
-                      <input placeholder="Email" value={r.email || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, email: e.target.value } : p))} style={{ width: '100%', padding: 8, marginTop: 6 }} />
-                      <input placeholder="LinkedIn" value={r.linkedinLink || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, linkedinLink: e.target.value } : p))} style={{ width: '100%', padding: 8, marginTop: 6 }} />
-                      <textarea placeholder="Content" value={r.content || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, content: e.target.value } : p))} style={{ width: '100%', padding: 8, marginTop: 6 }} />
-                      <div style={{ marginTop: 6 }}>
-                        <button onClick={() => saveRow(table, r, setRows)} disabled={loadingLists} style={{ marginRight: 8, padding: '6px 10px' }}>Save</button>
-                        <button onClick={() => deleteRow(table, r, setRows)} disabled={loadingLists} style={{ padding: '6px 10px' }}>Delete</button>
+                  <h4 style={styles.heading}>{label} ({rows.length})</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 12 }}>
+                    {rows.map((r, i) => (
+                      <div key={i} style={{ background: '#fff', border: '1px solid #e6edf0', borderRadius: 8, padding: 12, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                        <div style={{ width: 120, flexShrink: 0 }}>
+                          <div style={{ width: 120, height: 120, background: '#f3f4f6', borderRadius: 6, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {r.image ? (
+                              <img src={r.image} alt={r.name || `member-${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                              <div style={{ color: '#9ca3af', fontSize: 12, textAlign: 'center', padding: 8 }}>No image</div>
+                            )}
+                          </div>
+                          <div style={{ marginTop: 8 }}>
+                            <input type="file" accept="image/*" onChange={async (e) => {
+                              const f = e.target.files?.[0]; if (!f) return
+                              const path = await uploadImage(f)
+                              if (path) setRows(prev => prev.map((p, idx) => idx === i ? { ...p, image: path } : p))
+                            }} />
+                          </div>
+                        </div>
+
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                          <input placeholder="Name" value={r.name || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, name: e.target.value } : p))} style={styles.input} />
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <input placeholder="Email" value={r.email || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, email: e.target.value } : p))} style={{ ...styles.input }} />
+                            <input placeholder="LinkedIn" value={r.linkedinLink || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, linkedinLink: e.target.value } : p))} style={{ ...styles.input }} />
+                          </div>
+                          <textarea placeholder="Content" value={r.content || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, content: e.target.value } : p))} style={{ ...styles.textarea, minHeight: 80 }} />
+
+                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 4 }}>
+                            <button onClick={() => saveRow(table, r, setRows)} disabled={loadingLists} style={styles.btnPrimary}>Save</button>
+                            <button onClick={() => deleteRow(table, r, setRows)} disabled={loadingLists} style={styles.btnDanger}>Delete</button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
-                <div>
-                  <button onClick={() => addEmptyRow(setRows)} disabled={loadingLists} style={{ padding: '6px 10px' }}>Add new {label.slice(0, -1)}</button>
-                </div>
-              </div>
+                  <div style={{ marginTop: 12, textAlign: 'right' }}>
+                    <button onClick={() => addEmptyRow(setRows)} disabled={loadingLists} style={styles.btnSecondary}>+ Add new {label.slice(0, -1)}</button>
+                  </div>
             </div>
           )
         })}
