@@ -14,8 +14,8 @@
 
 /* Card buttons should be white background with black text */
 .card-btn {
-  background: #fff !important;
-  color: #000 !important;
+  background: transparent !important;
+  color: white !important;
   border: 1px solid #e5e7eb !important;
 }
 .card-btn:hover {
