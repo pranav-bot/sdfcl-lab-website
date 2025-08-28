@@ -302,12 +302,35 @@ export default function HomeEditor() {
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1rem' }}>
-      <section style={{ padding: '1rem', borderRadius: 8, background: '#fff',}}>
-        {/* Who We Are preview removed from editor — editing controls are in the aside */}
-        <h3 style={{ marginTop: 24 }}>Background Videos (from storage)</h3>
-        <div style={{ marginBottom: 12 }}>
+      <aside style={{ padding: '1rem', borderRadius: 8, background: '#f8fafc' }}>
+        <h4 style={{ marginTop: 0, color: '#000' }}>Edit Home Content</h4>
+        <label style={{ fontSize: 13, color: '#333' }}>Title</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <input value={whoTitle} onChange={(e) => setWhoTitle(e.target.value)} disabled={whoLoading} style={{ width: '100%', padding: '8px', margin: '6px 0 12px 0' }} />
+          {whoLoading && <small style={{ color: '#666' }}>Loading...</small>}
         </div>
-        <div>
+
+        <label style={{ fontSize: 13, color: '#333' }}>Content</label>
+        <textarea value={whoParagraph} onChange={(e) => setWhoParagraph(e.target.value)} rows={8} disabled={whoLoading} style={{ width: '100%', padding: '8px', margin: '6px 0 12px 0' }} />
+
+        {/* Research boxes editor removed */}
+
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <button onClick={handleSave} disabled={whoLoading || whoSaving} style={{ padding: '8px 12px', background: whoLoading || whoSaving ? '#93c5fd' : '#2563eb', color: 'white', border: 'none', borderRadius: 6 }}>{whoSaving ? 'Saving...' : 'Save'}</button>
+          <button onClick={handleReset} disabled={whoLoading || whoSaving} style={{ padding: '8px 12px', background: '#fff', border: '1px solid #d1d5db', borderRadius: 6 }}>Reset</button>
+          {saved && <span style={{ marginLeft: 8, color: 'green' }}>Saved</span>}
+        </div>
+        {whoError && <div style={{ color: 'red', marginTop: 8 }}>{whoError}</div>}
+        <hr style={{ margin: '12px 0' }} />
+        <h4 style={{ marginTop: 0, color: '#000' }}>Background Videos (from storage)</h4>
+        <input type="file" accept="video/*" multiple onChange={(e) => handleUploadFiles(e.target.files)} />
+        <div style={{ marginTop: 8 }}>
+          {uploading ? <small>Uploading...</small> : <small style={{ color: '#666' }}>You can upload multiple videos. Existing files with the same name will be replaced.</small>}
+        </div>
+        <div style={{ marginTop: 8 }}>
+          <button onClick={loadVideos} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff' }}>Refresh Videos</button>
+        </div>
+        <div style={{ marginTop: 12 }}>
           {loadingVideos ? (
             <p>Loading videos...</p>
           ) : videoError ? (
@@ -328,81 +351,68 @@ export default function HomeEditor() {
             </div>
           )}
         </div>
-      </section>
-
-      <section style={{ padding: '1rem', borderRadius: 8, background: '#fff', marginTop: 12 }}>
-        <h3 style={{ marginTop: 0 }}>Collaborator Logos (from storage)</h3>
-        {loadingLogos ? (
-          <p>Loading logos...</p>
-        ) : logosError ? (
-          <p style={{ color: 'red' }}>{logosError}</p>
-        ) : logos.length === 0 ? (
-          <p style={{ color: '#666' }}>No logos found in <code>assets/Logos/</code>.</p>
-        ) : (
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            {logos.map((v) => (
-              <div key={v.name} style={{ width: 120, border: '1px solid #eee', padding: 8, borderRadius: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <img src={v.url} alt={v.name} style={{ maxWidth: '100%', maxHeight: 70, objectFit: 'contain' }} />
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 8 }}>
-                  <small style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.name}</small>
-                  <button onClick={() => handleDeleteLogo(v.name)} style={{ border: 'none', background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: 6, cursor: 'pointer' }}>Delete</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <aside style={{ padding: '1rem', borderRadius: 8, background: '#f8fafc' }}>
-        <h4 style={{ marginTop: 0 }}>Edit Home Content</h4>
-        <label style={{ fontSize: 13, color: '#333' }}>Title</label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <input value={whoTitle} onChange={(e) => setWhoTitle(e.target.value)} disabled={whoLoading} style={{ width: '100%', padding: '8px', margin: '6px 0 12px 0' }} />
-          {whoLoading && <small style={{ color: '#666' }}>Loading...</small>}
-        </div>
-
-        <label style={{ fontSize: 13, color: '#333' }}>Content</label>
-        <textarea value={whoParagraph} onChange={(e) => setWhoParagraph(e.target.value)} rows={8} disabled={whoLoading} style={{ width: '100%', padding: '8px', margin: '6px 0 12px 0' }} />
-
-        {/* Research boxes editor removed */}
-
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <button onClick={handleSave} disabled={whoLoading || whoSaving} style={{ padding: '8px 12px', background: whoLoading || whoSaving ? '#93c5fd' : '#2563eb', color: 'white', border: 'none', borderRadius: 6 }}>{whoSaving ? 'Saving...' : 'Save'}</button>
-          <button onClick={handleReset} disabled={whoLoading || whoSaving} style={{ padding: '8px 12px', background: '#fff', border: '1px solid #d1d5db', borderRadius: 6 }}>Reset</button>
-          {saved && <span style={{ marginLeft: 8, color: 'green' }}>Saved</span>}
-        </div>
-        {whoError && <div style={{ color: 'red', marginTop: 8 }}>{whoError}</div>}
         <hr style={{ margin: '12px 0' }} />
-        <h4 style={{ marginTop: 0 }}>Manage Background Videos</h4>
-        <input type="file" accept="video/*" multiple onChange={(e) => handleUploadFiles(e.target.files)} />
-        <div style={{ marginTop: 8 }}>
-          {uploading ? <small>Uploading...</small> : <small style={{ color: '#666' }}>You can upload multiple videos. Existing files with the same name will be replaced.</small>}
-        </div>
-        <div style={{ marginTop: 8 }}>
-          <button onClick={loadVideos} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff' }}>Refresh Videos</button>
-        </div>
-        <hr style={{ margin: '12px 0' }} />
-        <h4 style={{ marginTop: 0 }}>Manage Collaborator Logos</h4>
+        <h4 style={{ marginTop: 0, color: '#000' }}>Collaborator Logos (from storage)</h4>
         <input type="file" accept="image/*" multiple onChange={(e) => handleUploadLogos(e.target.files)} />
         <div style={{ marginTop: 8 }}>{uploadingLogos ? <small>Uploading logos...</small> : <small style={{ color: '#666' }}>You can upload multiple logos. Existing files with the same name will be replaced.</small>}</div>
         <div style={{ marginTop: 8 }}>
           <button onClick={loadLogos} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff' }}>Refresh Logos</button>
         </div>
+        <div style={{ marginTop: 12 }}>
+          {loadingLogos ? (
+            <p>Loading logos...</p>
+          ) : logosError ? (
+            <p style={{ color: 'red' }}>{logosError}</p>
+          ) : logos.length === 0 ? (
+            <p style={{ color: '#666' }}>No logos found in <code>assets/Logos/</code>.</p>
+          ) : (
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              {logos.map((v) => (
+                <div key={v.name} style={{ width: 120, border: '1px solid #eee', padding: 8, borderRadius: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <img src={v.url} alt={v.name} style={{ maxWidth: '100%', maxHeight: 70, objectFit: 'contain' }} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 8 }}>
+                    <small style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.name}</small>
+                    <button onClick={() => handleDeleteLogo(v.name)} style={{ border: 'none', background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: 6, cursor: 'pointer' }}>Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <hr style={{ margin: '12px 0' }} />
-        <h4 style={{ marginTop: 0 }}>Edit Topics (DB)</h4>
+        <h4 style={{ marginTop: 0, color: 'black'}}>Edit Topics (DB)</h4>
         {loadingTopics ? <small>Loading topics...</small> : topicsError ? <small style={{ color: 'red' }}>{topicsError}</small> : null}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
-          {topics.map((t, i) => (
-            <div key={i} style={{ border: '1px solid #e5e7eb', padding: 8, borderRadius: 6 }}>
-              <input value={t.title || ''} onChange={(e) => updateTopicField(i, 'title', e.target.value)} placeholder="Title" style={{ width: '100%', padding: 6 }} />
-              <textarea value={t.description || ''} onChange={(e) => updateTopicField(i, 'description', e.target.value)} rows={2} style={{ width: '100%', padding: 6, marginTop: 6 }} placeholder="Description" />
-              <div style={{ display: 'flex', gap: 8, marginTop: 6, alignItems: 'center' }}>
-                <input type="file" accept="image/*" onChange={(e) => handleUploadTopicImage(e.target.files?.[0], i)} />
-                <input value={t.image || ''} onChange={(e) => updateTopicField(i, 'image', e.target.value)} placeholder="image path or url" style={{ flex: 1, padding: 6 }} />
-                <button onClick={() => deleteTopic(i)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 8px', borderRadius: 6 }}>Delete</button>
+          {topics.map((t, i) => {
+            // determine a preview src: prefer explicit url, else resolve storage path
+            let previewSrc = t.image || t.image_path || t.image_url || ''
+            if (previewSrc && !previewSrc.startsWith('http')) {
+              try {
+                const urlData = supabase.storage.from('assets').getPublicUrl(previewSrc)
+                previewSrc = urlData?.data?.publicUrl || previewSrc
+              } catch {
+                // keep original string
+              }
+            }
+
+            return (
+              <div key={i} style={{ border: '1px solid #e5e7eb', padding: 8, borderRadius: 6 }}>
+                {previewSrc ? (
+                  <div style={{ marginBottom: 8, textAlign: 'center' }}>
+                    <img src={previewSrc} alt={t.title || `topic-${i}`} style={{ maxWidth: '160px', maxHeight: 90, objectFit: 'cover', borderRadius: 6 }} />
+                  </div>
+                ) : null}
+
+                <input value={t.title || ''} onChange={(e) => updateTopicField(i, 'title', e.target.value)} placeholder="Title" style={{ width: '100%', padding: 6 }} />
+                <textarea value={t.description || ''} onChange={(e) => updateTopicField(i, 'description', e.target.value)} rows={2} style={{ width: '100%', padding: 6, marginTop: 6 }} placeholder="Description" />
+                <div style={{ display: 'flex', gap: 8, marginTop: 6, alignItems: 'center' }}>
+                  <input type="file" accept="image/*" onChange={(e) => handleUploadTopicImage(e.target.files?.[0], i)} />
+                  <input value={t.image || ''} onChange={(e) => updateTopicField(i, 'image', e.target.value)} placeholder="image path or url" style={{ flex: 1, padding: 6 }} />
+                  <button onClick={() => deleteTopic(i)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 8px', borderRadius: 6 }}>Delete</button>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={addTopic} style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff' }}>Add Topic</button>
             <button onClick={saveTopicsToDB} style={{ padding: '6px 8px', borderRadius: 6, background: '#2563eb', color: '#fff', border: 'none' }}>{savingTopics ? 'Saving...' : 'Save to DB'}</button>
