@@ -8,6 +8,7 @@ import GalleryEditor from './edits/GalleryEditor'
 import TeamEditor from './edits/TeamEditor'
 import ResearchEditor from './edits/ResearchEditor'
 import PublicationsEditor from './edits/PublicationsEditor'
+import CitationsEditor from './edits/CitationsEditor'
 
 // Supabase client (matches LoginPage usage)
 const supabase = createClient(
@@ -90,6 +91,9 @@ export default function EditPage() {
                     } else if (item === 'Gallery') {
                       // open Gallery editor in-place
                       setSelectedPage('gallery')
+                    } else if (item === 'Citations') {
+                      // open Citations editor in-place
+                      setSelectedPage('citations')
                     } else {
                       navigate(path)
                       setSelectedPage(null)
@@ -122,6 +126,8 @@ export default function EditPage() {
           <ResearchEditor />
         ) : selectedPage === 'publications' ? (
           <PublicationsEditor />
+        ) : selectedPage === 'citations' ? (
+          <CitationsEditor />
         ) : selectedPage === 'gallery' ? (
           <GalleryEditor />
         ) : (
