@@ -1,0 +1,22 @@
+.gallery-editor { padding: 12px; }
+.ge-header { display:flex; justify-content:space-between; align-items:center; gap:12px }
+.ge-controls { display:flex; gap:8px }
+.btn { background:#2563eb; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer }
+.btn-ghost { background:transparent; color:#2563eb; border:1px solid #c7d2fe }
+.btn-danger { background:#ef4444 }
+.ge-list { display:flex; flex-direction:column; gap:12px; margin-top:12px }
+.ge-card { display:flex; gap:12px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e5e7eb; align-items:center }
+.ge-card-left { flex:1; display:flex; flex-direction:column }
+.ge-card-right { width:180px; display:flex; align-items:center; justify-content:center }
+.ge-input { width:100%; padding:8px; margin-top:8px; border:1px solid #e5e7eb; border-radius:6px }
+.ge-actions { display:flex; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap }
+.file-label { background:#f3f4f6; padding:8px 10px; border-radius:6px; cursor:pointer; border:1px dashed #d1d5db }
+.file-label span { color:#374151 }
+.file-input { display:none }
+.file-name { color:#6b7280; font-size:12px }
+.ge-preview { max-width:100%; max-height:120px; object-fit:contain; border-radius:6px }
+.ge-noimg { color:#9ca3af }
+@media (max-width:700px) {
+  .ge-card { flex-direction:column; align-items:stretch }
+  .ge-card-right { width:100%; height:140px }
+}

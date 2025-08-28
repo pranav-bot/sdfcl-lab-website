@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
-// import '../EditPage.css'
+import './GalleryEditor.css'
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
 
@@ -8,6 +8,7 @@ export default function GalleryEditor() {
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [savingIndex, setSavingIndex] = useState(null)
   const [error, setError] = useState(null)
 
   useEffect(() => { loadGallery() }, [])
@@ -28,6 +29,15 @@ export default function GalleryEditor() {
     setRows(prev => [{ src: '', caption: '', category: '', _new: true }, ...prev])
   }
 
+  function getFileName(src) {
+    if (!src) return ''
+    try {
+      return src.split('/').pop()
+    } catch {
+      return src
+    }
+  }
+
   function updateField(i, field, value) {
     setRows(prev => { const copy = [...prev]; copy[i] = { ...copy[i], [field]: value }; return copy })
   }
@@ -40,14 +50,14 @@ export default function GalleryEditor() {
       const { error } = await supabase.storage.from('assets').upload(path, file, { upsert: true })
       if (error) throw error
       const publicUrl = supabase.storage.from('assets').getPublicUrl(path).data.publicUrl
-      setRows(prev => { const copy = [...prev]; copy[i] = { ...copy[i], src: path, preview: publicUrl }; return copy })
+  setRows(prev => { const copy = [...prev]; copy[i] = { ...copy[i], src: path, preview: publicUrl, _fileName: file.name }; return copy })
     } catch (err) { setError(err.message || String(err)) }
   }
 
   async function saveRow(i) {
     const r = rows[i]
     if (!r) return
-    setSaving(true); setError(null)
+    setSaving(true); setSavingIndex(i); setError(null)
     try {
       const payload = { src: r.src || '', caption: r.caption || '', category: r.category || '' }
       if (r.id) payload.id = r.id
@@ -55,7 +65,7 @@ export default function GalleryEditor() {
       if (error) throw error
       await loadGallery()
     } catch (err) { setError(err.message || String(err)) }
-    finally { setSaving(false) }
+    finally { setSaving(false); setSavingIndex(null) }
   }
 
   async function deleteRow(i) {
@@ -69,36 +79,40 @@ export default function GalleryEditor() {
         await loadGallery()
       } catch (err) { setError(err.message || String(err)) }
     } else {
+      // remove unsaved row without prompt
       setRows(prev => prev.filter((_, idx) => idx !== i))
     }
   }
 
   return (
-    <div style={{ padding: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="gallery-editor">
+      <div className="ge-header">
         <h3>Gallery Editor</h3>
-        <div>
-          <button onClick={addRow} style={{ marginRight: 8 }}>+ New</button>
-          <button onClick={loadGallery}>Refresh</button>
+        <div className="ge-controls">
+          <button className="btn" onClick={addRow}>+ New</button>
+          <button className="btn btn-ghost" onClick={loadGallery}>Refresh</button>
         </div>
       </div>
       {loading ? <p>Loading gallery...</p> : error ? <p style={{ color: 'red' }}>{error}</p> : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12 }}>
+        <div className="ge-list">
           {rows.map((r, i) => (
-            <div key={r.id ?? `new-${i}`} style={{ padding: 12, background: '#fff', borderRadius: 8, border: '1px solid #e5e7eb' }}>
-              <div style={{ display: 'flex', gap: 12 }}>
-                <div style={{ flex: 1 }}>
-                  <input value={r.caption || ''} onChange={(e) => updateField(i, 'caption', e.target.value)} placeholder="Caption" style={{ width: '100%', padding: 8 }} />
-                  <input value={r.category || ''} onChange={(e) => updateField(i, 'category', e.target.value)} placeholder="Category" style={{ width: '100%', padding: 8, marginTop: 8 }} />
-                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                    <input type="file" accept="image/*" onChange={(e) => uploadImage(e.target.files?.[0], i)} />
-                    <button onClick={() => saveRow(i)} disabled={saving}>{saving ? 'Saving...' : 'Save'}</button>
-                    <button onClick={() => deleteRow(i)} style={{ background: '#ef4444', color: '#fff' }}>Delete</button>
-                  </div>
+            <div key={r.id ?? `new-${i}`} className="ge-card">
+              <div className="ge-card-left">
+                <input className="ge-input" value={r.caption || ''} onChange={(e) => updateField(i, 'caption', e.target.value)} placeholder="Caption" />
+                <input className="ge-input" value={r.category || ''} onChange={(e) => updateField(i, 'category', e.target.value)} placeholder="Category" />
+
+                <div className="ge-actions">
+                  <label className="file-label">
+                    <input className="file-input" type="file" accept="image/*" onChange={(e) => uploadImage(e.target.files?.[0], i)} />
+                    <span>Upload</span>
+                  </label>
+                  <div className="file-name">{r._fileName || getFileName(r.src) || 'No file'}</div>
+                  <button className="btn" onClick={() => saveRow(i)} disabled={saving && savingIndex !== i}>{savingIndex === i ? 'Saving...' : 'Save'}</button>
+                  <button className="btn btn-danger" onClick={() => deleteRow(i)}>Delete</button>
                 </div>
-                <div style={{ width: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {r.preview ? <img src={r.preview} alt={r.caption} style={{ maxWidth: '100%', maxHeight: 120, objectFit: 'contain' }} /> : <div style={{ color: '#666' }}>No image</div>}
-                </div>
+              </div>
+              <div className="ge-card-right">
+                {r.preview ? <img src={r.preview} alt={r.caption} className="ge-preview" /> : <div className="ge-noimg">No image</div>}
               </div>
             </div>
           ))}
