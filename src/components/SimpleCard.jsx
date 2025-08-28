@@ -10,7 +10,7 @@ function SimpleCard(props) {
     <Card
       className='card'
       style={{
-        width: '18rem',
+  width: props.cardWidth || '18rem',
         backgroundColor: props.color,
         border: '0'
       }}
@@ -118,6 +118,7 @@ SimpleCard.propTypes = {
   content: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
   color: PropTypes.string.isRequired,
+  cardWidth: PropTypes.string,
   
   googleScholarLink: PropTypes.string,
   email: PropTypes.string,
