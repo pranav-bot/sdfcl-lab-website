@@ -9,6 +9,7 @@ import TeamEditor from './edits/TeamEditor'
 import ResearchEditor from './edits/ResearchEditor'
 import PublicationsEditor from './edits/PublicationsEditor'
 import CitationsEditor from './edits/CitationsEditor'
+import AboutEditor from './edits/AboutEditor'
 
 // Supabase client (matches LoginPage usage)
 const supabase = createClient(
@@ -79,6 +80,7 @@ export default function EditPage() {
             Projects: 'projects',
             Gallery: 'gallery',
             Citations: 'citations',
+            'About Us': 'about'
           }
 
           const itemKey = keyMap[item] ?? null
@@ -122,6 +124,8 @@ export default function EditPage() {
           <CitationsEditor />
         ) : selectedPage === 'gallery' ? (
           <GalleryEditor />
+        ) : selectedPage === 'about' ? (
+          <AboutEditor />
         ) : (
           <p style={{ color: 'white' }}>Select a page button above to edit its content.</p>
         )}
