@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Container, Navbar, Nav } from "react-bootstrap";
+import { Container, Navbar, Nav, Button } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 //import labLogo from "/sdfcl-lab-website/assets/Picture1.png";
@@ -24,6 +24,7 @@ function Nbar() {
   ];
 
   return (
+    // expand="md" means: collapsed on small screens, expands at md and up
     <Navbar expand="md" className="custom-navbar">
       <Container fluid>
         <Navbar.Brand as={Link} to="/sdfcl-lab-website/">
@@ -34,23 +35,34 @@ function Nbar() {
           />
         </Navbar.Brand>
 
+        {/* Home button visible only on small screens, placed next to the toggle */}
+        <Button
+          as={Link}
+          to="/sdfcl-lab-website/"
+          variant="outline-primary"
+          className="d-md-none me-2 home-button"
+        >
+          Home
+        </Button>
+
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav" className="justify-content-end">
           <Nav>
             {navItems.map((item, index) => (
-              <motion.button
+              <motion.div
                 key={index}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="nav-button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                className="nav-item-wrapper"
               >
-                <Link
+                <Nav.Link
+                  as={Link}
                   to={`/sdfcl-lab-website/${item.toLowerCase().replace(/\s/g, "")}`}
                   className="nav-link-custom"
                 >
                   {item}
-                </Link>
-              </motion.button>
+                </Nav.Link>
+              </motion.div>
             ))}
           </Nav>
         </Navbar.Collapse>

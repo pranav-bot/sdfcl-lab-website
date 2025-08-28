@@ -7,17 +7,52 @@
 .editpage-nav {
   margin-top: 1rem;
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
+  align-items: stretch;
 }
 
-.editpage-nav button {
-  padding: 0.5rem 0.8rem;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background: white;
+.editpage-nav-button {
+  --pad-y: 0.45rem;
+  --pad-x: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: var(--pad-y) var(--pad-x);
+  border-radius: 10px;
+  border: 1px solid rgba(209,213,219,0.9);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 6px rgba(16,24,40,0.04);
+  color: #111827; /* default text color */
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, color 120ms ease;
+  /* allow buttons to grow so they distribute evenly across the row */
+  flex: 1 1 140px;
+  min-width: 120px;
+  max-width: 260px;
+  text-align: center;
+}
+
+.editpage-nav-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(16,24,40,0.08);
+}
+
+.editpage-nav-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+}
+
+.editpage-nav-button.active {
+  background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
+  color: #fff;
+  border-color: transparent;
+}
+
+.editpage-nav-button.active:hover {
+  transform: none;
 }
 
 .editpage-editor {
@@ -39,6 +74,16 @@
 
 .editpage-editor aside {
   background: #f8fafc;
+}
+
+/* Make headings inside the edit page white for better contrast on dark backgrounds */
+.editpage-container h1,
+.editpage-container h2,
+.editpage-container h3,
+.editpage-container h4,
+.editpage-container h5,
+.editpage-container h6 {
+  color: #fff;
 }
 
 /* Responsive fallback for small screens */

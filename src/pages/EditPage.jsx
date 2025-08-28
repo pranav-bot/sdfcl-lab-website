@@ -49,12 +49,12 @@ export default function EditPage() {
   if (!session) return null // redirecting to login
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div className="editpage-container" style={{ padding: '2rem' }}>
       <h1>Edit Page</h1>
 
-      {/* Navigation buttons same as Navbar */}
-      <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                {[
+      {/* Navigation buttons same as Navbar (improved UI/UX) */}
+      <div className="editpage-nav" style={{ marginTop: '1rem' }}>
+        {[
           // keep Home so the in-place Home editor stays available, then mirror the site navbar
           'Home',
           'Group',
@@ -70,43 +70,35 @@ export default function EditPage() {
             item === 'Home'
               ? '/sdfcl-lab-website/'
               : `/sdfcl-lab-website/${item.toLowerCase().replace(/\s/g, '')}`
+
+          const keyMap = {
+            Home: 'home',
+            Group: 'group',
+            Research: 'research',
+            Publications: 'publications',
+            Projects: 'projects',
+            Gallery: 'gallery',
+            Citations: 'citations',
+          }
+
+          const itemKey = keyMap[item] ?? null
+          const isActive = itemKey ? selectedPage === itemKey : false
+
           return (
-                <button
+            <button
               key={item}
+              className={`editpage-nav-button${isActive ? ' active' : ''}`}
               onClick={() => {
-                    if (item === 'Home') {
-                      // open Home editor in-place
-                      setSelectedPage('home')
-                    } else if (item === 'Research') {
-                      // open Research editor in-place
-                      setSelectedPage('research')
-                    } else if (item === 'Publications') {
-                      setSelectedPage('publications')
-                    } else if (item === 'Projects') {
-                      // open Projects editor in-place
-                      setSelectedPage('projects')
-                    } else if (item === 'Group') {
-                      // open Group (team) editor in-place
-                      setSelectedPage('group')
-                    } else if (item === 'Gallery') {
-                      // open Gallery editor in-place
-                      setSelectedPage('gallery')
-                    } else if (item === 'Citations') {
-                      // open Citations editor in-place
-                      setSelectedPage('citations')
-                    } else {
-                      navigate(path)
-                      setSelectedPage(null)
-                    }
+                if (itemKey) {
+                  // open editor in-place
+                  setSelectedPage(itemKey)
+                } else {
+                  // external/navigation items
+                  navigate(path)
+                  setSelectedPage(null)
+                }
               }}
-              style={{
-                padding: '0.5rem 0.8rem',
-                borderRadius: '8px',
-                border: '1px solid #d1d5db',
-                background: 'white',
-                cursor: 'pointer',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
-              }}
+              aria-pressed={isActive}
             >
               {item}
             </button>
@@ -131,7 +123,7 @@ export default function EditPage() {
         ) : selectedPage === 'gallery' ? (
           <GalleryEditor />
         ) : (
-          <p style={{ color: '#666' }}>Select a page button above to edit its content.</p>
+          <p style={{ color: 'white' }}>Select a page button above to edit its content.</p>
         )}
       </div>
     </div>
