@@ -40,9 +40,9 @@ function HomePage() {
     setLogosError(null)
     setLoadingLogos(true)
     try {
-      const res = await supabase.storage.from('assets').list('Logos', { limit: 500 })
+      const res = await supabase.storage.from('assets').list('Logos/Collaborators', { limit: 500 })
       if (!res.error && res.data && res.data.length > 0) {
-        const urls = res.data.map((f) => supabase.storage.from('assets').getPublicUrl(`Logos/${f.name}`).data.publicUrl)
+        const urls = res.data.map((f) => supabase.storage.from('assets').getPublicUrl(`Logos/Collaborators/${f.name}`).data.publicUrl)
         setLogosList(urls)
         return
       }

@@ -32,10 +32,10 @@ function PublicationsPage() {
     ;(async () => {
       setLogosLoading(true)
       try {
-        const { data, error } = await supabase.storage.from('assets').list('Logos')
+  const { data, error } = await supabase.storage.from('assets').list('Logos/Publications')
         if (error) throw error
         if (!mounted) return
-        const urls = (data || []).map(f => supabase.storage.from('assets').getPublicUrl(`Logos/${f.name}`).data.publicUrl)
+  const urls = (data || []).map(f => supabase.storage.from('assets').getPublicUrl(`Logos/Publications/${f.name}`).data.publicUrl)
         if (mounted) setLogos(urls)
       } catch (err) {
         console.warn('Failed to load logos from storage', err)

@@ -143,9 +143,9 @@ export default function HomeEditor() {
     setLoadingLogos(true)
     setLogosError(null)
     try {
-      const { data, error } = await supabase.storage.from('assets').list('Logos')
+  const { data, error } = await supabase.storage.from('assets').list('Logos/Collaborators')
       if (error) throw error
-      const withUrls = data.map((f) => ({ name: f.name, url: supabase.storage.from('assets').getPublicUrl(`Logos/${f.name}`).data.publicUrl }))
+  const withUrls = data.map((f) => ({ name: f.name, url: supabase.storage.from('assets').getPublicUrl(`Logos/Collaborators/${f.name}`).data.publicUrl }))
       setLogos(withUrls)
     } catch (err) {
       setLogosError(err.message || String(err))
@@ -158,7 +158,7 @@ export default function HomeEditor() {
     if (!confirm(`Delete logo ${name}? This will remove the file from the storage bucket.`)) return
     setLogosError(null)
     try {
-      const { error } = await supabase.storage.from('assets').remove([`Logos/${name}`])
+  const { error } = await supabase.storage.from('assets').remove([`Logos/Collaborators/${name}`])
       if (error) throw error
       await loadLogos()
     } catch (err) {
@@ -172,7 +172,7 @@ export default function HomeEditor() {
     setLogosError(null)
     try {
       for (const file of Array.from(files)) {
-        const path = `Logos/${file.name}`
+        const path = `Logos/Collaborators/${file.name}`
         const { error } = await supabase.storage.from('assets').upload(path, file, { upsert: true })
         if (error) throw error
       }
@@ -364,7 +364,7 @@ export default function HomeEditor() {
           ) : logosError ? (
             <p style={{ color: 'red' }}>{logosError}</p>
           ) : logos.length === 0 ? (
-            <p style={{ color: '#666' }}>No logos found in <code>assets/Logos/</code>.</p>
+            <p style={{ color: '#666' }}>No logos found in <code>assets/Logos/Collaborators/</code>.</p>
           ) : (
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               {logos.map((v) => (

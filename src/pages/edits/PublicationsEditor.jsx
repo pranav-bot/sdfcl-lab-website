@@ -10,6 +10,11 @@ function PublicationsEditor() {
   const [publications, setPublications] = useState([])
   const [conferences, setConferences] = useState([])
   const [iac, setIac] = useState([])
+  // Logos for publications (storage: Logos/Publications)
+  const [logos, setLogos] = useState([])
+  const [loadingLogos, setLoadingLogos] = useState(false)
+  const [uploadingLogos, setUploadingLogos] = useState(false)
+  const [logosError, setLogosError] = useState(null)
 
   async function loadAll() {
     setLoading(true)
@@ -37,7 +42,58 @@ function PublicationsEditor() {
 
   useEffect(() => {
     loadAll()
+    loadLogos()
   }, [])
+
+  async function loadLogos() {
+    setLoadingLogos(true)
+    setLogosError(null)
+    try {
+      const { data, error } = await supabase.storage.from('assets').list('Logos/Publications')
+      if (error) throw error
+      const urls = (data || []).map((f) => ({ name: f.name, url: supabase.storage.from('assets').getPublicUrl(`Logos/Publications/${f.name}`).data.publicUrl }))
+      setLogos(urls)
+    } catch (err) {
+      console.error('loadLogos', err)
+      setLogosError(String(err))
+      setLogos([])
+    } finally {
+      setLoadingLogos(false)
+    }
+  }
+
+  async function handleUploadLogos(files) {
+    if (!files || files.length === 0) return
+    setUploadingLogos(true)
+    setLogosError(null)
+    try {
+      for (const file of Array.from(files)) {
+        const path = `Logos/Publications/${file.name}`
+        const { error } = await supabase.storage.from('assets').upload(path, file, { upsert: true })
+        if (error) throw error
+      }
+      await loadLogos()
+    } catch (err) {
+      console.error('handleUploadLogos', err)
+      setLogosError(String(err))
+    } finally {
+      setUploadingLogos(false)
+    }
+  }
+
+  async function handleDeleteLogo(name) {
+    if (!name) return
+    if (!confirm(`Delete logo ${name}? This will remove the file from the storage bucket.`)) return
+    setLogosError(null)
+    try {
+      const { error } = await supabase.storage.from('assets').remove([`Logos/Publications/${name}`])
+      if (error) throw error
+      await loadLogos()
+    } catch (err) {
+      console.error('handleDeleteLogo', err)
+      setLogosError(String(err))
+    }
+  }
 
   // Generic save (upsert) for a table
   async function saveRow(table, row) {
@@ -105,6 +161,31 @@ function PublicationsEditor() {
         ))}
         <div>
           <button onClick={() => addRow('publications')}>Add Journal</button>
+        </div>
+      </section>
+
+      <section style={{ marginTop: 16 }}>
+        <h4>Publication Logos (Logos/Publications)</h4>
+        <div style={{ marginBottom: 8 }}>
+          <input type="file" accept="image/*" multiple onChange={(e) => handleUploadLogos(e.target.files)} />
+          <div style={{ marginTop: 8 }}>{uploadingLogos ? <small>Uploading logos...</small> : <small style={{ color: '#666' }}>Upload images to <code>Logos/Publications/</code>. Existing files with the same name will be replaced.</small>}</div>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          {loadingLogos ? (
+            <div>Loading logos...</div>
+          ) : logos.length === 0 ? (
+            <div>No logos found in <code>Logos/Publications/</code></div>
+          ) : (
+            logos.map(l => (
+              <div key={l.name} style={{ width: 160, border: '1px solid #eee', padding: 8, borderRadius: 6 }}>
+                <img src={l.url} alt={l.name} style={{ width: '100%', height: 80, objectFit: 'contain' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+                  <small style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{l.name}</small>
+                  <button onClick={() => handleDeleteLogo(l.name)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: 6 }}>Delete</button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 
