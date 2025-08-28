@@ -18,8 +18,8 @@ function MasterCard(props) {
             <Card.Text style={{color: 'white', textAlign: 'left', ...props.contentStyle}}>{props.content}</Card.Text>
             <div className="d-flex flex-column">
               <Button 
-                variant="outline-light" 
-                className="mb-2"
+                variant="light" 
+                className="mb-2 card-btn"
                 href={props.googleScholarLink} 
                 target="_blank"
                 rel="noopener noreferrer"
@@ -28,8 +28,8 @@ function MasterCard(props) {
               </Button>
 
               <Button 
-                variant="outline-light" 
-                className="mb-2"
+                variant="light" 
+                className="mb-2 card-btn"
                 href={`mailto:${props.email}`} 
                 target="_blank"
                 rel="noopener noreferrer"
@@ -38,7 +38,8 @@ function MasterCard(props) {
               </Button>
 
               <Button 
-                variant="outline-light" 
+                variant="light" 
+                className="card-btn"
                 href={props.linkedinLink} 
                 target="_blank"
                 rel="noopener noreferrer"

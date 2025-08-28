@@ -45,8 +45,8 @@ function SimpleCard(props) {
           {/* Google Scholar Button */}
           {props.googleScholarLink && (
             <Button
-              variant="outline-light"
-              className="mb-2"
+              variant="light"
+              className="mb-2 card-btn"
               href={props.googleScholarLink}
               target="_blank"
               rel="noopener noreferrer"
@@ -58,8 +58,8 @@ function SimpleCard(props) {
           {/* Email Button */}
           {props.email && (
             <Button
-              variant="outline-light"
-              className="mb-2"
+              variant="light"
+              className="mb-2 card-btn"
               href={`mailto:${props.email}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -71,8 +71,8 @@ function SimpleCard(props) {
           {/* LinkedIn Button */}
           {props.linkedinLink && (
             <Button
-              variant="outline-light"
-              className="mb-2"
+              variant="light"
+              className="mb-2 card-btn"
               href={props.linkedinLink}
               target="_blank"
               rel="noopener noreferrer"
@@ -84,8 +84,8 @@ function SimpleCard(props) {
           {/* GitHub Button */}
           {props.githubLink && (
             <Button
-              variant="outline-light"
-              className="mb-2"
+              variant="light"
+              className="mb-2 card-btn"
               href={props.githubLink}
               target="_blank"
               rel="noopener noreferrer"
@@ -97,8 +97,8 @@ function SimpleCard(props) {
           {/* Website Button */}
           {props.websiteLink && (
             <Button
-              variant="outline-light"
-              className="mb-2"
+              variant="light"
+              className="mb-2 card-btn"
               href={props.websiteLink}
               target="_blank"
               rel="noopener noreferrer"
