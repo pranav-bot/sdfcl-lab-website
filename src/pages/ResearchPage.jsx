@@ -86,23 +86,32 @@ function ResearchPage() {
             ) : homeError ? (
               <div style={{ color: 'red', textAlign: 'center' }}>{homeError}</div>
             ) : homeData ? (
-              <div className="research-boxes">
-                  {Object.entries(homeData)
-                    .filter(([k]) => !['id', 'created_at', 'createdAt'].includes(k))
-                    .map(([k, v], i) => (
-                  <div className="research-box" key={i}>
-                    <h3 style={headingfont}>{k.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</h3>
-                    {Array.isArray(v) ? (
-                      <ul>
-                        {v.map((item, idx) => (
-                          <li key={idx}><p style={contentFont}>{item}</p></li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p style={contentFont}>{v}</p>
-                    )}
-                  </div>
-                ))}
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 20, backgroundColor: '#0c0c0f', padding: 8, borderRadius: 8 }}>
+                {Object.entries(homeData)
+                  .filter(([k]) => !['id', 'created_at', 'createdAt'].includes(k))
+                  .map(([k, v], i) => (
+                    <div key={i} style={{ backgroundColor: '#0b3d2e', border: '1px solid #ddd', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: 8, padding: 20, width: 300, textAlign: 'left', color: 'white' }}>
+                      <h3 style={{ ...headingfont, color: 'white', marginTop: 0 }}>{k.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</h3>
+                      {Array.isArray(v) ? (
+                        <ul style={{ paddingLeft: 20, marginTop: 8 }}>
+                          {v.map((item, idx) => (
+                            <li key={idx} style={{ marginBottom: 8 }}><p style={{ ...contentFont, color: 'white', margin: 0 }}>{item}</p></li>
+                          ))}
+                        </ul>
+                      ) : v && typeof v === 'object' ? (
+                        <div style={{ marginTop: 8 }}>
+                          {Object.entries(v).map(([subk, subv], subi) => (
+                            <div key={subi} style={{ marginBottom: 8 }}>
+                              <strong style={{ display: 'block', marginBottom: 4, color: 'white' }}>{subk.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</strong>
+                              <p style={{ ...contentFont, color: 'white', margin: 0 }}>{String(subv)}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p style={{ ...contentFont, color: 'white', marginTop: 8 }}>{v}</p>
+                      )}
+                    </div>
+                  ))}
               </div>
             ) : (
               <div style={{ textAlign: 'center', width: '100%' }}>No research summary available.</div>
