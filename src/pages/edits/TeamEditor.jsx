@@ -232,7 +232,7 @@ function TeamEditor() {
           return (
             <div key={label} style={{ background: '#fff', color: '#000', padding: 12, borderRadius: 8, marginBottom: 12 }}>
                   <h4 style={styles.heading}>{label} ({rows.length})</h4>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 12 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(600px, 1fr))', gap: 12 }}>
                     {rows.map((r, i) => (
                       <div key={i} style={{ background: '#fff', border: '1px solid #e6edf0', borderRadius: 8, padding: 12, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                         <div style={{ width: 120, flexShrink: 0 }}>
