@@ -140,48 +140,30 @@ function PublicationsEditor() {
   if (loading) return <div style={{ padding: 12 }}>Loading publications editor...</div>
 
   return (
-    <div style={{ padding: 12 }}>
-      <h3>Publications Editor</h3>
-      {error && <div style={{ color: 'salmon' }}>{error}</div>}
+    <div style={{ padding: 16, maxWidth: 1100, margin: '0 auto' }}>
+      <h3 style={{ marginBottom: 8 }}>Publications Editor</h3>
+      {error && <div style={{ color: 'salmon', marginBottom: 12 }}>{error}</div>}
 
-      <section style={{ marginTop: 12 }}>
-        <h4>Journals</h4>
-        {publications.map((r, i) => (
-          <div key={r.id || i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
-            <input placeholder="Authors" value={r.authors || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, authors: e.target.value } : p))} style={{ flex: 2 }} />
-            <input placeholder="Title" value={r.title || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ flex: 3 }} />
-            <input placeholder="Journal" value={r.journal || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, journal: e.target.value } : p))} style={{ flex: 2 }} />
-            <input placeholder="Status" value={r.status || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, status: e.target.value } : p))} style={{ width: 140 }} />
-            <input placeholder="Year" value={r.year || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: 100 }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <button onClick={() => saveRow('publications', r)}>Save</button>
-              <button onClick={() => deleteRow('publications', r)}>Delete</button>
-            </div>
-          </div>
-        ))}
-        <div>
-          <button onClick={() => addRow('publications')}>Add Journal</button>
-        </div>
-      </section>
-
-      <section style={{ marginTop: 16 }}>
-        <h4>Publication Logos (Logos/Publications)</h4>
-        <div style={{ marginBottom: 8 }}>
+      {/* Logos at top */}
+      <section style={{ marginTop: 8, marginBottom: 18, background: '#fff', padding: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+        <h4 style={{ marginTop: 0, marginBottom: 8 }}>Publication Logos (Logos/Publications)</h4>
+        <div style={{ marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center' }}>
           <input type="file" accept="image/*" multiple onChange={(e) => handleUploadLogos(e.target.files)} />
-          <div style={{ marginTop: 8 }}>{uploadingLogos ? <small>Uploading logos...</small> : <small style={{ color: '#666' }}>Upload images to <code>Logos/Publications/</code>. Existing files with the same name will be replaced.</small>}</div>
+          <div style={{ marginLeft: 'auto', color: '#6b7280' }}>{uploadingLogos ? <small>Uploading logos...</small> : <small>Upload images to <code>Logos/Publications/</code></small>}</div>
         </div>
+  {logosError && <div style={{ color: 'salmon', marginBottom: 8 }}>{logosError}</div>}
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {loadingLogos ? (
-            <div>Loading logos...</div>
+            <div style={{ color: '#666' }}>Loading logos...</div>
           ) : logos.length === 0 ? (
-            <div>No logos found in <code>Logos/Publications/</code></div>
+            <div style={{ color: '#666' }}>No logos found in <code>Logos/Publications/</code></div>
           ) : (
             logos.map(l => (
-              <div key={l.name} style={{ width: 160, border: '1px solid #eee', padding: 8, borderRadius: 6 }}>
+              <div key={l.name} style={{ width: 160, border: '1px solid #eee', padding: 8, borderRadius: 6, background: '#fafafa' }}>
                 <img src={l.url} alt={l.name} style={{ width: '100%', height: 80, objectFit: 'contain' }} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
                   <small style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{l.name}</small>
-                  <button onClick={() => handleDeleteLogo(l.name)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: 6 }}>Delete</button>
+                  <button onClick={() => handleDeleteLogo(l.name)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 8px', borderRadius: 6, cursor: 'pointer' }}>Delete</button>
                 </div>
               </div>
             ))
@@ -189,45 +171,66 @@ function PublicationsEditor() {
         </div>
       </section>
 
-      <section style={{ marginTop: 16 }}>
-        <h4>IAC (Congress Presentations)</h4>
-        {iac.map((r, i) => (
-          <div key={r.id || i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
-            <input placeholder="Authors" value={r.authors || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, authors: e.target.value } : p))} style={{ flex: 2 }} />
-            <input placeholder="Title" value={r.title || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ flex: 3 }} />
-            <input placeholder="Event" value={r.event || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, event: e.target.value } : p))} style={{ flex: 2 }} />
-            <input placeholder="Location" value={r.location || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, location: e.target.value } : p))} style={{ width: 160 }} />
-            <input placeholder="Dates" value={r.dates || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, dates: e.target.value } : p))} style={{ width: 140 }} />
-            <input placeholder="Year" value={r.year || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: 100 }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <button onClick={() => saveRow('congress_presentations', r)}>Save</button>
-              <button onClick={() => deleteRow('congress_presentations', r)}>Delete</button>
+      <section style={{ marginTop: 4 }}>
+        <h4 style={{ marginBottom: 8 }}>Journals</h4>
+        {publications.map((r, i) => (
+          <div key={r.id || i} style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'flex-start', background: '#fff', padding: 10, borderRadius: 8, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+            <input placeholder="Authors" value={r.authors || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, authors: e.target.value } : p))} style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Title" value={r.title || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ flex: 3, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Journal" value={r.journal || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, journal: e.target.value } : p))} style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Status" value={r.status || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, status: e.target.value } : p))} style={{ width: 140, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Year" value={r.year || ''} onChange={e => setPublications(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: 100, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}> 
+              <button onClick={() => saveRow('publications', r)} style={{ padding: '8px 12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6 }}>Save</button>
+              <button onClick={() => deleteRow('publications', r)} style={{ padding: '8px 12px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: 6 }}>Delete</button>
             </div>
           </div>
         ))}
         <div>
-          <button onClick={() => addRow('congress_presentations')}>Add IAC Row</button>
+          <button onClick={() => addRow('publications')} style={{ padding: '8px 12px', background: '#10b981', color: '#fff', border: 'none', borderRadius: 6 }}>Add Journal</button>
+        </div>
+      </section>
+
+
+      <section style={{ marginTop: 16 }}>
+        <h4 style={{ marginBottom: 8 }}>IAC (Congress Presentations)</h4>
+        {iac.map((r, i) => (
+          <div key={r.id || i} style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'flex-start', background: '#fff', padding: 10, borderRadius: 8, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+            <input placeholder="Authors" value={r.authors || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, authors: e.target.value } : p))} style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Title" value={r.title || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ flex: 3, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Event" value={r.event || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, event: e.target.value } : p))} style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Location" value={r.location || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, location: e.target.value } : p))} style={{ width: 160, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Dates" value={r.dates || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, dates: e.target.value } : p))} style={{ width: 140, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Year" value={r.year || ''} onChange={e => setIac(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: 100, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button onClick={() => saveRow('congress_presentations', r)} style={{ padding: '8px 12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6 }}>Save</button>
+              <button onClick={() => deleteRow('congress_presentations', r)} style={{ padding: '8px 12px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: 6 }}>Delete</button>
+            </div>
+          </div>
+        ))}
+        <div>
+          <button onClick={() => addRow('congress_presentations')} style={{ padding: '8px 12px', background: '#10b981', color: '#fff', border: 'none', borderRadius: 6 }}>Add IAC Row</button>
         </div>
       </section>
 
       <section style={{ marginTop: 16 }}>
-        <h4>Conferences</h4>
+        <h4 style={{ marginBottom: 8 }}>Conferences</h4>
         {conferences.map((r, i) => (
-          <div key={r.id || i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
-            <input placeholder="Authors" value={r.authors || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, authors: e.target.value } : p))} style={{ flex: 2 }} />
-            <input placeholder="Title" value={r.title || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ flex: 3 }} />
-            <input placeholder="Conference" value={r.conference || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, conference: e.target.value } : p))} style={{ flex: 2 }} />
-            <input placeholder="Location" value={r.location || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, location: e.target.value } : p))} style={{ width: 160 }} />
-            <input placeholder="Date" value={r.date || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, date: e.target.value } : p))} style={{ width: 140 }} />
-            <input placeholder="Year" value={r.year || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: 100 }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <button onClick={() => saveRow('conferences', r)}>Save</button>
-              <button onClick={() => deleteRow('conferences', r)}>Delete</button>
+          <div key={r.id || i} style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'flex-start', background: '#fff', padding: 10, borderRadius: 8, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+            <input placeholder="Authors" value={r.authors || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, authors: e.target.value } : p))} style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Title" value={r.title || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ flex: 3, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Conference" value={r.conference || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, conference: e.target.value } : p))} style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Location" value={r.location || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, location: e.target.value } : p))} style={{ width: 160, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Date" value={r.date || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, date: e.target.value } : p))} style={{ width: 140, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <input placeholder="Year" value={r.year || ''} onChange={e => setConferences(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: 100, padding: 8, borderRadius: 6, border: '1px solid #e6edf0' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button onClick={() => saveRow('conferences', r)} style={{ padding: '8px 12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6 }}>Save</button>
+              <button onClick={() => deleteRow('conferences', r)} style={{ padding: '8px 12px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: 6 }}>Delete</button>
             </div>
           </div>
         ))}
         <div>
-          <button onClick={() => addRow('conferences')}>Add Conference</button>
+          <button onClick={() => addRow('conferences')} style={{ padding: '8px 12px', background: '#10b981', color: '#fff', border: 'none', borderRadius: 6 }}>Add Conference</button>
         </div>
       </section>
     </div>
