@@ -40,6 +40,18 @@ body, html {
   font-family: 'Oswald', sans-serif;
   font-weight: 400;
   font-size: 20px;
+  transition: opacity 0.2s, color 0.2s;
+}
+.nav-link-custom:hover {
+  opacity: 0.7;
+  color: #ffd700; /* Optional: highlight color on hover */
+}
+
+/* Faded effect for active nav link */
+.nav-link-active {
+  opacity: 0.6;
+  color: #ffd700 !important; /* Optional: highlight color for active tab */
+  pointer-events: none;
 }
 
 /* Wrapper for nav item when using motion.div */

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Container, Navbar, Nav, Button } from "react-bootstrap";
+import { Container, Navbar, Nav} from "react-bootstrap";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 //import labLogo from "/sdfcl-lab-website/assets/Picture1.png";
@@ -13,18 +13,22 @@ function Nbar() {
   }, [location.pathname]);
 
   const navItems = [
+    "Home",
     "Group",
     "Research",
     "Publications",
     "Projects",
-    "Gallery",
+    "Teaching",
     "Citations",
     "Collaborators",
-    "About Us",
+    "Gallery",
+    // "About Us",
   ];
 
+  // Get the current path for active tab highlighting
+  const currentPath = location.pathname.replace(/\/$/, "");
+
   return (
-    // expand="md" means: collapsed on small screens, expands at md and up
     <Navbar expand="md" className="custom-navbar">
       <Container fluid>
         <Navbar.Brand as={Link} to="/sdfcl-lab-website/">
@@ -35,35 +39,29 @@ function Nbar() {
           />
         </Navbar.Brand>
 
-        {/* Home button visible only on small screens, placed next to the toggle */}
-        <Button
-          as={Link}
-          to="/sdfcl-lab-website/"
-          variant="outline-primary"
-          className="d-md-none me-2 home-button"
-        >
-          Home
-        </Button>
-
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav" className="justify-content-end">
           <Nav>
-            {navItems.map((item, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="nav-item-wrapper"
-              >
-                <Nav.Link
-                  as={Link}
-                  to={`/sdfcl-lab-website/${item.toLowerCase().replace(/\s/g, "")}`}
-                  className="nav-link-custom"
+            {navItems.map((item, index) => {
+              const itemPath = `/sdfcl-lab-website/${item.toLowerCase() === 'home' ? '' : item.toLowerCase().replace(/\s/g, "")}`.replace(/\/$/, "");
+              const isActive = currentPath === itemPath;
+              return (
+                <motion.div
+                  key={index}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="nav-item-wrapper"
                 >
-                  {item}
-                </Nav.Link>
-              </motion.div>
-            ))}
+                  <Nav.Link
+                    as={Link}
+                    to={itemPath}
+                    className={`nav-link-custom${isActive ? ' nav-link-active' : ''}`}
+                  >
+                    {item}
+                  </Nav.Link>
+                </motion.div>
+              );
+            })}
           </Nav>
         </Navbar.Collapse>
       </Container>

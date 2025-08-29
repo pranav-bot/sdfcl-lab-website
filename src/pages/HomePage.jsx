@@ -277,34 +277,34 @@ function HomePage() {
   {/* Research & Teaching Summary moved to the Research page */}
       </div>
 
-        <div className="parallax-section topics fade-in-up" style={{ backgroundColor: '#011317' }}>
-          <h1 style={headingfont}>Topics That Fascinate Us</h1>
-          <Separator></Separator>
+        {(loadingTopics || (topics && topics.length > 0)) && (
+          <div className="parallax-section topics fade-in-up" style={{ backgroundColor: '#011317' }}>
+            <h1 style={headingfont}>Topics That Fascinate Us</h1>
+            <Separator></Separator>
 
-          {topicsError && <div style={{ color: 'red', textAlign: 'center' }}>{topicsError}</div>}
+            {topicsError && <div style={{ color: 'red', textAlign: 'center' }}>{topicsError}</div>}
 
-          <div className="topics-scroll-container fade-in-up">
-            <div className="topics-container">
-              {loadingTopics ? (
-                <div style={{ textAlign: 'center', width: '100%' }}>Loading topics...</div>
-              ) : topics && topics.length > 0 ? (
-                topics.map((topic, index) => (
-                  <div key={index} className={`topic-item fade-in-up ${index % 2 === 1 ? 'reverse' : ''}`}>
-                    <div className="topic-image fade-in-up">
-                      <img src={topic.image || topic.image_url || topic.image_path} alt={topic.title || topic.name} />
+            <div className="topics-scroll-container fade-in-up">
+              <div className="topics-container">
+                {loadingTopics ? (
+                  <div style={{ textAlign: 'center', width: '100%' }}>Loading topics...</div>
+                ) : topics && topics.length > 0 ? (
+                  topics.map((topic, index) => (
+                    <div key={index} className={`topic-item fade-in-up ${index % 2 === 1 ? 'reverse' : ''}`}>
+                      <div className="topic-image fade-in-up">
+                        <img src={topic.image || topic.image_url || topic.image_path} alt={topic.title || topic.name} />
+                      </div>
+                      <div className="topic-content fade-in-up">
+                        <h2 style={subHeadingFont}>{topic.title || topic.name}</h2>
+                        <p style={subContentFont}>{topic.description || topic.content}</p>
+                      </div>
                     </div>
-                    <div className="topic-content fade-in-up">
-                      <h2 style={subHeadingFont}>{topic.title || topic.name}</h2>
-                      <p style={subContentFont}>{topic.description || topic.content}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div style={{ textAlign: 'center', width: '100%' }}>No topics available.</div>
-              )}
+                  ))
+                ) : null}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

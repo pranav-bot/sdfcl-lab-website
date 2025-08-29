@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import MasterCard from "../components/MasterCard";
-import SimpleCard from "../components/SimpleCard";
 import "./TeamPage.css";
 import { createClient } from '@supabase/supabase-js'
 
@@ -144,25 +143,27 @@ function TeamPage() {
   );
 
   const renderCards = (data) => (
-    <div className="d-flex flex-wrap justify-content-center gap-3 fade-in-up">
+    <div className="members-list fade-in-up">
       {data.map((person, index) => (
-        <SimpleCard
-          key={index}
-          name={person.name}
-          content={person.content}
-          image={person.image}
-          googleScholarLink={person.googleScholarLink}
-          email={person.email}
-          linkedinLink={person.linkedinLink}
-          githubLink={person.githubLink}
-          websiteLink={person.websiteLink}
-          color="#2e2c29"
-          headingStyle={headingfont}
-          contentStyle={contentFont}
-        />
+        <div className="member-row" key={index}>
+          <div className="member-left">
+            <img src={person.image} alt={person.name} className="member-photo" />
+          </div>
+          <div className="member-right">
+            <h3 className="member-name" style={headingfont}>{person.name}</h3>
+            <p className="member-content" style={contentFont}>{person.content}</p>
+            <div className="member-links">
+              {person.googleScholarLink && <a className="member-link" href={person.googleScholarLink} target="_blank" rel="noopener noreferrer">Scholar</a>}
+              {person.email && <a className="member-link" href={`mailto:${person.email}`}>Email</a>}
+              {person.linkedinLink && <a className="member-link" href={person.linkedinLink} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
+              {person.githubLink && <a className="member-link" href={person.githubLink} target="_blank" rel="noopener noreferrer">GitHub</a>}
+              {person.websiteLink && <a className="member-link" href={person.websiteLink} target="_blank" rel="noopener noreferrer">Website</a>}
+            </div>
+          </div>
+        </div>
       ))}
     </div>
-  );
+  )
 
   function AcademicTimeline() {
     const timelineElements = [
@@ -273,7 +274,7 @@ function TeamPage() {
       </div>
 
       {/* Academic Timeline */}
-      <AcademicTimeline />
+      {/* <AcademicTimeline /> */}
 
       {/* Lab Members */}
       <div style={{ backgroundColor: "#2e2c29" }} className="fade-in-up">
