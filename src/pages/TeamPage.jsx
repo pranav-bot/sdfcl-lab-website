@@ -361,7 +361,6 @@ function TeamPage() {
           Research Interns
         </h2>
   {viewMode === 'current' ? renderCards(researchInterns) : renderCards(alumniResearchInterns)}
-        <div style={{ height: "50px" }}></div>
       </div>
     </div>
   );

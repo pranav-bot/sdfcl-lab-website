@@ -8,6 +8,7 @@ import AboutPage from "./pages/AboutPage";
 import HomePage from "./pages/HomePage";
 import TeamPage from "./pages/TeamPage";
 import GalleryPage from "./pages/GalleryPage";
+import TeachingPage from "./pages/TeachingPage";
 import Project1 from "./pages/projectPages/project1";
 import Project2 from "./pages/projectPages/project2";
 import Project3 from "./pages/projectPages/project3";
@@ -60,6 +61,7 @@ function App() {
               path="/sdfcl-lab-website/Spacecraft Attitude Control Testbed for Testing and Validating Maneuvering Controls"
               element={<Project1 />}
             />
+            <Route path="/sdfcl-lab-website/teaching" element={<TeachingPage />} />
             <Route
               path="/sdfcl-lab-website/Magneto-electric effects in the dynamics and motion control problems of telecommunication spacecraft"
               element={<Project2 />}

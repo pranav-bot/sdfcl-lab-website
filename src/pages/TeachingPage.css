@@ -1,0 +1,19 @@
+/* Teaching page styles */
+
+.teaching-page-container { background: #011317; color: #fff; padding: 2rem 1rem; box-sizing: border-box }
+.teaching-list { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px }
+.teaching-card { display: flex; gap: 16px; background: linear-gradient(180deg,#041818 0%, #031515 100%); padding: 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.04); align-items: flex-start; transition: transform .12s ease, box-shadow .12s ease }
+.teaching-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.5) }
+.teaching-card-left { flex: 0 0 90px; display:flex; align-items:center; justify-content:center }
+.teaching-year { background: rgba(5,50,51,0.95); color: #c7efe7; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif }
+.teaching-card-right { flex: 1 }
+.teaching-course { margin: 0 0 8px 0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff }
+.teaching-desc { margin: 0 0 10px 0; color: #c7efe7; line-height: 1.4 }
+.teaching-meta { display:flex; gap:8px }
+.read-more { color: #00e6c4; text-decoration: none; font-weight: 600 }
+
+@media (max-width: 900px) {
+  .teaching-card { flex-direction: column }
+  .teaching-card-left { flex: none }
+  .teaching-year { align-self: flex-start }
+}
