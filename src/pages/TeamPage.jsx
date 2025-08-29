@@ -286,7 +286,7 @@ function TeamPage() {
       style={{
         ...headingfont,
         fontSize: "60px",
-        paddingTop: "50px",
+        paddingTop: "20px",
         color: "white",
       }}
     >
@@ -332,8 +332,8 @@ function TeamPage() {
           style={{
             ...headingfont,
             color: "white",
-            paddingTop: "50px",
-            paddingBottom: "50px",
+            paddingTop: "20px",
+            paddingBottom: "20px",
           }}
         >
           PhD Students
@@ -345,7 +345,7 @@ function TeamPage() {
   {/* Masters Students */}
         <h2
           className="fade-in-up text-center"
-          style={{ ...headingfont, color: "white", paddingBottom: "50px" }}
+          style={{ ...headingfont, color: "white", paddingBottom: "20px" }}
         >
           Masters Students
         </h2>
@@ -356,7 +356,7 @@ function TeamPage() {
   {/* Research Interns */}
         <h2
           className="fade-in-up text-center"
-          style={{ ...headingfont, color: "white", paddingBottom: "50px" }}
+          style={{ ...headingfont, color: "white", paddingBottom: "20px" }}
         >
           Research Interns
         </h2>

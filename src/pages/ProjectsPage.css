@@ -75,7 +75,7 @@
 .project-row { display: flex; gap: 16px; align-items: flex-start; background: #031515; padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04) }
 .project-left { display:flex; align-items:center; justify-content:center; flex: 0 0 220px; text-decoration: none }
 .project-image { width: 220px; height: 160px; object-fit: cover; border-radius: 8px }
-.project-title { color: #fff; margin: 0 0 8px 0; font-family: 'Space Mono'; font-weight: 800 }
+.project-title { color: #fff; margin: 0 0 8px 0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-weight: 700; font-size: 1.15rem }
 .project-right { flex: 1; color: #d7f3ef }
 .project-desc { margin: 0 0 8px 0; color: #c7efe7 }
 .project-meta { display:flex; gap:8px; align-items:center }
@@ -94,3 +94,8 @@
 .funding-list ul { margin: 6px 0 0 1rem; padding: 0 }
 .funding-list li { font-size: 13px }
 .funding-list strong { color: #ffd700; margin-right: 6px }
+
+/* Tabs */
+.projects-tabs { margin-top: 8px }
+.tab { background: transparent; border: 1px solid rgba(255,255,255,0.06); color: #c7efe7; padding: 8px 14px; border-radius: 8px; cursor: pointer }
+.tab.active { background: #063636; border-color: rgba(0,150,136,0.7); color: #fff }

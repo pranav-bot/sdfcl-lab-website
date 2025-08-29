@@ -252,13 +252,13 @@ function HomePage() {
         </div>
 
               {/* Separate Section for Research & Teaching Summary */}
-      <div className="research-teaching-summary">
-      <h1 style={{ ...headingfont, textAlign: "center", marginBottom: 20 }}>
+      {/* <div className="research-teaching-summary"> */}
+      {/* <h1 style={{ ...headingfont, textAlign: "center", marginBottom: 20 }}>
         Collaborators
-      </h1>
-      <Separator></Separator>
+      </h1> */}
+      {/* <Separator></Separator> */}
               {/* Slider */}
-      <div className="slider-container fade-in-up">
+      {/* <div className="slider-container fade-in-up">
         <div className="slider">
           {logosError && <div style={{ color: 'red', textAlign: 'center' }}>{logosError}</div>}
           {loadingLogos ? (
@@ -273,9 +273,9 @@ function HomePage() {
             <div style={{ textAlign: 'center', width: '100%' }}>No collaborators to display.</div>
           )}
         </div>
-      </div>
+      </div> */}
   {/* Research & Teaching Summary moved to the Research page */}
-      </div>
+      {/* </div> */}
 
         {(loadingTopics || (topics && topics.length > 0)) && (
           <div className="parallax-section topics fade-in-up" style={{ backgroundColor: '#011317' }}>

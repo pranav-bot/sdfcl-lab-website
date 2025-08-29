@@ -11,6 +11,7 @@ const headingfont = { fontFamily: 'Space Mono', fontWeight: 800 }
 
 export default function ProjectsPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [activeTab, setActiveTab] = useState('ongoing') // 'ongoing' or 'completed'
 
   const lowerSearch = searchTerm.toLowerCase()
 
@@ -192,67 +193,85 @@ export default function ProjectsPage() {
         />
       </div>
 
-      {loadingCompleted ? (
-        <p style={{ color: 'white' }}>Loading completed projects...</p>
-      ) : completedError ? (
-        <p style={{ color: 'salmon' }}>Error loading completed projects: {completedError}</p>
-      ) : filteredCompleted.length > 0 && (
-        <>
-          <h2 style={{ ...headingfont, color: 'white' }}>Completed Projects</h2>
-          <div className="projects-list">
-            {filteredCompleted.map((project) => (
-              <div key={project.id} className="project-row">
-                <div className="project-left">
-                  <img src={project.image} alt={project.name} className="project-image" />
-                </div>
-                <div className="project-right">
-                  <h3 className="project-title">{project.name}</h3>
-                  <p className="project-desc">{project.content}</p>
-                  {renderFunding(project)}
-                  <div className="project-meta">
-                    <Link to={`/project${project.id}`} className="read-more">Read details</Link>
+      {/* Tabs to switch between ongoing and completed */}
+      <div className="projects-tabs" style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 12 }}>
+        <button className={`tab ${activeTab === 'ongoing' ? 'active' : ''}`} onClick={() => setActiveTab('ongoing')}>Ongoing</button>
+        <button className={`tab ${activeTab === 'completed' ? 'active' : ''}`} onClick={() => setActiveTab('completed')}>Completed</button>
+      </div>
+
+      {activeTab === 'completed' && (
+        loadingCompleted ? (
+          <p style={{ color: 'white' }}>Loading completed projects...</p>
+        ) : completedError ? (
+          <p style={{ color: 'salmon' }}>Error loading completed projects: {completedError}</p>
+        ) : (
+          filteredCompleted.length > 0 ? (
+            <>
+              <h2 style={{ ...headingfont, color: 'white' }}>Completed Projects</h2>
+              <div className="projects-list">
+                {filteredCompleted.map((project) => (
+                  <div key={project.id} className="project-row">
+                    <div className="project-left">
+                      <img src={project.image} alt={project.name} className="project-image" />
+                    </div>
+                    <div className="project-right">
+                      <h3 className="project-title">{project.name}</h3>
+                      <p className="project-desc">{project.content}</p>
+                      {renderFunding(project)}
+                      <div className="project-meta">
+                        <Link to={`/project${project.id}`} className="read-more">Read details</Link>
+                      </div>
+                      <div className="project-members">
+                        {(projectStudents[project.id] || []).slice(0, 8).map(m => (
+                          <span key={m.id || m.name} className="member-tag" title={m.designation || ''}>{m.name}</span>
+                        ))}
+                        {loadingProjectStudents[project.id] && <span style={{ color: '#c7efe7' }}>Loading...</span>}
+                      </div>
+                    </div>
                   </div>
-                  <div className="project-members">
-                    {(projectStudents[project.id] || []).slice(0, 8).map(m => (
-                      <span key={m.id || m.name} className="member-tag" title={m.designation || ''}>{m.name}</span>
-                    ))}
-                    {loadingProjectStudents[project.id] && <span style={{ color: '#c7efe7' }}>Loading...</span>}
-                  </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </>
+            </>
+          ) : (
+            <p style={{ color: '#c7efe7' }}>No completed projects found.</p>
+          )
+        )
       )}
 
-      {loadingOngoing ? (
-        <p style={{ color: 'white' }}>Loading ongoing projects...</p>
-      ) : ongoingError ? (
-        <p style={{ color: 'salmon' }}>Error loading ongoing projects: {ongoingError}</p>
-      ) : filteredOngoing.length > 0 && (
-        <>
-          <h2 style={{ ...headingfont, color: 'white', marginTop: 32 }}>Ongoing Projects</h2>
-          <div className="projects-list">
-            {filteredOngoing.map((project) => (
-              <div key={project.id} className="project-row">
-                <div className="project-left">
-                  <img src={project.image} alt={project.name} className="project-image" />
-                </div>
-                <div className="project-right">
-                  <h3 className="project-title">{project.name}</h3>
-                  <p className="project-desc">{project.content}</p>
-                  {renderFunding(project)}
-                  <div className="project-members">
-                    {(projectStudents[project.id] || []).slice(0, 8).map(m => (
-                      <span key={m.id || m.name} className="member-tag" title={m.designation || ''}>{m.name}</span>
-                    ))}
-                    {loadingProjectStudents[project.id] && <span style={{ color: '#c7efe7' }}>Loading...</span>}
+      {activeTab === 'ongoing' && (
+        loadingOngoing ? (
+          <p style={{ color: 'white' }}>Loading ongoing projects...</p>
+        ) : ongoingError ? (
+          <p style={{ color: 'salmon' }}>Error loading ongoing projects: {ongoingError}</p>
+        ) : (
+          filteredOngoing.length > 0 ? (
+            <>
+              <h2 style={{ ...headingfont, color: 'white', marginTop: 32 }}>Ongoing Projects</h2>
+              <div className="projects-list">
+                {filteredOngoing.map((project) => (
+                  <div key={project.id} className="project-row">
+                    <div className="project-left">
+                      <img src={project.image} alt={project.name} className="project-image" />
+                    </div>
+                    <div className="project-right">
+                      <h3 className="project-title">{project.name}</h3>
+                      <p className="project-desc">{project.content}</p>
+                      {renderFunding(project)}
+                      {/* <div className="project-members">
+                        {(projectStudents[project.id] || []).slice(0, 8).map(m => (
+                          <span key={m.id || m.name} className="member-tag" title={m.designation || ''}>{m.name}</span>
+                        ))}
+                        {loadingProjectStudents[project.id] && <span style={{ color: '#c7efe7' }}>Loading...</span>}
+                      </div> */}
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </>
+            </>
+          ) : (
+            <p style={{ color: '#c7efe7' }}>No ongoing projects found.</p>
+          )
+        )
       )}
       {/* Modal removed — projects are shown inline */}
     </div>

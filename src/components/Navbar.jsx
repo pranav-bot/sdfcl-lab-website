@@ -15,12 +15,12 @@ function Nbar() {
   const navItems = [
     "Home",
     "Group",
-    "Research",
+    "Research & Projects",
     "Publications",
-    "Projects",
     "Teaching",
     "Citations",
     "Collaborators",
+    "Outreach",
     "Gallery",
     // "About Us",
   ];

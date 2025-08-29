@@ -104,7 +104,7 @@
 .member-name { margin:0 0 8px 0 }
 .member-content { margin:0 0 8px 0 }
 .member-links { display:flex; gap:8px; flex-wrap:wrap }
-.member-link { color:#ffd700; background:transparent; text-decoration:none; border:1px solid rgba(255,255,255,0.04); padding:6px 8px; border-radius:6px }
+.member-link { color:white; background:transparent; text-decoration:none; border:1px solid rgba(255,255,255,0.04); padding:6px 8px; border-radius:6px }
 
 @media (max-width:800px) {
   .member-row { flex-direction:column; align-items:stretch }
