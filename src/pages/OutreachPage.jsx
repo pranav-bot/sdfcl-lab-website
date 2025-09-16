@@ -111,12 +111,14 @@ export default function OutreachPage() {
               )}
             </div>
             <div className="outreach-right">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-                <h3 className="outreach-title" id={`outreach-title-${it.id}`} style={subHeadingFont}>{it.title}</h3>
-                {isNew(it.created_at) && <span className="new-badge">NEW</span>}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, width: '100%' }}>
+                  <h3 className="outreach-title" id={`outreach-title-${it.id}`} style={subHeadingFont}>{it.title}</h3>
+                  {isNew(it.created_at) && <span className="new-badge">NEW</span>}
+                </div>
+                <div className="outreach-meta" style={subContentFont}>{formatDate(it.created_at)}</div>
+                <p className="outreach-content" style={contentFont}>{it.content}</p>
               </div>
-              <div className="outreach-meta" style={subContentFont}>{formatDate(it.created_at)}</div>
-              <p className="outreach-content" style={contentFont}>{it.content}</p>
             </div>
           </div>
         ))}
