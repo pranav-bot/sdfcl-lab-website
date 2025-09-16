@@ -11,6 +11,7 @@ import PublicationsEditor from './edits/PublicationsEditor'
 import CitationsEditor from './edits/CitationsEditor'
 import AboutEditor from './edits/AboutEditor'
 import TeachingEditor from './edits/TeachingEditor'
+import CollaboratorsEditor from './edits/CollaboratorsEditor'
 
 // Supabase client (matches LoginPage usage)
 const supabase = createClient(
@@ -81,6 +82,7 @@ export default function EditPage() {
             Projects: 'projects',
             Gallery: 'gallery',
             Citations: 'citations',
+            Collaborators: 'collaborators',
             'About Us': 'about'
           }
 
@@ -127,6 +129,8 @@ export default function EditPage() {
           <CitationsEditor />
         ) : selectedPage === 'gallery' ? (
           <GalleryEditor />
+        ) : selectedPage === 'collaborators' ? (
+          <CollaboratorsEditor />
         ) : selectedPage === 'about' ? (
           <AboutEditor />
         ) : (
