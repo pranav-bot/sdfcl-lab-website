@@ -46,9 +46,13 @@ export default function HomeEditor() {
         link: a.link,
         created_at: a.created_at || new Date().toISOString(),
       }
-      if (a.id) payload.id = a.id
-      const { error } = await supabase.from('announcements').upsert(payload)
-      if (error) throw error
+      if (a.id) {
+        const { error } = await supabase.from('announcements').update(payload).eq('id', a.id)
+        if (error) throw error
+      } else {
+        const { error } = await supabase.from('announcements').insert(payload)
+        if (error) throw error
+      }
       await loadAnnouncements()
     } catch (err) {
       setAnnouncementsError(err.message || String(err))

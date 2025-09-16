@@ -44,9 +44,13 @@ export default function TeachingEditor() {
     setSaving(true)
     try {
       const payload = { course_name: r.course_name, description: r.description, year: r.year }
-      if (r.id) payload.id = r.id
-      const { error } = await supabase.from('teaching').upsert(payload)
-      if (error) throw error
+      if (r.id) {
+        const { error } = await supabase.from('teaching').update(payload).eq('id', r.id)
+        if (error) throw error
+      } else {
+        const { error } = await supabase.from('teaching').insert(payload)
+        if (error) throw error
+      }
       await loadRows()
     } catch (err) {
       setError(err.message || String(err))

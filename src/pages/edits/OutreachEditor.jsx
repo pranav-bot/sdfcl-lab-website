@@ -100,9 +100,16 @@ export default function OutreachEditor() {
         content: it.content || '',
         photo: it.photo_path || (typeof it.photo === 'string' && it.photo.indexOf('http') !== 0 ? it.photo : (it.photo || ''))
       }
-      if (it.id) payload.id = it.id
-      const { error } = await supabase.from('outreach').upsert(payload).select()
-      if (error) throw error
+      // avoid inserting explicit id into identity column
+      const hasId = !!it.id
+      if (hasId) delete payload.id
+      if (hasId) {
+        const res = await supabase.from('outreach').update(payload).eq('id', it.id).select()
+        if (res.error) throw res.error
+      } else {
+        const res = await supabase.from('outreach').insert(payload).select()
+        if (res.error) throw res.error
+      }
       await load()
     } catch (err) {
       setError(err.message || String(err))

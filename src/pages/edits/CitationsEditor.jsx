@@ -47,8 +47,16 @@ export default function CitationsEditor() {
     try {
       const payload = { ...row }
       delete payload.__local
-      const res = await supabase.from(table).upsert(payload).select()
-      if (res.error) throw res.error
+      // ensure we don't attempt to insert explicit id values into identity column
+      const hasId = !!payload.id
+      if (hasId) delete payload.id
+      if (hasId) {
+        const res = await supabase.from(table).update(payload).eq('id', row.id).select()
+        if (res.error) throw res.error
+      } else {
+        const res = await supabase.from(table).insert(payload).select()
+        if (res.error) throw res.error
+      }
       await loadAll()
     } catch (err) {
       console.error('saveRow', err)

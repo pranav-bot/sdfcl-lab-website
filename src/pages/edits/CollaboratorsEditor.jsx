@@ -73,9 +73,15 @@ export default function CollaboratorsEditor() {
         photoToSave = url
       }
       const payload = { name: r.name, title: r.title, content: r.content, photo: photoToSave }
-      if (r.id) payload.id = r.id
-      const { error } = await supabase.from('collaborators').upsert(payload)
-      if (error) throw error
+      const hasId = !!r.id
+      if (hasId) delete payload.id
+      if (hasId) {
+        const res = await supabase.from('collaborators').update(payload).eq('id', r.id)
+        if (res.error) throw res.error
+      } else {
+        const res = await supabase.from('collaborators').insert(payload)
+        if (res.error) throw res.error
+      }
       await load()
     } catch (err) {
       setError(String(err))
