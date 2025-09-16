@@ -86,70 +86,95 @@ export default function CitationsEditor() {
 
   return (
     <div style={{ padding: 12 }}>
-      <h3>Citations Editor</h3>
-      {error && <div style={{ color: 'salmon' }}>{error}</div>}
+      <h3 style={{ marginBottom: 8 }}>Citations Editor</h3>
+      {error && <div style={{ color: 'salmon', marginBottom: 8 }}>{error}</div>}
 
       <section style={{ marginTop: 12 }}>
-        <h4>Academic Citations</h4>
-        {citations.map((r, i) => (
-          <div key={r.id || i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
-            <input placeholder="Title" value={r.title || ''} onChange={e => setCitations(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ flex: 3 }} />
-            <input placeholder="Organization" value={r.organization || ''} onChange={e => setCitations(prev => prev.map((p,idx) => idx === i ? { ...p, organization: e.target.value } : p))} style={{ flex: 2 }} />
-            <input placeholder="Year" value={r.year || ''} onChange={e => setCitations(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: 100 }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <button onClick={() => saveRow('academic_citations', r)}>Save</button>
-              <button onClick={() => deleteRow('academic_citations', r)}>Delete</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h4 style={{ margin: 0 }}>Academic Citations</h4>
+          <button onClick={() => addRow('academic_citations')}>+ Add Citation</button>
+        </div>
+
+        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {citations.map((r, i) => (
+            <div key={r.id || i} style={{ border: '1px solid #e6edf0', borderRadius: 8, padding: 12, background: '#fff' }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <div style={{ flex: 3 }}>
+                  <input placeholder="Title" value={r.title || ''} onChange={e => setCitations(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ width: '100%', padding: 8 }} />
+                  <input placeholder="Organization" value={r.organization || ''} onChange={e => setCitations(prev => prev.map((p,idx) => idx === i ? { ...p, organization: e.target.value } : p))} style={{ width: '100%', padding: 8, marginTop: 8 }} />
+                </div>
+
+                <div style={{ width: 110 }}>
+                  <input placeholder="Year" value={r.year || ''} onChange={e => setCitations(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: '100%', padding: 8 }} />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <button onClick={() => saveRow('academic_citations', r)} style={{ padding: '6px 10px' }}>Save</button>
+                  <button onClick={() => deleteRow('academic_citations', r)} style={{ padding: '6px 10px', background: '#ef4444', color: '#fff' }}>Delete</button>
+                </div>
+              </div>
+              <div style={{ marginTop: 8 }}>
+                <textarea placeholder="Description" value={r.description || ''} onChange={e => setCitations(prev => prev.map((p,idx) => idx === i ? { ...p, description: e.target.value } : p))} style={{ width: '100%', padding: 8, minHeight: 64 }} />
+              </div>
             </div>
-            <div style={{ width: '100%' }}>
-              <input placeholder="Description" value={r.description || ''} onChange={e => setCitations(prev => prev.map((p,idx) => idx === i ? { ...p, description: e.target.value } : p))} style={{ width: '100%', marginTop: 6 }} />
-            </div>
-          </div>
-        ))}
-        <div>
-          <button onClick={() => addRow('academic_citations')}>Add Citation</button>
+          ))}
         </div>
       </section>
 
       <section style={{ marginTop: 16 }}>
-        <h4>Assignments & Invited Talks</h4>
-        {talks.map((r, i) => (
-          <div key={r.id || i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
-            <input placeholder="Title" value={r.title || ''} onChange={e => setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ flex: 3 }} />
-            <input placeholder="Event" value={r.event || ''} onChange={e => setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, event: e.target.value } : p))} style={{ flex: 2 }} />
-            <input placeholder="Location" value={r.location || ''} onChange={e => setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, location: e.target.value } : p))} style={{ width: 140 }} />
-            <input placeholder="Year" value={r.year || ''} onChange={e => setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: 100 }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <button onClick={() => saveRow('assignments_invited_talks', r)}>Save</button>
-              <button onClick={() => deleteRow('assignments_invited_talks', r)}>Delete</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h4 style={{ margin: 0 }}>Assignments & Invited Talks</h4>
+          <button onClick={() => addRow('assignments_invited_talks')}>+ Add Talk</button>
+        </div>
+
+        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {talks.map((r, i) => (
+            <div key={r.id || i} style={{ border: '1px solid #e6edf0', borderRadius: 8, padding: 12, background: '#fff' }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <div style={{ flex: 3 }}>
+                  <input placeholder="Title" value={r.title || ''} onChange={e => setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, title: e.target.value } : p))} style={{ width: '100%', padding: 8 }} />
+                  <input placeholder="Event" value={r.event || ''} onChange={e => setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, event: e.target.value } : p))} style={{ width: '100%', padding: 8, marginTop: 8 }} />
+                </div>
+
+                <div style={{ width: 140 }}>
+                  <input placeholder="Location" value={r.location || ''} onChange={e => setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, location: e.target.value } : p))} style={{ width: '100%', padding: 8 }} />
+                  <input placeholder="Year" value={r.year || ''} onChange={e => setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, year: e.target.value } : p))} style={{ width: '100%', padding: 8, marginTop: 8 }} />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <button onClick={() => saveRow('assignments_invited_talks', r)} style={{ padding: '6px 10px' }}>Save</button>
+                  <button onClick={() => deleteRow('assignments_invited_talks', r)} style={{ padding: '6px 10px', background: '#ef4444', color: '#fff' }}>Delete</button>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 8 }}>
+                <input placeholder="Type / Role / Date" value={`${r.type || ''}${r.role ? ` — ${r.role}` : ''}${r.date ? ` • ${r.date}` : ''}`} onChange={e => {
+                  const val = e.target.value
+                  setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, type: val } : p))
+                }} style={{ width: '100%', padding: 8 }} />
+              </div>
             </div>
-            <div style={{ width: '100%' }}>
-              <input placeholder="Type / Role / Date" value={`${r.type || ''}${r.role ? ` — ${r.role}` : ''}${r.date ? ` • ${r.date}` : ''}`} onChange={e => {
-                // keep it simple: let user edit type field only here
-                const val = e.target.value
-                setTalks(prev => prev.map((p,idx) => idx === i ? { ...p, type: val } : p))
-              }} style={{ width: '100%', marginTop: 6 }} />
-            </div>
-          </div>
-        ))}
-        <div>
-          <button onClick={() => addRow('assignments_invited_talks')}>Add Talk</button>
+          ))}
         </div>
       </section>
 
       <section style={{ marginTop: 16 }}>
-        <h4>External Reviewer Assignments</h4>
-        {external.map((r, i) => (
-          <div key={r.id || i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
-            <input placeholder="Journal Name" value={r.journal_name || ''} onChange={e => setExternal(prev => prev.map((p,idx) => idx === i ? { ...p, journal_name: e.target.value } : p))} style={{ flex: 2 }} />
-            <input placeholder="Details" value={r.details || ''} onChange={e => setExternal(prev => prev.map((p,idx) => idx === i ? { ...p, details: e.target.value } : p))} style={{ flex: 3 }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <button onClick={() => saveRow('external_reviewer_assignments', r)}>Save</button>
-              <button onClick={() => deleteRow('external_reviewer_assignments', r)}>Delete</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h4 style={{ margin: 0 }}>External Reviewer Assignments</h4>
+          <button onClick={() => addRow('external_reviewer_assignments')}>+ Add External Reviewer</button>
+        </div>
+
+        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {external.map((r, i) => (
+            <div key={r.id || i} style={{ border: '1px solid #e6edf0', borderRadius: 8, padding: 12, background: '#fff', display: 'flex', gap: 12, alignItems: 'center' }}>
+              <input placeholder="Journal Name" value={r.journal_name || ''} onChange={e => setExternal(prev => prev.map((p,idx) => idx === i ? { ...p, journal_name: e.target.value } : p))} style={{ flex: 2, padding: 8 }} />
+              <input placeholder="Details" value={r.details || ''} onChange={e => setExternal(prev => prev.map((p,idx) => idx === i ? { ...p, details: e.target.value } : p))} style={{ flex: 3, padding: 8 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <button onClick={() => saveRow('external_reviewer_assignments', r)} style={{ padding: '6px 10px' }}>Save</button>
+                <button onClick={() => deleteRow('external_reviewer_assignments', r)} style={{ padding: '6px 10px', background: '#ef4444', color: '#fff' }}>Delete</button>
+              </div>
             </div>
-          </div>
-        ))}
-        <div>
-          <button onClick={() => addRow('external_reviewer_assignments')}>Add External Reviewer</button>
+          ))}
         </div>
       </section>
     </div>
