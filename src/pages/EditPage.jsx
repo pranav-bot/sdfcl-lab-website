@@ -10,6 +10,7 @@ import ResearchEditor from './edits/ResearchEditor'
 import PublicationsEditor from './edits/PublicationsEditor'
 import CitationsEditor from './edits/CitationsEditor'
 import AboutEditor from './edits/AboutEditor'
+import TeachingEditor from './edits/TeachingEditor'
 
 // Supabase client (matches LoginPage usage)
 const supabase = createClient(
@@ -59,6 +60,7 @@ export default function EditPage() {
           // keep Home so the in-place Home editor stays available, then mirror the site navbar
           'Home',
           'Group',
+          'Teaching',
           'Publications',
           'Projects',
           'Gallery',
@@ -73,6 +75,7 @@ export default function EditPage() {
           const keyMap = {
             Home: 'home',
             Group: 'group',
+            Teaching: 'teaching',
             Research: 'research',
             Publications: 'publications',
             Projects: 'projects',
@@ -110,6 +113,8 @@ export default function EditPage() {
       <div style={{ marginTop: '1.5rem' }}>
         {selectedPage === 'home' ? (
           <HomeEditor />
+        ) : selectedPage === 'teaching' ? (
+          <TeachingEditor />
         ) : selectedPage === 'projects' ? (
           <ProjectsEditor />
         ) : selectedPage === 'group' ? (
