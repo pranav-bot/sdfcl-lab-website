@@ -26,33 +26,19 @@ function HomePage() {
   const [homeLoading, setHomeLoading] = useState(true)
 
   // logos state and loader
-  const [logosList, setLogosList] = useState([])
-  const [logosError, setLogosError] = useState(null)
-  const [loadingLogos, setLoadingLogos] = useState(false)
+  // collaborator logos are managed elsewhere; not used on this page
 
   // topics state + loader (new)
   const [topics, setTopics] = useState([])
   const [topicsError, setTopicsError] = useState(null)
   const [loadingTopics, setLoadingTopics] = useState(false)
+  // announcements
+  const [announcements, setAnnouncements] = useState([])
+  const [loadingAnnouncements, setLoadingAnnouncements] = useState(false)
+  const [announcementsError, setAnnouncementsError] = useState(null)
   // home page data from DB
 
-  async function loadLogos() {
-    setLogosError(null)
-    setLoadingLogos(true)
-    try {
-      const res = await supabase.storage.from('assets').list('Logos/Collaborators', { limit: 500 })
-      if (!res.error && res.data && res.data.length > 0) {
-        const urls = res.data.map((f) => supabase.storage.from('assets').getPublicUrl(`Logos/Collaborators/${f.name}`).data.publicUrl)
-        setLogosList(urls)
-        return
-      }
-      // no logos found -> leave logosList empty
-    } catch (err) {
-      setLogosError(String(err))
-    } finally {
-      setLoadingLogos(false)
-    }
-  }
+
 
   async function loadBackgroundVideos() {
   setVideoError(null)
@@ -138,6 +124,25 @@ function HomePage() {
     }
   }
 
+  async function loadAnnouncements() {
+    setAnnouncementsError(null)
+    setLoadingAnnouncements(true)
+    try {
+  const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(5)
+      if (error) {
+        setAnnouncementsError(error.message || String(error))
+        return
+      }
+  // ensure descending by created_at and limit to 5 on client as safety
+  const sorted = Array.isArray(data) ? data.slice().sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0,5) : []
+  setAnnouncements(sorted)
+    } catch (err) {
+      setAnnouncementsError(String(err))
+    } finally {
+      setLoadingAnnouncements(false)
+    }
+  }
+
   // load home page data from DB
 
 
@@ -181,9 +186,9 @@ function HomePage() {
 
   // load videos & logos & topics once on mount
   useEffect(() => {
-    loadBackgroundVideos()
-    loadLogos()
+  loadBackgroundVideos()
   loadTopics() // <-- added
+  loadAnnouncements()
   loadHomeFromDB()
   }, [])
 
@@ -250,6 +255,44 @@ function HomePage() {
             <p style={contentFont}>{homeLoading ? 'Loading content...' : (homeContent || '')}</p>
           </div>
         </div>
+
+        {/* Announcements block: appears just under Who We Are */}
+        {(loadingAnnouncements || announcements.length > 0) && (
+          <div className="parallax-section announcements fade-in-up" style={{ backgroundColor: '#011317' }}>
+            <h1 style={headingfont}>Announcements</h1>
+            <Separator />
+
+            {announcementsError && <div style={{ color: 'red', textAlign: 'center' }}>{announcementsError}</div>}
+
+            <div className="announcements-list" style={{ width: '100%', maxWidth: 900, margin: '0 auto' }}>
+              {loadingAnnouncements ? (
+                <div style={{ textAlign: 'center', padding: 12 }}>Loading announcements...</div>
+              ) : announcements && announcements.length > 0 ? (
+                announcements.map((a) => {
+                  const created = a.created_at ? new Date(a.created_at) : null
+                  const isNew = created ? ((Date.now() - created.getTime()) <= 7 * 24 * 60 * 60 * 1000) : false
+                  return (
+                  <div key={a.id} className="announcement-item">
+                    <div className="announcement-header">
+                      <strong style={{ fontSize: '1.05rem' }}>{a.title || 'Untitled'}</strong>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        {a.link ? (
+                          <a href={a.link} target="_blank" rel="noreferrer" style={{ color: '#9bd8cf', fontSize: '0.95rem' }}>Link</a>
+                        ) : null}
+                        <span className="announcement-date">{a.created_at ? new Date(a.created_at).toLocaleDateString() : ''}</span>
+                        {isNew && <span className="announcement-new">NEW</span>}
+                      </div>
+                    </div>
+                    {a.content ? <p className="announcement-content">{a.content}</p> : null}
+                  </div>
+                  )
+                })
+              ) : (
+                <div style={{ textAlign: 'center', padding: 12, color: '#c7efe7' }}>No announcements at the moment.</div>
+              )}
+            </div>
+          </div>
+        )}
 
               {/* Separate Section for Research & Teaching Summary */}
       {/* <div className="research-teaching-summary"> */}

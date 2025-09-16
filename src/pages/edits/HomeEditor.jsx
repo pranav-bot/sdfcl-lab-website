@@ -14,6 +14,93 @@ export default function HomeEditor() {
   const [whoParagraph, setWhoParagraph] = useState('')
   const [whoLoading, setWhoLoading] = useState(true)
   // research boxes removed from editor (migrated to Research page)
+  // Announcements editor state
+  const [announcements, setAnnouncements] = useState([])
+  const [loadingAnnouncements, setLoadingAnnouncements] = useState(false)
+  const [announcementsError, setAnnouncementsError] = useState(null)
+  const [newAnnouncement, setNewAnnouncement] = useState({ title: '', content: '', link: '' })
+  const [savingAnnouncement, setSavingAnnouncement] = useState(false)
+  // Announcements CRUD
+  async function loadAnnouncements() {
+    setLoadingAnnouncements(true)
+    setAnnouncementsError(null)
+    try {
+      const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(5)
+      if (error) throw error
+      setAnnouncements(Array.isArray(data) ? data : [])
+    } catch (err) {
+      setAnnouncementsError(err.message || String(err))
+    } finally {
+      setLoadingAnnouncements(false)
+    }
+  }
+
+  async function saveAnnouncement(idx) {
+    setSavingAnnouncement(true)
+    try {
+      const a = announcements[idx]
+      if (!a.title?.trim()) throw new Error('Title required')
+      const payload = {
+        title: a.title,
+        content: a.content,
+        link: a.link,
+        created_at: a.created_at || new Date().toISOString(),
+      }
+      if (a.id) payload.id = a.id
+      const { error } = await supabase.from('announcements').upsert(payload)
+      if (error) throw error
+      await loadAnnouncements()
+    } catch (err) {
+      setAnnouncementsError(err.message || String(err))
+    } finally {
+      setSavingAnnouncement(false)
+    }
+  }
+
+  async function deleteAnnouncement(idx) {
+    const a = announcements[idx]
+    if (!a?.id) return
+    if (!confirm(`Delete announcement "${a.title}"?`)) return
+    setSavingAnnouncement(true)
+    try {
+      const { error } = await supabase.from('announcements').delete().eq('id', a.id)
+      if (error) throw error
+      await loadAnnouncements()
+    } catch (err) {
+      setAnnouncementsError(err.message || String(err))
+    } finally {
+      setSavingAnnouncement(false)
+    }
+  }
+
+  async function addAnnouncement() {
+    setSavingAnnouncement(true)
+    try {
+      if (!newAnnouncement.title?.trim()) throw new Error('Title required')
+      const payload = {
+        title: newAnnouncement.title,
+        content: newAnnouncement.content,
+        link: newAnnouncement.link,
+        created_at: new Date().toISOString(),
+      }
+      const { error } = await supabase.from('announcements').insert(payload)
+      if (error) throw error
+      setNewAnnouncement({ title: '', content: '', link: '' })
+      await loadAnnouncements()
+    } catch (err) {
+      setAnnouncementsError(err.message || String(err))
+    } finally {
+      setSavingAnnouncement(false)
+    }
+  }
+
+  function updateAnnouncementField(idx, field, value) {
+    setAnnouncements(prev => {
+      const copy = [...prev]
+      copy[idx] = { ...copy[idx], [field]: value }
+      return copy
+    })
+  }
   const [homeRow, setHomeRow] = useState(null)
   const [saved, setSaved] = useState(false)
   const [whoSaving, setWhoSaving] = useState(false)
@@ -22,17 +109,7 @@ export default function HomeEditor() {
   const [loadingVideos, setLoadingVideos] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [videoError, setVideoError] = useState(null)
-  // Logos management
-  const [logos, setLogos] = useState([])
-  const [loadingLogos, setLoadingLogos] = useState(false)
-  const [uploadingLogos, setUploadingLogos] = useState(false)
-  const [logosError, setLogosError] = useState(null)
-
-  // Topics (DB-backed)
-  const [topics, setTopics] = useState([])
-  const [loadingTopics, setLoadingTopics] = useState(false)
-  const [savingTopics, setSavingTopics] = useState(false)
-  const [topicsError, setTopicsError] = useState(null)
+  
 
   async function handleSave() {
     // save basic home fields
@@ -139,56 +216,11 @@ export default function HomeEditor() {
   }
 
   // --- Logos management ---
-  async function loadLogos() {
-    setLoadingLogos(true)
-    setLogosError(null)
-    try {
-  const { data, error } = await supabase.storage.from('assets').list('Logos/Collaborators')
-      if (error) throw error
-  const withUrls = data.map((f) => ({ name: f.name, url: supabase.storage.from('assets').getPublicUrl(`Logos/Collaborators/${f.name}`).data.publicUrl }))
-      setLogos(withUrls)
-    } catch (err) {
-      setLogosError(err.message || String(err))
-    } finally {
-      setLoadingLogos(false)
-    }
-  }
-
-  async function handleDeleteLogo(name) {
-    if (!confirm(`Delete logo ${name}? This will remove the file from the storage bucket.`)) return
-    setLogosError(null)
-    try {
-  const { error } = await supabase.storage.from('assets').remove([`Logos/Collaborators/${name}`])
-      if (error) throw error
-      await loadLogos()
-    } catch (err) {
-      setLogosError(err.message || String(err))
-    }
-  }
-
-  async function handleUploadLogos(files) {
-    if (!files || files.length === 0) return
-    setUploadingLogos(true)
-    setLogosError(null)
-    try {
-      for (const file of Array.from(files)) {
-        const path = `Logos/Collaborators/${file.name}`
-        const { error } = await supabase.storage.from('assets').upload(path, file, { upsert: true })
-        if (error) throw error
-      }
-      await loadLogos()
-    } catch (err) {
-      setLogosError(err.message || String(err))
-    } finally {
-      setUploadingLogos(false)
-    }
-  }
 
   // load videos on mount
   useEffect(() => {
     loadVideos()
-    loadLogos()
-    loadTopicsFromDB()
+    loadAnnouncements()
     // inline loadHomeFromDB to avoid dependency warnings
     ;(async () => {
       try {
@@ -219,84 +251,7 @@ export default function HomeEditor() {
   // loadHomeFromDB removed (inline used in useEffect)
 
   // --- Topics (DB) management ---
-  async function loadTopicsFromDB() {
-    setLoadingTopics(true)
-    setTopicsError(null)
-    try {
-      const { data, error } = await supabase.from('topics').select('*').order('id', { ascending: true })
-      console.log(data)
-      if (error) throw error
-      // ensure array
-      setTopics(Array.isArray(data) ? data : [])
-    } catch (err) {
-      setTopicsError(err.message || String(err))
-    } finally {
-      setLoadingTopics(false)
-    }
-  }
-
-  async function handleUploadTopicImage(file, index) {
-    if (!file) return
-    try {
-      const path = `Topics/${file.name}`
-      const { error } = await supabase.storage.from('assets').upload(path, file, { upsert: true })
-      if (error) throw error
-      // set the topic image path so frontend resolver can turn it into a public URL
-      setTopics((prev) => {
-        const copy = [...prev]
-        copy[index] = { ...copy[index], image: path }
-        return copy
-      })
-    } catch (err) {
-      setTopicsError(err.message || String(err))
-    }
-  }
-
-  function addTopic() {
-    setTopics((t) => [...t, { title: '', description: '', image: '' }])
-  }
-
-  function updateTopicField(index, field, value) {
-    setTopics((prev) => {
-      const copy = [...prev]
-      copy[index] = { ...copy[index], [field]: value }
-      return copy
-    })
-  }
-
-  async function deleteTopic(index) {
-    const t = topics[index]
-    if (!t) return
-    if (t.id) {
-      if (!confirm(`Delete topic "${t.title || t.id}" from database?`)) return
-      try {
-        const { error } = await supabase.from('topics').delete().eq('id', t.id)
-        if (error) throw error
-        await loadTopicsFromDB()
-      } catch (err) {
-        setTopicsError(err.message || String(err))
-      }
-    } else {
-      // local only, remove
-      setTopics((prev) => prev.filter((_, i) => i !== index))
-    }
-  }
-
-  async function saveTopicsToDB() {
-    setSavingTopics(true)
-    setTopicsError(null)
-    try {
-      // upsert all topics. New records without id will be inserted.
-      const { error } = await supabase.from('topics').upsert(topics).select()
-      if (error) throw error
-      // refresh from DB to get assigned ids and normalized rows
-      await loadTopicsFromDB()
-    } catch (err) {
-      setTopicsError(err.message || String(err))
-    } finally {
-      setSavingTopics(false)
-    }
-  }
+  
 
   // research boxes preview removed
 
@@ -351,73 +306,74 @@ export default function HomeEditor() {
             </div>
           )}
         </div>
-        <hr style={{ margin: '12px 0' }} />
-        <h4 style={{ marginTop: 0, color: '#000' }}>Collaborator Logos (from storage)</h4>
-        <input type="file" accept="image/*" multiple onChange={(e) => handleUploadLogos(e.target.files)} />
-        <div style={{ marginTop: 8 }}>{uploadingLogos ? <small>Uploading logos...</small> : <small style={{ color: '#666' }}>You can upload multiple logos. Existing files with the same name will be replaced.</small>}</div>
-        <div style={{ marginTop: 8 }}>
-          <button onClick={loadLogos} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff' }}>Refresh Logos</button>
+        <hr style={{ margin: '18px 0' }} />
+        <h4 style={{ marginTop: 0, color: '#000' }}>Edit Announcements</h4>
+        {announcementsError && <div style={{ color: 'red', marginBottom: 8 }}>{announcementsError}</div>}
+        <div style={{ marginBottom: 18 }}>
+          <label style={{ fontWeight: 600 }}>Add New Announcement</label>
+          <input
+            value={newAnnouncement.title}
+            onChange={e => setNewAnnouncement(a => ({ ...a, title: e.target.value }))}
+            placeholder="Title"
+            style={{ width: '100%', padding: 6, margin: '6px 0' }}
+            disabled={savingAnnouncement}
+          />
+          <textarea
+            value={newAnnouncement.content}
+            onChange={e => setNewAnnouncement(a => ({ ...a, content: e.target.value }))}
+            placeholder="Content"
+            rows={2}
+            style={{ width: '100%', padding: 6, margin: '6px 0' }}
+            disabled={savingAnnouncement}
+          />
+          <input
+            value={newAnnouncement.link}
+            onChange={e => setNewAnnouncement(a => ({ ...a, link: e.target.value }))}
+            placeholder="Link (optional)"
+            style={{ width: '100%', padding: 6, margin: '6px 0' }}
+            disabled={savingAnnouncement}
+          />
+          <button onClick={addAnnouncement} disabled={savingAnnouncement || !newAnnouncement.title.trim()} style={{ padding: '6px 12px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 6, marginTop: 6 }}>Add Announcement</button>
         </div>
-        <div style={{ marginTop: 12 }}>
-          {loadingLogos ? (
-            <p>Loading logos...</p>
-          ) : logosError ? (
-            <p style={{ color: 'red' }}>{logosError}</p>
-          ) : logos.length === 0 ? (
-            <p style={{ color: '#666' }}>No logos found in <code>assets/Logos/Collaborators/</code>.</p>
+        <div>
+          <label style={{ fontWeight: 600 }}>Recent Announcements</label>
+          {loadingAnnouncements ? (
+            <div style={{ color: '#666', margin: '8px 0' }}>Loading...</div>
+          ) : announcements.length === 0 ? (
+            <div style={{ color: '#666', margin: '8px 0' }}>No announcements found.</div>
           ) : (
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              {logos.map((v) => (
-                <div key={v.name} style={{ width: 120, border: '1px solid #eee', padding: 8, borderRadius: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <img src={v.url} alt={v.name} style={{ maxWidth: '100%', maxHeight: 70, objectFit: 'contain' }} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 8 }}>
-                    <small style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.name}</small>
-                    <button onClick={() => handleDeleteLogo(v.name)} style={{ border: 'none', background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: 6, cursor: 'pointer' }}>Delete</button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {announcements.map((a, idx) => (
+                <div key={a.id || idx} style={{ border: '1px solid #e5e7eb', borderRadius: 6, padding: 10, background: '#f6f8fa' }}>
+                  <input
+                    value={a.title || ''}
+                    onChange={e => updateAnnouncementField(idx, 'title', e.target.value)}
+                    style={{ width: '100%', padding: 6, fontWeight: 600, marginBottom: 4 }}
+                    disabled={savingAnnouncement}
+                  />
+                  <textarea
+                    value={a.content || ''}
+                    onChange={e => updateAnnouncementField(idx, 'content', e.target.value)}
+                    rows={2}
+                    style={{ width: '100%', padding: 6, marginBottom: 4 }}
+                    disabled={savingAnnouncement}
+                  />
+                  <input
+                    value={a.link || ''}
+                    onChange={e => updateAnnouncementField(idx, 'link', e.target.value)}
+                    placeholder="Link (optional)"
+                    style={{ width: '100%', padding: 6, marginBottom: 4 }}
+                    disabled={savingAnnouncement}
+                  />
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <button onClick={() => saveAnnouncement(idx)} disabled={savingAnnouncement || !a.title.trim()} style={{ padding: '6px 10px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 6 }}>Save</button>
+                    <button onClick={() => deleteAnnouncement(idx)} disabled={savingAnnouncement} style={{ padding: '6px 10px', background: '#ef4444', color: 'white', border: 'none', borderRadius: 6 }}>Delete</button>
+                    <span style={{ color: '#666', fontSize: 12 }}>{a.created_at ? new Date(a.created_at).toLocaleDateString() : ''}</span>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
-        <hr style={{ margin: '12px 0' }} />
-        <h4 style={{ marginTop: 0, color: 'black'}}>Edit Topics (DB)</h4>
-        {loadingTopics ? <small>Loading topics...</small> : topicsError ? <small style={{ color: 'red' }}>{topicsError}</small> : null}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
-          {topics.map((t, i) => {
-            // determine a preview src: prefer explicit url, else resolve storage path
-            let previewSrc = t.image || t.image_path || t.image_url || ''
-            if (previewSrc && !previewSrc.startsWith('http')) {
-              try {
-                const urlData = supabase.storage.from('assets').getPublicUrl(previewSrc)
-                previewSrc = urlData?.data?.publicUrl || previewSrc
-              } catch {
-                // keep original string
-              }
-            }
-
-            return (
-              <div key={i} style={{ border: '1px solid #e5e7eb', padding: 8, borderRadius: 6 }}>
-                {previewSrc ? (
-                  <div style={{ marginBottom: 8, textAlign: 'center' }}>
-                    <img src={previewSrc} alt={t.title || `topic-${i}`} style={{ maxWidth: '160px', maxHeight: 90, objectFit: 'cover', borderRadius: 6 }} />
-                  </div>
-                ) : null}
-
-                <input value={t.title || ''} onChange={(e) => updateTopicField(i, 'title', e.target.value)} placeholder="Title" style={{ width: '100%', padding: 6 }} />
-                <textarea value={t.description || ''} onChange={(e) => updateTopicField(i, 'description', e.target.value)} rows={2} style={{ width: '100%', padding: 6, marginTop: 6 }} placeholder="Description" />
-                <div style={{ display: 'flex', gap: 8, marginTop: 6, alignItems: 'center' }}>
-                  <input type="file" accept="image/*" onChange={(e) => handleUploadTopicImage(e.target.files?.[0], i)} />
-                  <input value={t.image || ''} onChange={(e) => updateTopicField(i, 'image', e.target.value)} placeholder="image path or url" style={{ flex: 1, padding: 6 }} />
-                  <button onClick={() => deleteTopic(i)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 8px', borderRadius: 6 }}>Delete</button>
-                </div>
-              </div>
-            )
-          })}
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={addTopic} style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff' }}>Add Topic</button>
-            <button onClick={saveTopicsToDB} style={{ padding: '6px 8px', borderRadius: 6, background: '#2563eb', color: '#fff', border: 'none' }}>{savingTopics ? 'Saving...' : 'Save to DB'}</button>
-            <button onClick={loadTopicsFromDB} style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff' }}>Refresh from DB</button>
-          </div>
         </div>
       </aside>
     </div>

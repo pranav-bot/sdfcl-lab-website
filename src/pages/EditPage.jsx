@@ -59,13 +59,11 @@ export default function EditPage() {
           // keep Home so the in-place Home editor stays available, then mirror the site navbar
           'Home',
           'Group',
-          'Research',
           'Publications',
           'Projects',
           'Gallery',
           'Citations',
           'Collaborators',
-          'About Us',
         ].map((item) => {
           const path =
             item === 'Home'

@@ -277,4 +277,45 @@ flex: 1 1 100%;
     object-fit: contain;
     border-radius: 8px;
   }
-  
+  /* Announcements styling */
+  .announcements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 20px 40px 20px;
+  }
+
+  .announcement-item {
+    background: rgba(3, 21, 21, 0.6);
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 14px;
+    border-radius: 8px;
+    color: #c7efe7;
+    text-align: left;
+  }
+
+  .announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .announcement-date {
+    color: #9bd8cf;
+    font-size: 0.9rem;
+  }
+
+  .announcement-content { margin: 0; color: #c7efe7 }
+
+  .announcement-new {
+    display: inline-block;
+    background: #ff6b6b;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    margin-left: 8px;
+  }
+    
