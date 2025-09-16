@@ -1,0 +1,284 @@
+.outreach-page {
+  /* Fonts imported below */
+}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&family=Roboto+Mono:wght@100;200;400;700&family=Space+Mono:wght@400;700;800&family=Ubuntu:wght@300;400;700&display=swap');
+/* OutreachPage styles: centered title, logo, white text, responsive card layout */
+.outreach-page {
+  padding: 48px 20px;
+  color: #ffffff; /* default white text */
+  background: linear-gradient(180deg, #021212 0%, #011317 100%);
+  min-height: 60vh;
+}
+.outreach-header-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.outreach-logo {
+  .outreach-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .outreach-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: #031515;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .outreach-left { display:flex; align-items:center; justify-content:center; flex: 0 0 220px }
+  .outreach-image { width: 220px; height: 160px; object-fit: cover; border-radius: 8px }
+  .outreach-right { flex: 1; color: #d7f3ef }
+  .outreach-title { color: #fff; margin: 0 0 8px 0; font-weight: 700; font-size: 1.15rem }
+  .outreach-desc { margin: 0 0 8px 0; color: #c7efe7 }
+
+  @media (max-width: 800px) {
+    .outreach-row { flex-direction: column }
+    .outreach-left { flex: none }
+    .outreach-image { width: 100%; height: auto; max-height: 240px }
+  }
+  width: 100%;
+  max-height: 260px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+}
+.outreach-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.outreach-body {
+  padding: 18px;
+  color: #ffffff; /* ensure white text */
+}
+.outreach-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+.outreach-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+.new-badge {
+  background: #ff6b6b;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.outreach-meta {
+  font-size: 0.86rem;
+  color: rgba(255,255,255,0.75);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.outreach-content {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: #e6f7f3; /* slightly off-white for readability */
+  white-space: pre-wrap; /* preserve line breaks */
+}
+/* Make sure long content stays visible and doesn't get truncated */
+.outreach-content {
+  max-height: none;
+}
+/* Small screens: make cards roomy */
+@media (max-width: 420px) {
+  .page-title {
+  font-size: 1.6rem;
+  }
+  .outreach-body {
+  padding: 14px;
+  }
+}
+.outreach-page {
+  padding: 2rem 1rem;
+}
+.page-title {
+  color: #ffffff;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.outreach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+.outreach-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 0.75rem;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.outreach-card:focus,
+.outreach-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+  outline: none;
+}
+.outreach-thumb {
+  width: 100%;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.outreach-thumb img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+.outreach-body {
+  padding: 0.6rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.outreach-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  justify-content: space-between;
+}
+.outreach-title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+.new-badge {
+  background: #ff6b6b;
+  color: white;
+  font-weight: 700;
+  padding: 0.18rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+}
+.outreach-meta {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.65);
+}
+.outreach-content {
+  margin: 0;
+  color: rgba(255,255,255,0.92);
+  display: block;
+  overflow: visible; /* show full content */
+  white-space: pre-wrap; /* preserve line breaks */
+  max-height: none; /* explicit no truncation */
+  font-family: 'Roboto Mono', 'Ubuntu', monospace;
+  font-weight: 200;
+}
+
+/* Apply requested fonts explicitly to headings/meta */
+.page-title {
+  font-family: 'Space Mono', 'Poppins', sans-serif;
+  font-weight: 800;
+}
+.outreach-title {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-weight: 800;
+}
+.outreach-meta {
+  font-family: 'Ubuntu', 'Roboto', sans-serif;
+  font-weight: 200;
+}
+
+/* Larger layout: split thumb and content side-by-side for wide screens */
+@media (min-width: 980px) {
+  .outreach-card {
+    flex-direction: row;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  .outreach-thumb {
+    width: 42%;
+    flex: 0 0 42%;
+    height: auto;
+  }
+  .outreach-thumb img {
+    height: 100%;
+    min-height: 180px;
+    object-fit: cover;
+  }
+  .outreach-body {
+    width: 58%;
+    padding: 0;
+  }
+}
+
+/* focus ring for keyboard users */
+.outreach-card:focus {
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.18), 0 10px 30px rgba(2,6,23,0.5);
+}
+
+/* small screens spacing */
+@media (max-width: 440px) {
+  .outreach-thumb img { height: 140px; }
+}
+
+  /* Row-based layout to match ProjectsPage: image left, content right */
+  .outreach-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .outreach-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+  .outreach-left {
+    flex: 0 0 auto;
+  }
+  .outreach-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .outreach-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  @media (min-width: 980px) {
+    .outreach-row {
+      flex-direction: row;
+      align-items: stretch;
+    }
+    /* fixed column width for images to keep consistent sizing */
+    .outreach-left {
+      flex: 0 0 320px; /* fixed width column */
+      max-width: 320px;
+    }
+    .outreach-right {
+      flex: 1 1 calc(100% - 320px);
+      padding-left: 1rem;
+    }
+    .outreach-image { width: 320px; height: 100%; min-height: 200px; object-fit: cover; }
+  }

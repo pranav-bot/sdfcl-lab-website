@@ -10,6 +10,7 @@ import TeamPage from "./pages/TeamPage";
 import GalleryPage from "./pages/GalleryPage";
 import TeachingPage from "./pages/TeachingPage";
 import CollaboratorsPage from "./pages/CollaboratorsPage";
+import OutreachPage from "./pages/OutreachPage";
 import Project1 from "./pages/projectPages/project1";
 import Project2 from "./pages/projectPages/project2";
 import Project3 from "./pages/projectPages/project3";
@@ -57,6 +58,7 @@ function App() {
             />
             <Route path="/sdfcl-lab-website/aboutus" element={<AboutPage />} />
             <Route path="/sdfcl-lab-website/collaborators" element={<CollaboratorsPage />} />
+            <Route path="/sdfcl-lab-website/outreach" element={<OutreachPage />} />
             <Route path="/sdfcl-lab-website/login" element={<LoginPage />} />
             <Route path="/sdfcl-lab-website/edit" element={<EditPage />} />
             <Route
