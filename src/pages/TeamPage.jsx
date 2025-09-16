@@ -293,16 +293,21 @@ function TeamPage() {
       Lab Members
     </h1>
 
-    <div style={{ marginTop: 16 }}>
+    <div style={{ marginTop: 16, display: 'flex', justifyContent: 'center', gap: 24 }}>
       <button
         onClick={() => setViewMode('current')}
         style={{
           marginRight: 8,
-          padding: '8px 12px',
+          padding: '18px 36px',
+          fontSize: '1.35rem',
+          fontWeight: 700,
+          borderRadius: 12,
           backgroundColor: viewMode === 'current' ? '#ffd700' : '#333',
           color: viewMode === 'current' ? '#000' : '#fff',
-          border: 'none',
-          cursor: 'pointer'
+          border: viewMode === 'current' ? '2px solid #ffd700' : '2px solid #333',
+          boxShadow: viewMode === 'current' ? '0 2px 12px rgba(255,215,0,0.15)' : 'none',
+          cursor: 'pointer',
+          transition: 'all 0.2s'
         }}
       >
         Current
@@ -310,11 +315,16 @@ function TeamPage() {
       <button
         onClick={() => setViewMode('alumni')}
         style={{
-          padding: '8px 12px',
+          padding: '18px 36px',
+          fontSize: '1.35rem',
+          fontWeight: 700,
+          borderRadius: 12,
           backgroundColor: viewMode === 'alumni' ? '#ffd700' : '#333',
           color: viewMode === 'alumni' ? '#000' : '#fff',
-          border: 'none',
-          cursor: 'pointer'
+          border: viewMode === 'alumni' ? '2px solid #ffd700' : '2px solid #333',
+          boxShadow: viewMode === 'alumni' ? '0 2px 12px rgba(255,215,0,0.15)' : 'none',
+          cursor: 'pointer',
+          transition: 'all 0.2s'
         }}
       >
         Alumni
