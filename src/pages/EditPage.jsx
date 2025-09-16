@@ -12,6 +12,7 @@ import CitationsEditor from './edits/CitationsEditor'
 import AboutEditor from './edits/AboutEditor'
 import TeachingEditor from './edits/TeachingEditor'
 import CollaboratorsEditor from './edits/CollaboratorsEditor'
+import OutreachEditor from './edits/OutreachEditor'
 
 // Supabase client (matches LoginPage usage)
 const supabase = createClient(
@@ -67,6 +68,7 @@ export default function EditPage() {
           'Gallery',
           'Citations',
           'Collaborators',
+          'Outreach'
         ].map((item) => {
           const path =
             item === 'Home'
@@ -83,6 +85,7 @@ export default function EditPage() {
             Gallery: 'gallery',
             Citations: 'citations',
             Collaborators: 'collaborators',
+            Outreach: 'outreach',
             'About Us': 'about'
           }
 
@@ -131,6 +134,8 @@ export default function EditPage() {
           <GalleryEditor />
         ) : selectedPage === 'collaborators' ? (
           <CollaboratorsEditor />
+        ) : selectedPage === 'outreach' ? (
+          <OutreachEditor />
         ) : selectedPage === 'about' ? (
           <AboutEditor />
         ) : (
