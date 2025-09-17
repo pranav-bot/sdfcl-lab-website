@@ -120,23 +120,25 @@ function GalleryPage() {
           <p>Loading gallery...</p>
         ) : (
           <div className="gallery-grid fade-in-up">
-            {filteredImages.map((img) => (
-              <div
-                key={img.id}
-                className="gallery-item fade-in-up"
-                onClick={() => handleImageClick(img)}
-              >
-                <img
-                  src={img.src}
-                  alt={img.caption}
-                  className="gallery-image"
-                  style={contentFont}
-                />
-                <div className="caption-overlay" style={contentFont}>
-                  <div className="caption-text">{img.caption}</div>
+            {filteredImages.map((img) => {
+              const isVideo = img.src && img.src.match(/\.(mp4|webm|ogg|mov|m4v)$/i)
+              return (
+                <div
+                  key={img.id}
+                  className="gallery-item fade-in-up"
+                  onClick={() => handleImageClick(img)}
+                >
+                  {isVideo ? (
+                    <video src={img.src} className="gallery-image" style={contentFont} muted playsInline />
+                  ) : (
+                    <img src={img.src} alt={img.caption} className="gallery-image" style={contentFont} />
+                  )}
+                  <div className="caption-overlay" style={contentFont}>
+                    <div className="caption-text">{img.caption}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
@@ -160,11 +162,11 @@ function GalleryPage() {
               ›
             </button>
 
-            <img
-              src={selectedImage.src}
-              alt={selectedImage.caption}
-              className="modal-image"
-            />
+            {selectedImage.src && selectedImage.src.match(/\.(mp4|webm|ogg|mov|m4v)$/i) ? (
+              <video src={selectedImage.src} className="modal-image" controls />
+            ) : (
+              <img src={selectedImage.src} alt={selectedImage.caption} className="modal-image" />
+            )}
             <p className="modal-caption" style={contentFont}>
               {selectedImage.caption}
             </p>

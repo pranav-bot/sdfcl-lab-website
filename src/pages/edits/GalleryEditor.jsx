@@ -60,9 +60,13 @@ export default function GalleryEditor() {
     setSaving(true); setSavingIndex(i); setError(null)
     try {
       const payload = { src: r.src || '', caption: r.caption || '', category: r.category || '' }
-      if (r.id) payload.id = r.id
-      const { error } = await supabase.from('gallery').upsert(payload).select()
-      if (error) throw error
+      if (r.id) {
+        const { error } = await supabase.from('gallery').update(payload).eq('id', r.id).select()
+        if (error) throw error
+      } else {
+        const { error } = await supabase.from('gallery').insert(payload).select()
+        if (error) throw error
+      }
       await loadGallery()
     } catch (err) { setError(err.message || String(err)) }
     finally { setSaving(false); setSavingIndex(null) }
@@ -103,16 +107,45 @@ export default function GalleryEditor() {
 
                 <div className="ge-actions">
                   <label className="file-label">
-                    <input className="file-input" type="file" accept="image/*" onChange={(e) => uploadImage(e.target.files?.[0], i)} />
+                    <input className="file-input" type="file" accept="image/*,video/*" onChange={(e) => uploadImage(e.target.files?.[0], i)} />
                     <span>Upload</span>
                   </label>
                   <div className="file-name">{r._fileName || getFileName(r.src) || 'No file'}</div>
-                  <button className="btn" onClick={() => saveRow(i)} disabled={saving && savingIndex !== i}>{savingIndex === i ? 'Saving...' : 'Save'}</button>
+                  <button
+                    onClick={() => saveRow(i)}
+                    disabled={saving && savingIndex !== i}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '8px 12px',
+                      borderRadius: 8,
+                      background: (saving && savingIndex === i) ? '#999' : '#ffd700',
+                      color: (saving && savingIndex === i) ? '#222' : '#000',
+                      border: 'none',
+                      cursor: (saving && savingIndex !== i) ? 'not-allowed' : 'pointer',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)'
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 4H19V20H5V4Z" stroke="#000" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M5 8H19" stroke="#000" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span style={{ fontWeight: 700 }}>{savingIndex === i ? 'Saving...' : 'Save'}</span>
+                  </button>
                   <button className="btn btn-danger" onClick={() => deleteRow(i)}>Delete</button>
                 </div>
               </div>
               <div className="ge-card-right">
-                {r.preview ? <img src={r.preview} alt={r.caption} className="ge-preview" /> : <div className="ge-noimg">No image</div>}
+                {r.preview ? (
+                  (r._fileName && r._fileName.match(/\.(mp4|webm|ogg|mov|m4v)$/i)) || (r.preview && r.preview.match(/\.(mp4|webm|ogg|mov|m4v)$/i)) ? (
+                    <video src={r.preview} className="ge-preview" controls />
+                  ) : (
+                    <img src={r.preview} alt={r.caption} className="ge-preview" />
+                  )
+                ) : (
+                  <div className="ge-noimg">No image</div>
+                )}
               </div>
             </div>
           ))}
