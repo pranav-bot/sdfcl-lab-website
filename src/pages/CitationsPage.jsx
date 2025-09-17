@@ -19,9 +19,7 @@ function CitationsPage() {
   const [talks, setTalks] = useState({})
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showCitations, setShowCitations] = useState(true)
-  const [showTalks, setShowTalks] = useState(true)
-  const [showExternal, setShowExternal] = useState(true)
+  // simplified layout: no collapsible sections
 
   useEffect(() => {
     let mounted = true;
@@ -91,8 +89,11 @@ function CitationsPage() {
     return (e.journal_name && e.journal_name.toLowerCase().includes(s))
   }
 
-  const totalCitations = Object.values(citations).flat().length
-  const totalTalks = Object.values(talks).flat().length
+  // flatten grouped objects into arrays for simple grids
+  const flatCitations = Object.values(citations).flat()
+  const flatTalks = Object.values(talks).flat()
+  const totalCitations = flatCitations.length
+  const totalTalks = flatTalks.length
   const totalExternal = external.length
 
   return (
@@ -131,100 +132,77 @@ function CitationsPage() {
           <div style={{ color: 'salmon', padding: 12 }}>{error}</div>
         ) : (
           <div>
-            {/* Academic citations grouped by year (collapsible) */}
+            {/* Academic citations - simplified flat grid */}
             <div className="panel">
               <div className="panel-header">
                 <div>
                   <h2 style={headingfont} className="panel-title">Citations</h2>
-                  <div className="panel-sub">Grouped by year — {totalCitations} total</div>
-                </div>
-                <div>
-                  <button className="toggle-button" onClick={() => setShowCitations(s => !s)}>{showCitations ? 'Hide' : 'Show'}</button>
+                  <div className="panel-sub">{totalCitations} total</div>
                 </div>
               </div>
-              {showCitations && (
-                <div className="panel-body">
-                  {Object.keys(citations).sort((a,b) => b - a).map(year => {
-                    const list = (citations[year] || []).filter(matchesSearch)
-                    if (list.length === 0) return null
-                    return (
-                      <div key={year} className="year-section">
-                        <h3 style={headingfont} className="year-title">{year}</h3>
-                        <div className="cards-grid">
-                          {list.map((c, idx) => (
-                            <div key={idx} className="citation-card">
-                              <div className="citation-title">{c.title}</div>
-                              {c.organization && <div className="citation-org">{c.organization}</div>}
-                              {c.description && <div className="citation-desc">{c.description}</div>}
-                            </div>
-                          ))}
-                        </div>
+              <div className="panel-body">
+                {flatCitations.filter(matchesSearch).length > 0 ? (
+                  <div className="cards-grid">
+                    {flatCitations.filter(matchesSearch).map((c, idx) => (
+                      <div key={c.id || idx} className="citation-card">
+                        <div className="citation-title">{c.title}</div>
+                        {c.organization && <div className="citation-org">{c.organization}</div>}
+                        {c.description && <div className="citation-desc">{c.description}</div>}
                       </div>
-                    )
-                  })}
-                </div>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ color: '#999' }}>No citations match your search.</div>
+                )}
+              </div>
             </div>
 
             {/* Invited talks / assignments (come before external) */}
+            {/* Talks & assignments - simplified flat grid */}
             <div className="panel">
               <div className="panel-header">
                 <div>
                   <h2 style={headingfont} className="panel-title">Assignments & Invited Talks</h2>
-                  <div className="panel-sub">{totalTalks} records — grouped by year</div>
-                </div>
-                <div>
-                  <button className="toggle-button" onClick={() => setShowTalks(s => !s)}>{showTalks ? 'Hide' : 'Show'}</button>
+                  <div className="panel-sub">{totalTalks} records</div>
                 </div>
               </div>
-              {showTalks && (
-                <div className="panel-body">
-                  {Object.keys(talks).sort((a,b) => b - a).map(year => {
-                    const list = (talks[year] || []).filter(matchesTalkSearch)
-                    if (list.length === 0) return null
-                    return (
-                      <div key={year} className="year-section">
-                        <h3 style={headingfont} className="year-title">{year}</h3>
-                        <div className="cards-grid">
-                          {list.map((t, idx) => (
-                            <div key={idx} className="citation-card">
-                              <div className="citation-title">{t.title}</div>
-                              <div className="citation-org">{t.event || t.location}</div>
-                              <div className="citation-desc">{t.type}{t.role ? ` — ${t.role}` : ''}{t.date ? ` • ${t.date}` : ''}</div>
-                            </div>
-                          ))}
-                        </div>
+              <div className="panel-body">
+                {flatTalks.filter(matchesTalkSearch).length > 0 ? (
+                  <div className="cards-grid">
+                    {flatTalks.filter(matchesTalkSearch).map((t, idx) => (
+                      <div key={t.id || idx} className="citation-card">
+                        <div className="citation-title">{t.title}</div>
+                        <div className="citation-org">{t.event || t.location}</div>
+                        <div className="citation-desc">{t.type}{t.role ? ` — ${t.role}` : ''}{t.date ? ` • ${t.date}` : ''}</div>
                       </div>
-                    )
-                  })}
-                </div>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ color: '#999' }}>No talks match your search.</div>
+                )}
+              </div>
             </div>
 
             {/* External reviewer assignments (now after talks) */}
+            {/* External reviewers - simple list/grid */}
             <div className="panel">
               <div className="panel-header">
                 <div>
                   <h2 style={headingfont} className="panel-title">External Reviewer Assignments</h2>
                   <div className="panel-sub">{totalExternal} journals</div>
                 </div>
-                <div>
-                  <button className="toggle-button" onClick={() => setShowExternal(s => !s)}>{showExternal ? 'Hide' : 'Show'}</button>
-                </div>
               </div>
-              {showExternal && (
-                <div className="panel-body">
-                  {external && external.length > 0 ? (
-                    <div className="cards-grid">
-                      {external.filter(matchesExternalSearch).map((e) => (
-                        <div key={e.id} className="citation-card small-card">{e.journal_name}</div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div style={{ color: '#999' }}>No external reviewer assignments found.</div>
-                  )}
-                </div>
-              )}
+              <div className="panel-body">
+                {external && external.filter(matchesExternalSearch).length > 0 ? (
+                  <div className="cards-grid">
+                    {external.filter(matchesExternalSearch).map((e) => (
+                      <div key={e.id} className="citation-card small-card">{e.journal_name}</div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ color: '#999' }}>No external reviewer assignments found.</div>
+                )}
+              </div>
             </div>
           </div>
         )}
