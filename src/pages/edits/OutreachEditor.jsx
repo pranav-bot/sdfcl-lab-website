@@ -106,7 +106,7 @@ export default function OutreachEditor() {
       if (hasId) {
         const res = await supabase.from('outreach').update(payload).eq('id', it.id).select()
         if (res.error) throw res.error
-      } else {
+      } else {  
         const res = await supabase.from('outreach').insert(payload).select()
         if (res.error) throw res.error
       }

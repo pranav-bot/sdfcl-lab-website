@@ -31,14 +31,14 @@ export default function EditPage() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setLoading(false)
-      if (!session) navigate('/sdfcl-lab-website/login')
+      if (!session) navigate('/login')
     })
 
     // listen for changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setLoading(false)
-      if (!session) navigate('/sdfcl-lab-website/login')
+      if (!session) navigate('/login')
     })
 
     return () => subscription.unsubscribe()
@@ -72,8 +72,8 @@ export default function EditPage() {
         ].map((item) => {
           const path =
             item === 'Home'
-              ? '/sdfcl-lab-website/'
-              : `/sdfcl-lab-website/${item.toLowerCase().replace(/\s/g, '')}`
+              ? '/'
+              : `/${item.toLowerCase().replace(/\s/g, '')}`
 
           const keyMap = {
             Home: 'home',

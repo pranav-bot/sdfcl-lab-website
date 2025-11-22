@@ -25,65 +25,66 @@ import ProjectsPage from "./pages/ProjectsPage";
 
 function App() {
   return (
-    <Router>
+
+    <Router basename="/~dkgiri/">
       <div className="app-container">
         <Nbar />
         <div className="main-content">
           <Routes>
-            <Route path="/sdfcl-lab-website/" element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
             <Route
-              path="/sdfcl-lab-website/research"
+              path="/research"
               element={<ResearchPage />}
             />
             <Route
-              path="/sdfcl-lab-website/research&projects"
+              path="/research&projects"
               element={<ProjectsPage />}
             />
             <Route
-              path="/sdfcl-lab-website/gallery"
+              path="/gallery"
               element={<GalleryPage />}
             />
             <Route
-              path="/sdfcl-lab-website/publications"
+              path="/publications"
               element={<PublicationsPage />}
             />
             <Route
-              path="/sdfcl-lab-website/citations"
+              path="/citations"
               element={<CitationsPage />}
             />
-            <Route path="/sdfcl-lab-website/group" element={<TeamPage />} />
+            <Route path="/group" element={<TeamPage />} />
             <Route
-              path="/sdfcl-lab-website/openings"
+              path="/openings"
               element={<OpeningsPage />}
             />
-            <Route path="/sdfcl-lab-website/aboutus" element={<AboutPage />} />
-            <Route path="/sdfcl-lab-website/collaborators" element={<CollaboratorsPage />} />
-            <Route path="/sdfcl-lab-website/outreach" element={<OutreachPage />} />
-            <Route path="/sdfcl-lab-website/login" element={<LoginPage />} />
-            <Route path="/sdfcl-lab-website/edit" element={<EditPage />} />
+            <Route path="/aboutus" element={<AboutPage />} />
+            <Route path="/collaborators" element={<CollaboratorsPage />} />
+            <Route path="/outreach" element={<OutreachPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/edit" element={<EditPage />} />
             <Route
-              path="/sdfcl-lab-website/Spacecraft Attitude Control Testbed for Testing and Validating Maneuvering Controls"
+              path="/Spacecraft Attitude Control Testbed for Testing and Validating Maneuvering Controls"
               element={<Project1 />}
             />
-            <Route path="/sdfcl-lab-website/teaching" element={<TeachingPage />} />
+            <Route path="/teaching" element={<TeachingPage />} />
             <Route
-              path="/sdfcl-lab-website/Magneto-electric effects in the dynamics and motion control problems of telecommunication spacecraft"
+              path="/Magneto-electric effects in the dynamics and motion control problems of telecommunication spacecraft"
               element={<Project2 />}
             />
             <Route
-              path="/sdfcl-lab-website/6D Pose-estimation of Uncooperative Airborne Vehicle"
+              path="/6D Pose-estimation of Uncooperative Airborne Vehicle"
               element={<Project3 />}
             />
             <Route
-              path="/sdfcl-lab-website/Slip Estimation, Slip Mitigation, and Path Planning Techniques of Planetary Exploration Rovers"
+              path="/Slip Estimation, Slip Mitigation, and Path Planning Techniques of Planetary Exploration Rovers"
               element={<Project4 />}
             />
             <Route
-              path="/sdfcl-lab-website/Design and Development of Ground Robots for Autonomous Navigation System in Collaboration with Armatirx"
+              path="/Design and Development of Ground Robots for Autonomous Navigation System in Collaboration with Armatirx"
               element={<Project5 />}
             />
             <Route
-              path="/sdfcl-lab-website/MASCOT : Multiple Autonomous Spacecraft Close proximity Operations Test facility"
+              path="/MASCOT : Multiple Autonomous Spacecraft Close proximity Operations Test facility"
               element={<Project6 />}
             />
           </Routes>

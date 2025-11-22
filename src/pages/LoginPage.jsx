@@ -26,7 +26,7 @@ export default function LoginPage() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setLoading(false)
-      if (session) navigate('/sdfcl-lab-website/edit')
+      if (session) navigate('/edit')
     })
 
     // Listen for auth changes
@@ -35,7 +35,7 @@ export default function LoginPage() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setLoading(false)
-      if (session) navigate('/sdfcl-lab-website/edit')
+      if (session) navigate('/edit')
     })
 
     return () => subscription.unsubscribe()

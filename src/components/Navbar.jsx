@@ -31,9 +31,9 @@ function Nbar() {
   return (
     <Navbar expand="md" className="custom-navbar">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/sdfcl-lab-website/">
+        <Navbar.Brand as={Link} to="/">
           <img
-            src='/sdfcl-lab-website/assets/Picture1.png'
+            src='/~dkgiri/assets/Picture1.png'
             alt="Lab Logo"
             className="navbar-logo img-fluid"
           />
@@ -43,7 +43,7 @@ function Nbar() {
         <Navbar.Collapse id="navbar-nav" className="justify-content-end">
           <Nav>
             {navItems.map((item, index) => {
-              const itemPath = `/sdfcl-lab-website/${item.toLowerCase() === 'home' ? '' : item.toLowerCase().replace(/\s/g, "")}`.replace(/\/$/, "");
+              const itemPath = `/${item.toLowerCase() === 'home' ? '' : item.toLowerCase().replace(/\s/g, "")}`.replace(/\/$/, "");
               const isActive = currentPath === itemPath;
               return (
                 <motion.div

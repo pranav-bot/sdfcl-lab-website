@@ -26,7 +26,7 @@ const Footer = () => {
             {/* Footer Info */}
             <div className="col-lg-5 col-md-12 footer-info fade-in-up">
               <Link
-                to="/sdfcl-lab-website/"
+                to="/"
                 className="logo d-flex align-items-center"
                 style={headingfont}
               >
@@ -86,7 +86,7 @@ const Footer = () => {
                 <br />
               </p>
               <div style={{ marginTop: 8 }}>
-                <Link to="/sdfcl-lab-website/login" style={{ textDecoration: 'none' }}>
+                <Link to="/login" style={{ textDecoration: 'none' }}>
                   <button style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #d1d5db', background: '#111827', color: '#fff', cursor: 'pointer' }}>Login</button>
                 </Link>
               </div>
