@@ -161,16 +161,22 @@ export default function ProjectsPage() {
     if (!project) return null
     const list = (arr) => (
       <div className="funding-list">
-        <strong>Funding:</strong>
+        <strong>Funded by:</strong>
         <ul>
           {arr.map((f, idx) => <li key={idx} style={{ color: '#c7efe7' }}>{f}</li>)}
         </ul>
       </div>
     )
 
+    if (project.funding_sources && Array.isArray(project.funding_sources) && project.funding_sources.length) return list(project.funding_sources)
     if (project.fundingSources && Array.isArray(project.fundingSources) && project.fundingSources.length) return list(project.fundingSources)
     if (project.funding && Array.isArray(project.funding) && project.funding.length) return list(project.funding)
+    
     // fallback: comma-separated string
+    if (project.funding_sources && typeof project.funding_sources === 'string' && project.funding_sources.trim()) {
+      const parts = project.funding_sources.split(',').map(s => s.trim()).filter(Boolean)
+      if (parts.length) return list(parts)
+    }
     if (project.fundingSources && typeof project.fundingSources === 'string' && project.fundingSources.trim()) {
       const parts = project.fundingSources.split(',').map(s => s.trim()).filter(Boolean)
       if (parts.length) return list(parts)

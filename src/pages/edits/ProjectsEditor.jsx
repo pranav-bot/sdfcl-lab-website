@@ -34,7 +34,7 @@ export default function ProjectsEditor() {
   }, [currentTable, loadProjects])
 
   function addEmpty() {
-    setProjects((p) => [{ name: '', content: '', main_image_path: '', mainImageUrl: '', _new: true }, ...p])
+    setProjects((p) => [{ name: '', content: '', funding_sources: '', main_image_path: '', mainImageUrl: '', _new: true }, ...p])
   }
 
   function updateField(idx, field, value) {
@@ -90,6 +90,7 @@ export default function ProjectsEditor() {
       const payload = {
         name: p.name || '',
         content: p.content || '',
+        funding_sources: p.funding_sources || '',
         main_image_path: p.main_image_path || ''
       }
       if (p.id) payload.id = p.id
@@ -132,6 +133,7 @@ export default function ProjectsEditor() {
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                   <div style={{ flex: 1 }}>
                     <input value={proj.name || ''} onChange={(e) => updateField(i, 'name', e.target.value)} placeholder="Name" style={{ width: '100%', padding: 8 }} />
+                    <input value={Array.isArray(proj.funding_sources) ? proj.funding_sources.join(', ') : (proj.funding_sources || '')} onChange={(e) => updateField(i, 'funding_sources', e.target.value)} placeholder="Funding Sources (comma separated)" style={{ width: '100%', padding: 8, marginTop: 8 }} />
                     <textarea value={proj.content || ''} onChange={(e) => updateField(i, 'content', e.target.value)} placeholder="Short description" rows={4} style={{ width: '100%', padding: 8, marginTop: 8 }} />
                     <div style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center' }}>
                       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

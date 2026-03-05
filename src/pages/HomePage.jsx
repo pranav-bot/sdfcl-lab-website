@@ -128,13 +128,13 @@ function HomePage() {
     setAnnouncementsError(null)
     setLoadingAnnouncements(true)
     try {
-  const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(5)
+  const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false })
       if (error) {
         setAnnouncementsError(error.message || String(error))
         return
       }
-  // ensure descending by created_at and limit to 5 on client as safety
-  const sorted = Array.isArray(data) ? data.slice().sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0,5) : []
+  // ensure descending by created_at
+  const sorted = Array.isArray(data) ? data.slice().sort((a,b) => new Date(b.created_at) - new Date(a.created_at)) : []
   setAnnouncements(sorted)
     } catch (err) {
       setAnnouncementsError(String(err))
@@ -264,29 +264,57 @@ function HomePage() {
 
             {announcementsError && <div style={{ color: 'red', textAlign: 'center' }}>{announcementsError}</div>}
 
-            <div className="announcements-list" style={{ width: '100%', maxWidth: 900, margin: '0 auto' }}>
+            <div className="announcements-list" style={{ width: '100%', maxWidth: 900, margin: '0 auto', maxHeight: '60vh', overflowY: 'auto', paddingRight: '10px' }}>
               {loadingAnnouncements ? (
                 <div style={{ textAlign: 'center', padding: 12 }}>Loading announcements...</div>
               ) : announcements && announcements.length > 0 ? (
-                announcements.map((a) => {
-                  const created = a.created_at ? new Date(a.created_at) : null
-                  const isNew = created ? ((Date.now() - created.getTime()) <= 7 * 24 * 60 * 60 * 1000) : false
-                  return (
-                  <div key={a.id} className="announcement-item">
-                    <div className="announcement-header">
-                      <strong style={{ fontSize: '1.05rem' }}>{a.title || 'Untitled'}</strong>
-                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                        {a.link ? (
-                          <a href={a.link} target="_blank" rel="noreferrer" style={{ color: '#9bd8cf', fontSize: '0.95rem' }}>Link</a>
-                        ) : null}
-                        <span className="announcement-date">{a.created_at ? new Date(a.created_at).toLocaleDateString() : ''}</span>
-                        {isNew && <span className="announcement-new">NEW</span>}
+                (() => {
+                  const twoMonthsAgo = new Date();
+                  twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+                  const newItems = announcements.filter(a => new Date(a.created_at) >= twoMonthsAgo);
+                  const oldItems = announcements.filter(a => new Date(a.created_at) < twoMonthsAgo);
+
+                  const renderItem = (a) => {
+                    const created = a.created_at ? new Date(a.created_at) : null
+                    const isVeryNew = created ? ((Date.now() - created.getTime()) <= 14 * 24 * 60 * 60 * 1000) : false
+                    return (
+                      <div key={a.id} className="announcement-item">
+                        <div className="announcement-header">
+                          <strong style={{ fontSize: '1.05rem' }}>{a.title || 'Untitled'}</strong>
+                          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                            {a.link ? (
+                              <a href={a.link} target="_blank" rel="noreferrer" style={{ color: '#9bd8cf', fontSize: '0.95rem' }}>Link</a>
+                            ) : null}
+                            <span className="announcement-date">{a.created_at ? new Date(a.created_at).toLocaleDateString() : ''}</span>
+                            {isVeryNew && <span className="announcement-new">NEW</span>}
+                          </div>
+                        </div>
+                        {a.content ? <p className="announcement-content">{a.content}</p> : null}
                       </div>
-                    </div>
-                    {a.content ? <p className="announcement-content">{a.content}</p> : null}
-                  </div>
+                    )
+                  }
+
+                  return (
+                    <>
+                      {newItems.length > 0 && (
+                        <div style={{ marginBottom: 20 }}>
+                          <h3 style={{ ...subHeadingFont, color: '#ff6b6b', marginBottom: 10, borderBottom: '1px solid #ff6b6b', paddingBottom: 5 }}>New Announcements</h3>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            {newItems.map(renderItem)}
+                          </div>
+                        </div>
+                      )}
+                      {oldItems.length > 0 && (
+                        <div>
+                          <h3 style={{ ...subHeadingFont, color: '#9bd8cf', marginBottom: 10, borderBottom: '1px solid #9bd8cf', paddingBottom: 5 }}>Previous Announcements</h3>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            {oldItems.map(renderItem)}
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )
-                })
+                })()
               ) : (
                 <div style={{ textAlign: 'center', padding: 12, color: '#c7efe7' }}>No announcements at the moment.</div>
               )}
