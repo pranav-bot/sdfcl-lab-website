@@ -13,16 +13,17 @@ function Nbar() {
   }, [location.pathname]);
 
   const navItems = [
-    "Home",
-    "Group",
-    "Research & Projects",
-    "Publications",
-    "Teaching",
-    "Citations",
-    "Collaborators",
-    "Outreach",
-    "Gallery",
-    // "About Us",
+    { label: "Home", path: "/" },
+    { label: "Group", path: "/group" },
+    { label: "Research", path: "/research" },
+    { label: "Projects", path: "/projects" },
+    { label: "Publications", path: "/publications" },
+    { label: "Teaching", path: "/teaching" },
+    { label: "Citations", path: "/citations" },
+    { label: "Collaborators", path: "/collaborators" },
+    { label: "Outreach", path: "/outreach" },
+    { label: "Gallery", path: "/gallery" },
+    // { label: "About Us", path: "/aboutus" },
   ];
 
   // Get the current path for active tab highlighting
@@ -43,7 +44,7 @@ function Nbar() {
         <Navbar.Collapse id="navbar-nav" className="justify-content-end">
           <Nav>
             {navItems.map((item, index) => {
-              const itemPath = `/${item.toLowerCase() === 'home' ? '' : item.toLowerCase().replace(/\s/g, "")}`.replace(/\/$/, "");
+              const itemPath = item.path.replace(/\/$/, "") || "/";
               const isActive = currentPath === itemPath;
               return (
                 <motion.div
@@ -57,7 +58,7 @@ function Nbar() {
                     to={itemPath}
                     className={`nav-link-custom${isActive ? ' nav-link-active' : ''}`}
                   >
-                    {item}
+                    {item.label}
                   </Nav.Link>
                 </motion.div>
               );

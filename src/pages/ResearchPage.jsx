@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./ResearchPage.css";
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
 // Define heading + content fonts
 const headingfont = {
@@ -8,145 +8,124 @@ const headingfont = {
   fontWeight: 800,
 };
 
-const contentFont = {
-  fontFamily: "Poppins",
-  fontWeight: 200,
-};
+const contentFont = { fontFamily: "Poppins", fontWeight: 300 };
 
-// supabase client for loading home page content
+// Supabase client for loading research data.
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-)
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
 
 
 function ResearchPage() {
-  // home page data (research & teaching summary) loaded from DB
-  const [homeData, setHomeData] = useState(null)
-  const [loadingHome, setLoadingHome] = useState(false)
-  const [homeError, setHomeError] = useState(null)
-  // teaching table
-  const [teachingData, setTeachingData] = useState([])
-  const [loadingTeaching, setLoadingTeaching] = useState(false)
-  const [teachingError, setTeachingError] = useState(null)
+  const [researchItems, setResearchItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // load home page data and teaching table from DB
-  async function loadContent() {
-    setLoadingHome(true)
-    setHomeError(null)
-    setLoadingTeaching(true)
-    setTeachingError(null)
+  const mapImage = (img) => {
+    if (!img || typeof img !== "string") return "";
+    if (img.startsWith("http") || img.startsWith("/")) return img;
+    return supabase.storage.from("assets").getPublicUrl(img).data.publicUrl;
+  };
+
+  const loadResearch = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
-      // new schema: research_summary is a table of rows { id, title, items[] }
-      const [homeRes, teachRes] = await Promise.all([
-        supabase.from('research_summary').select('*').order('id', { ascending: false }),
-        supabase.from('teaching').select('*').order('year', { ascending: false })
-      ])
+      const { data, error: loadError } = await supabase
+        .from("research_information")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-      if (homeRes.error) throw homeRes.error
-      if (teachRes.error) throw teachRes.error
+      if (loadError) throw loadError;
 
-      // homeRes.data now is an array of section rows
-      const rows = Array.isArray(homeRes.data) ? homeRes.data : []
-      setHomeData(rows)
-      setTeachingData(Array.isArray(teachRes.data) ? teachRes.data : [])
+      const rows = Array.isArray(data) ? data : [];
+      const withUrls = rows.map((row) => ({
+        ...row,
+        image: mapImage(row.img_url || ""),
+      }));
+      setResearchItems(withUrls);
     } catch (err) {
-      const s = String(err)
-      // attribute errors to appropriate state
-      setHomeError(s)
-      setTeachingError(s)
+      setError(err?.message || String(err));
     } finally {
-      setLoadingHome(false)
-      setLoadingTeaching(false)
+      setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
-    loadContent()
-  }, [])
+    loadResearch();
+  }, [loadResearch]);
+
+  const lowerSearch = searchTerm.toLowerCase();
+  const filteredResearch = researchItems.filter(
+    (item) =>
+      (item.name || "").toLowerCase().includes(lowerSearch) ||
+      (item.description || "").toLowerCase().includes(lowerSearch),
+  );
 
   return (
-    <div
-      className="research-page-container fade-in-up"
-      style={{
-        backgroundColor: "#011317",
-        padding: "",
-        paddingBottom: "50px",
-      }}
-    >
-      {/* Research & Teaching Summary (moved from HomePage) */}
-      <div className="research-teaching-summary" style={{ paddingTop: 40 }}>
-        <h1 style={{ ...headingfont, textAlign: "center", marginBottom: 20 }}>
-          Research & Teaching Summary
-        </h1>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: '90%' }}>
-            {loadingHome ? (
-              <div style={{ textAlign: 'center', width: '100%' }}>Loading summary...</div>
-            ) : homeError ? (
-              <div style={{ color: 'red', textAlign: 'center' }}>{homeError}</div>
-            ) : homeData && Array.isArray(homeData) && homeData.length > 0 ? (
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 20, backgroundColor: '#0c0c0f', padding: 8, borderRadius: 8 }}>
-                {homeData.map((row, i) => {
-                  const title = row.title || row.name || `Section ${i + 1}`
-                  const items = Array.isArray(row.items) ? row.items : (row.items ? [String(row.items)] : [])
-                  return (
-                    <div key={i} style={{ backgroundColor: '#0b3d2e', border: '1px solid #ddd', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: 8, padding: 20, width: 300, textAlign: 'left', color: 'white' }}>
-                      <h3 style={{ ...headingfont, color: 'white', marginTop: 0 }}>{title}</h3>
-                      {items.length > 0 ? (
-                        <ul style={{ paddingLeft: 20, marginTop: 8 }}>
-                          {items.map((item, idx) => (
-                            <li key={idx} style={{ marginBottom: 8 }}><p style={{ ...contentFont, color: 'white', margin: 0 }}>{item}</p></li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p style={{ ...contentFont, color: 'white', marginTop: 8 }}>No items</p>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            ) : (
-              <div style={{ textAlign: 'center', width: '100%' }}>No research summary available.</div>
-            )}
-          </div>
-        </div>
+    <div className="projects-page-container research-page-container fade-in-up">
+      <div style={{ maxWidth: 600, margin: "0 auto 24px" }}>
+        <input
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search research..."
+          style={{
+            width: "100%",
+            padding: "10px 12px",
+            borderRadius: 8,
+            border: "1px solid #ccc",
+            background: "#011317",
+            color: "white",
+          }}
+        />
       </div>
 
-      {/* Teaching table below the summary */}
-      <div style={{ marginTop: 30 }}>
-        <h2 style={{ ...headingfont, textAlign: 'center', marginBottom: 12, color: 'white' }}>Teaching</h2>
-        {loadingTeaching ? (
-          <div style={{ textAlign: 'center', color: 'white' }}>Loading teaching records...</div>
-        ) : teachingError ? (
-          <div style={{ color: 'salmon', textAlign: 'center' }}>{teachingError}</div>
-        ) : teachingData && teachingData.length > 0 ? (
-          <div style={{ overflowX: 'auto' }}>
-            <div style={{ background: '#021617', padding: 12, borderRadius: 8 }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', color: '#fff' }}>
-                <thead>
-                  <tr>
-                    <th style={{ textAlign: 'left', padding: 10, background: 'rgba(255,255,255,0.03)', color: '#fff' }}>Role</th>
-                    <th style={{ textAlign: 'left', padding: 10, background: 'rgba(255,255,255,0.03)', color: '#fff' }}>Course</th>
-                    <th style={{ textAlign: 'left', padding: 10, background: 'rgba(255,255,255,0.03)', color: '#fff' }}>Year</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {teachingData.map((t, idx) => (
-                    <tr key={idx} style={{ borderTop: '1px solid rgba(255,255,255,0.03)', background: idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent', transition: 'background 0.15s' }}>
-                      <td style={{ padding: 10 }}>{t.role}</td>
-                      <td style={{ padding: 10 }}>{t.course_title}</td>
-                      <td style={{ padding: 10 }}>{t.year}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+      {loading ? (
+        <p style={{ color: "white", textAlign: "center" }}>
+          Loading research information...
+        </p>
+      ) : error ? (
+        <p style={{ color: "salmon", textAlign: "center" }}>
+          Error loading research information: {error}
+        </p>
+      ) : filteredResearch.length > 0 ? (
+        <>
+          <h2 style={{ ...headingfont, color: "white", marginTop: 8 }}>
+            Research
+          </h2>
+          <div className="projects-list">
+            {filteredResearch.map((item) => (
+              <div key={item.id} className="project-row">
+                <div className="project-left">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name || "Research image"}
+                      className="project-image"
+                    />
+                  ) : (
+                    <div className="project-image research-image-placeholder">
+                      No image
+                    </div>
+                  )}
+                </div>
+                <div className="project-right">
+                  <h3 className="project-title">{item.name || "Untitled"}</h3>
+                  <p className="project-desc" style={contentFont}>
+                    {item.description || "No description available."}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-        ) : (
-          <div style={{ textAlign: 'center', color: 'white' }}>No teaching records found.</div>
-        )}
-      </div>
+        </>
+      ) : (
+        <p style={{ color: "#c7efe7", textAlign: "center" }}>
+          No research entries found.
+        </p>
+      )}
     </div>
   );
 }

@@ -20,6 +20,20 @@
   .fade-in-up {
     animation: fadeInUp 0.8s ease forwards;
   }
+
+  .research-page-container {
+    background-color: #011317;
+    min-height: 80vh;
+  }
+
+  .research-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #102428;
+    color: #d4e7e4;
+    border-radius: 8px;
+  }
   
   /* 
     .card-wrapper or .fade-in-up can be used 

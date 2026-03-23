@@ -62,6 +62,7 @@ export default function EditPage() {
           // keep Home so the in-place Home editor stays available, then mirror the site navbar
           'Home',
           'Group',
+          'Research',
           'Teaching',
           'Publications',
           'Projects',

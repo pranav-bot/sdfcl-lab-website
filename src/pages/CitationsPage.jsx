@@ -17,6 +17,8 @@ function CitationsPage() {
   const [citations, setCitations] = useState({});
   const [external, setExternal] = useState([])
   const [talks, setTalks] = useState({})
+  const [activeTab, setActiveTab] = useState('citations')
+  const [sortDirection, setSortDirection] = useState('desc')
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   // simplified layout: no collapsible sections
@@ -96,9 +98,84 @@ function CitationsPage() {
   const totalTalks = flatTalks.length
   const totalExternal = external.length
 
+  const filteredCitations = flatCitations.filter(matchesSearch)
+  const filteredTalks = flatTalks.filter(matchesTalkSearch)
+  const filteredExternal = external.filter(matchesExternalSearch)
+
+  const sortRowsByYear = (rows) => {
+    const dir = sortDirection === 'asc' ? 1 : -1
+    return [...rows].sort((a, b) => {
+      const ay = Number.parseInt(a?.year, 10)
+      const by = Number.parseInt(b?.year, 10)
+      const aYear = Number.isFinite(ay) ? ay : 0
+      const bYear = Number.isFinite(by) ? by : 0
+      return (aYear - bYear) * dir
+    })
+  }
+
+  const sortedCitations = sortRowsByYear(filteredCitations)
+  const sortedTalks = sortRowsByYear(filteredTalks)
+
+  const renderCitationItems = () => {
+    if (sortedCitations.length === 0) {
+      return <div className="tab-empty">No citations match your search.</div>
+    }
+
+    return sortedCitations.map((c, idx) => (
+      <div key={c.id || `citation-${idx}`} className="teaching-like-card">
+        <div className="teaching-like-card-left">
+          <div className="teaching-like-year">{c.year || '-'}</div>
+        </div>
+        <div className="teaching-like-card-right">
+          <h3 className="teaching-like-title">{c.title}</h3>
+          {c.organization && <p className="teaching-like-subtitle">{c.organization}</p>}
+          {c.description && <p className="teaching-like-desc">{c.description}</p>}
+        </div>
+      </div>
+    ))
+  }
+
+  const renderTalkItems = () => {
+    if (sortedTalks.length === 0) {
+      return <div className="tab-empty">No talks match your search.</div>
+    }
+
+    return sortedTalks.map((t, idx) => (
+      <div key={t.id || `talk-${idx}`} className="teaching-like-card">
+        <div className="teaching-like-card-left">
+          <div className="teaching-like-year">{t.year || '-'}</div>
+        </div>
+        <div className="teaching-like-card-right">
+          <h3 className="teaching-like-title">{t.title || t.event || 'Assignment / Talk'}</h3>
+          {(t.event || t.location) && <p className="teaching-like-subtitle">{t.event || t.location}</p>}
+          {(t.type || t.role || t.date) && (
+            <p className="teaching-like-desc">
+              {t.type || 'Talk'}{t.role ? ` - ${t.role}` : ''}{t.date ? ` | ${t.date}` : ''}
+            </p>
+          )}
+        </div>
+      </div>
+    ))
+  }
+
+  const renderExternalItems = () => {
+    if (filteredExternal.length === 0) {
+      return <div className="tab-empty">No external reviewer assignments found.</div>
+    }
+
+    return filteredExternal.map((e, idx) => (
+      <div key={e.id || `external-${idx}`} className="teaching-like-card">
+        <div className="teaching-like-card-right">
+          <h3 className="teaching-like-title">{e.journal_name}</h3>
+          <p className="teaching-like-subtitle">External Reviewer Assignment</p>
+        </div>
+      </div>
+    ))
+  }
+
   return (
     <div className="citations-page fade-in-up">
-      <h1 style={{ ...headingfont, textAlign: 'center', marginBottom: 12 }}>Academic Citations</h1>
+      <h1 style={{ ...headingfont, textAlign: 'center', marginBottom: 12 }}>Citations</h1>
 
       <div className="summary-row">
         <div className="summary-card">
@@ -125,85 +202,56 @@ function CitationsPage() {
         />
       </div>
 
+      <div className="sort-row">
+        <button
+          type="button"
+          className="sort-button"
+          onClick={() => setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'))}
+        >
+          Sort by year: {sortDirection === 'desc' ? 'Newest First' : 'Oldest First'}
+        </button>
+      </div>
+
+      <div className="mini-tabs" role="tablist" aria-label="Citation categories">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'citations'}
+          className={`mini-tab ${activeTab === 'citations' ? 'active' : ''}`}
+          onClick={() => setActiveTab('citations')}
+        >
+          Citations ({filteredCitations.length})
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'talks'}
+          className={`mini-tab ${activeTab === 'talks' ? 'active' : ''}`}
+          onClick={() => setActiveTab('talks')}
+        >
+          Talks / Assignments ({filteredTalks.length})
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'external'}
+          className={`mini-tab ${activeTab === 'external' ? 'active' : ''}`}
+          onClick={() => setActiveTab('external')}
+        >
+          External Reviewers ({filteredExternal.length})
+        </button>
+      </div>
+
       <div className="section-content" style={contentFont}>
         {loading ? (
           <div style={{ color: '#999', padding: 12 }}>Loading citations...</div>
         ) : error ? (
           <div style={{ color: 'salmon', padding: 12 }}>{error}</div>
         ) : (
-          <div>
-            {/* Academic citations - simplified flat grid */}
-            <div className="panel">
-              <div className="panel-header">
-                <div>
-                  <h2 style={headingfont} className="panel-title">Citations</h2>
-                  <div className="panel-sub">{totalCitations} total</div>
-                </div>
-              </div>
-              <div className="panel-body">
-                {flatCitations.filter(matchesSearch).length > 0 ? (
-                  <div className="cards-grid">
-                    {flatCitations.filter(matchesSearch).map((c, idx) => (
-                      <div key={c.id || idx} className="citation-card">
-                        <div className="citation-title">{c.title}</div>
-                        {c.organization && <div className="citation-org">{c.organization}</div>}
-                        {c.description && <div className="citation-desc">{c.description}</div>}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div style={{ color: '#999' }}>No citations match your search.</div>
-                )}
-              </div>
-            </div>
-
-            {/* Invited talks / assignments (come before external) */}
-            {/* Talks & assignments - simplified flat grid */}
-            <div className="panel">
-              <div className="panel-header">
-                <div>
-                  <h2 style={headingfont} className="panel-title">Assignments & Invited Talks</h2>
-                  <div className="panel-sub">{totalTalks} records</div>
-                </div>
-              </div>
-              <div className="panel-body">
-                {flatTalks.filter(matchesTalkSearch).length > 0 ? (
-                  <div className="cards-grid">
-                    {flatTalks.filter(matchesTalkSearch).map((t, idx) => (
-                      <div key={t.id || idx} className="citation-card">
-                        <div className="citation-title">{t.title}</div>
-                        <div className="citation-org">{t.event || t.location}</div>
-                        <div className="citation-desc">{t.type}{t.role ? ` — ${t.role}` : ''}{t.date ? ` • ${t.date}` : ''}</div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div style={{ color: '#999' }}>No talks match your search.</div>
-                )}
-              </div>
-            </div>
-
-            {/* External reviewer assignments (now after talks) */}
-            {/* External reviewers - simple list/grid */}
-            <div className="panel">
-              <div className="panel-header">
-                <div>
-                  <h2 style={headingfont} className="panel-title">External Reviewer Assignments</h2>
-                  <div className="panel-sub">{totalExternal} journals</div>
-                </div>
-              </div>
-              <div className="panel-body">
-                {external && external.filter(matchesExternalSearch).length > 0 ? (
-                  <div className="cards-grid">
-                    {external.filter(matchesExternalSearch).map((e) => (
-                      <div key={e.id} className="citation-card small-card">{e.journal_name}</div>
-                    ))}
-                  </div>
-                ) : (
-                  <div style={{ color: '#999' }}>No external reviewer assignments found.</div>
-                )}
-              </div>
-            </div>
+          <div className="teaching-like-list" role="tabpanel" aria-live="polite">
+            {activeTab === 'citations' && renderCitationItems()}
+            {activeTab === 'talks' && renderTalkItems()}
+            {activeTab === 'external' && renderExternalItems()}
           </div>
         )}
       </div>

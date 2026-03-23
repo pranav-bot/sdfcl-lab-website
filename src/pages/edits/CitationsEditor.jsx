@@ -10,6 +10,7 @@ const supabase = createClient(
 export default function CitationsEditor() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [activeTab, setActiveTab] = useState('academic')
 
   const [citations, setCitations] = useState([])
   const [talks, setTalks] = useState([])
@@ -97,7 +98,55 @@ export default function CitationsEditor() {
       <h3 style={{ marginBottom: 8 }}>Citations Editor</h3>
       {error && <div style={{ color: 'salmon', marginBottom: 8 }}>{error}</div>}
 
-      <section style={{ marginTop: 12 }}>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12, marginBottom: 12 }}>
+        <button
+          type="button"
+          onClick={() => setActiveTab('academic')}
+          style={{
+            padding: '8px 14px',
+            borderRadius: 999,
+            border: '1px solid #d1dde2',
+            cursor: 'pointer',
+            background: activeTab === 'academic' ? '#08353a' : '#fff',
+            color: activeTab === 'academic' ? '#fff' : '#1f2937',
+            fontWeight: 600,
+          }}
+        >
+          Academic Citations ({citations.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('talks')}
+          style={{
+            padding: '8px 14px',
+            borderRadius: 999,
+            border: '1px solid #d1dde2',
+            cursor: 'pointer',
+            background: activeTab === 'talks' ? '#08353a' : '#fff',
+            color: activeTab === 'talks' ? '#fff' : '#1f2937',
+            fontWeight: 600,
+          }}
+        >
+          Talks ({talks.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('external')}
+          style={{
+            padding: '8px 14px',
+            borderRadius: 999,
+            border: '1px solid #d1dde2',
+            cursor: 'pointer',
+            background: activeTab === 'external' ? '#08353a' : '#fff',
+            color: activeTab === 'external' ? '#fff' : '#1f2937',
+            fontWeight: 600,
+          }}
+        >
+          External Reviewer ({external.length})
+        </button>
+      </div>
+
+      {activeTab === 'academic' && <section style={{ marginTop: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h4 style={{ margin: 0 }}>Academic Citations</h4>
           <button onClick={() => addRow('academic_citations')}>+ Add Citation</button>
@@ -127,9 +176,9 @@ export default function CitationsEditor() {
             </div>
           ))}
         </div>
-      </section>
+      </section>}
 
-      <section style={{ marginTop: 16 }}>
+      {activeTab === 'talks' && <section style={{ marginTop: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h4 style={{ margin: 0 }}>Assignments & Invited Talks</h4>
           <button onClick={() => addRow('assignments_invited_talks')}>+ Add Talk</button>
@@ -164,9 +213,9 @@ export default function CitationsEditor() {
             </div>
           ))}
         </div>
-      </section>
+      </section>}
 
-      <section style={{ marginTop: 16 }}>
+      {activeTab === 'external' && <section style={{ marginTop: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h4 style={{ margin: 0 }}>External Reviewer Assignments</h4>
           <button onClick={() => addRow('external_reviewer_assignments')}>+ Add External Reviewer</button>
@@ -184,7 +233,7 @@ export default function CitationsEditor() {
             </div>
           ))}
         </div>
-      </section>
+      </section>}
     </div>
   )
 }

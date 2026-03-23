@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 import Nbar from "./components/Navbar";
 import ResearchPage from "./pages/ResearchPage";
 import PublicationsPage from "./pages/PublicationsPage";
@@ -37,8 +37,12 @@ function App() {
               element={<ResearchPage />}
             />
             <Route
-              path="/research&projects"
+              path="/projects"
               element={<ProjectsPage />}
+            />
+            <Route
+              path="/research&projects"
+              element={<Navigate to="/projects" replace />}
             />
             <Route
               path="/gallery"
