@@ -27,16 +27,19 @@ const contentFont = {
 
 function TeamPage() {
   // DB-driven lists
+  const [postdocs, setPostdocs] = useState([])
   const [phdStudents, setPhdStudents] = useState([])
   const [mastersStudents, setMastersStudents] = useState([])
   const [researchInterns, setResearchInterns] = useState([])
   const [masterCardRow, setMasterCardRow] = useState(null)
   // alumni lists
+  const [alumniPostdocs, setAlumniPostdocs] = useState([])
   const [alumniPhdStudents, setAlumniPhdStudents] = useState([])
   const [alumniMastersStudents, setAlumniMastersStudents] = useState([])
   const [alumniResearchInterns, setAlumniResearchInterns] = useState([])
   // view mode: 'current' or 'alumni'
   const [viewMode, setViewMode] = useState('current')
+  const [loadingPostdocs, setLoadingPostdocs] = useState(false)
   const [loadingPhd, setLoadingPhd] = useState(false)
   const [loadingMasters, setLoadingMasters] = useState(false)
   const [loadingInterns, setLoadingInterns] = useState(false)
@@ -48,12 +51,14 @@ function TeamPage() {
     let mounted = true
     ;(async () => {
   setError(null)
-  setLoadingPhd(true); setLoadingMasters(true); setLoadingInterns(true); setLoadingMasterCard(true)
+  setLoadingPostdocs(true); setLoadingPhd(true); setLoadingMasters(true); setLoadingInterns(true); setLoadingMasterCard(true); setLoadingAlumni(true)
       try {
-        const [phdRes, mastersRes, internsRes, alumniPhdRes, alumniMastersRes, alumniInternsRes, masterRes] = await Promise.all([
+        const [postdocsRes, phdRes, mastersRes, internsRes, alumniPostdocsRes, alumniPhdRes, alumniMastersRes, alumniInternsRes, masterRes] = await Promise.all([
+          supabase.from('postdocs').select('*').order('id', { ascending: true }),
           supabase.from('phd_students').select('*').order('id', { ascending: true }),
           supabase.from('masters_students').select('*').order('id', { ascending: true }),
           supabase.from('research_interns').select('*').order('id', { ascending: true }),
+          supabase.from('alumini_postdocs').select('*').order('id', { ascending: true }),
           supabase.from('alumini_phd_students').select('*').order('id', { ascending: true }),
           supabase.from('alumini_masters_students').select('*').order('id', { ascending: true }),
           supabase.from('alumini_research_interns').select('*').order('id', { ascending: true }),
@@ -62,9 +67,11 @@ function TeamPage() {
 
         if (!mounted) return
 
+        if (postdocsRes.error) throw postdocsRes.error
   if (phdRes.error) throw phdRes.error
   if (mastersRes.error) throw mastersRes.error
   if (internsRes.error) throw internsRes.error
+        if (alumniPostdocsRes.error) throw alumniPostdocsRes.error
   if (alumniPhdRes.error) throw alumniPhdRes.error
   if (alumniMastersRes.error) throw alumniMastersRes.error
   if (alumniInternsRes.error) throw alumniInternsRes.error
@@ -75,9 +82,11 @@ function TeamPage() {
           return supabase.storage.from('assets').getPublicUrl(img).data.publicUrl
         }
 
+          setPostdocs((postdocsRes.data || []).map(p => ({ ...p, image: mapImage(p.image) })))
         setPhdStudents((phdRes.data || []).map(p => ({ ...p, image: mapImage(p.image) })))
         setMastersStudents((mastersRes.data || []).map(m => ({ ...m, image: mapImage(m.image) })))
   setResearchInterns((internsRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
+        setAlumniPostdocs((alumniPostdocsRes.data || []).map(p => ({ ...p, image: mapImage(p.image) })))
   setAlumniPhdStudents((alumniPhdRes.data || []).map(p => ({ ...p, image: mapImage(p.image) })))
   setAlumniMastersStudents((alumniMastersRes.data || []).map(m => ({ ...m, image: mapImage(m.image) })))
   setAlumniResearchInterns((alumniInternsRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
@@ -98,7 +107,7 @@ function TeamPage() {
         if (mounted) setError(err.message || String(err))
       } finally {
         if (mounted) {
-          setLoadingPhd(false); setLoadingMasters(false); setLoadingInterns(false); setLoadingMasterCard(false); setLoadingAlumni(false)
+          setLoadingPostdocs(false); setLoadingPhd(false); setLoadingMasters(false); setLoadingInterns(false); setLoadingMasterCard(false); setLoadingAlumni(false)
         }
       }
     })()
@@ -331,9 +340,25 @@ function TeamPage() {
       </button>
     </div>
 
-    {(loadingPhd || loadingMasters || loadingInterns || (viewMode === 'alumni' && loadingAlumni)) && <p style={{ color: 'white', textAlign: 'center' }}>Loading members...</p>}
+    {(loadingPostdocs || loadingPhd || loadingMasters || loadingInterns || (viewMode === 'alumni' && loadingAlumni)) && <p style={{ color: 'white', textAlign: 'center' }}>Loading members...</p>}
     {error && <p style={{ color: 'salmon', textAlign: 'center' }}>{error}</p>}
   </div>
+        <Separator />
+
+        {/* Post Docs */}
+        <h2
+          className="fade-in-up text-center"
+          style={{
+            ...headingfont,
+            color: "white",
+            paddingTop: "20px",
+            paddingBottom: "20px",
+          }}
+        >
+          Post Docs
+        </h2>
+        {viewMode === 'current' ? renderCards(postdocs) : renderCards(alumniPostdocs)}
+
         <Separator />
 
         {/* PhD Students */}

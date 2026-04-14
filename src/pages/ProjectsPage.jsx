@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 // completed projects will be loaded from DB
 import "./ProjectsPage.css";
 import { createClient } from "@supabase/supabase-js";
@@ -390,11 +389,6 @@ export default function ProjectsPage() {
                     <h3 className="project-title">{project.name}</h3>
                     <p className="project-desc">{project.content}</p>
                     {renderFunding(project)}
-                    <div className="project-meta">
-                      <Link to={`/project${project.id}`} className="read-more">
-                        Read details
-                      </Link>
-                    </div>
                     <div className="project-members">
                       {(projectStudents[project.id] || [])
                         .slice(0, 8)

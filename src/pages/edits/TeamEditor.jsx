@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js'
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
 
 function TeamEditor() {
+  const makeLocalId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -13,11 +15,13 @@ function TeamEditor() {
   const [savingMaster, setSavingMaster] = useState(false)
 
   // current members
+  const [postdocs, setPostdocs] = useState([])
   const [phd, setPhd] = useState([])
   const [masters, setMasters] = useState([])
   const [interns, setInterns] = useState([])
 
   // alumni members
+  const [alumniPostdocs, setAlumniPostdocs] = useState([])
   const [alumniPhd, setAlumniPhd] = useState([])
   const [alumniMasters, setAlumniMasters] = useState([])
   const [alumniInterns, setAlumniInterns] = useState([])
@@ -48,11 +52,13 @@ function TeamEditor() {
       setLoadingMaster(true)
       setLoadingLists(true)
       try {
-        const [masterRes, phdRes, mastersRes, internsRes, alumniPhdRes, alumniMastersRes, alumniInternsRes] = await Promise.all([
+        const [masterRes, postdocsRes, phdRes, mastersRes, internsRes, alumniPostdocsRes, alumniPhdRes, alumniMastersRes, alumniInternsRes] = await Promise.all([
           supabase.from('master_card').select('*').order('id', { ascending: false }).limit(1),
+          supabase.from('postdocs').select('*').order('id', { ascending: true }),
           supabase.from('phd_students').select('*').order('id', { ascending: true }),
           supabase.from('masters_students').select('*').order('id', { ascending: true }),
           supabase.from('research_interns').select('*').order('id', { ascending: true }),
+          supabase.from('alumini_postdocs').select('*').order('id', { ascending: true }),
           supabase.from('alumini_phd_students').select('*').order('id', { ascending: true }),
           supabase.from('alumini_master_students').select('*').order('id', { ascending: true }),
           supabase.from('alumini_research_interns').select('*').order('id', { ascending: true }),
@@ -61,22 +67,26 @@ function TeamEditor() {
         if (!mounted) return
 
         if (masterRes?.error) throw masterRes.error
+        if (postdocsRes?.error) throw postdocsRes.error
         if (phdRes?.error) throw phdRes.error
         if (mastersRes?.error) throw mastersRes.error
         if (internsRes?.error) throw internsRes.error
+        if (alumniPostdocsRes?.error) throw alumniPostdocsRes.error
 
         setMaster((masterRes.data && masterRes.data[0]) ? {
           ...masterRes.data[0],
           image: mapImage(masterRes.data[0].image || masterRes.data[0].image_path || '')
         } : { title: '', content: '', image: '', email: '', linkedinLink: '', googleScholarLink: '' })
 
-        setPhd((phdRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
-        setMasters((mastersRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
-        setInterns((internsRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
+        setPostdocs((postdocsRes.data || []).map(r => ({ ...r, image: mapImage(r.image), __localId: `id-${r.id}` })))
+        setPhd((phdRes.data || []).map(r => ({ ...r, image: mapImage(r.image), __localId: `id-${r.id}` })))
+        setMasters((mastersRes.data || []).map(r => ({ ...r, image: mapImage(r.image), __localId: `id-${r.id}` })))
+        setInterns((internsRes.data || []).map(r => ({ ...r, image: mapImage(r.image), __localId: `id-${r.id}` })))
 
-        setAlumniPhd((alumniPhdRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
-        setAlumniMasters((alumniMastersRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
-        setAlumniInterns((alumniInternsRes.data || []).map(r => ({ ...r, image: mapImage(r.image) })))
+        setAlumniPostdocs((alumniPostdocsRes.data || []).map(r => ({ ...r, image: mapImage(r.image), __localId: `id-${r.id}` })))
+        setAlumniPhd((alumniPhdRes.data || []).map(r => ({ ...r, image: mapImage(r.image), __localId: `id-${r.id}` })))
+        setAlumniMasters((alumniMastersRes.data || []).map(r => ({ ...r, image: mapImage(r.image), __localId: `id-${r.id}` })))
+        setAlumniInterns((alumniInternsRes.data || []).map(r => ({ ...r, image: mapImage(r.image), __localId: `id-${r.id}` })))
 
       } catch (err) {
         console.error('TeamEditor load error', err)
@@ -118,6 +128,7 @@ function TeamEditor() {
       const payload = { ...row }
       // remove client-side preview key
       delete payload.imageUrl
+      delete payload.__localId
       setError(null)
       const { data, error } = await supabase.from(table).upsert(payload).select()
       if (error) throw error
@@ -125,7 +136,19 @@ function TeamEditor() {
       // if returned is array, replace by id where possible
       if (data && data.length > 0) {
         const updated = data[0]
-        setRows(prev => prev.map(r => (r.id === updated.id ? { ...r, ...updated, image: mapImage(updated.image || updated.image_path || '') } : r)))
+        setRows(prev => prev.map(r => {
+          const isSameSavedRow = row.id && r.id === updated.id
+          const isSameUnsavedRow = !row.id && r.__localId === row.__localId
+          if (isSameSavedRow || isSameUnsavedRow) {
+            return {
+              ...r,
+              ...updated,
+              image: mapImage(updated.image || updated.image_path || ''),
+              __localId: `id-${updated.id}`
+            }
+          }
+          return r
+        }))
       }
     } catch (err) {
       console.error('saveRow error', err)
@@ -138,7 +161,7 @@ function TeamEditor() {
       setError(null)
       if (!row.id) {
         // local unsaved row — just remove
-        setRows(prev => prev.filter(r => r !== row))
+        setRows(prev => prev.filter(r => r.__localId !== row.__localId))
         return
       }
       const { error } = await supabase.from(table).delete().eq('id', row.id)
@@ -169,7 +192,7 @@ function TeamEditor() {
   }
 
   function addEmptyRow(setRows) {
-    setRows(prev => [...prev, { name: '', content: '', image: '', email: '', linkedinLink: '', githubLink: '', websiteLink: '' }])
+    setRows(prev => [...prev, { __localId: makeLocalId(), name: '', content: '', image: '', email: '', linkedinLink: '', githubLink: '', websiteLink: '', googleScholarLink: '' }])
   }
 
   if (loading) {
@@ -221,8 +244,9 @@ function TeamEditor() {
         </div>
 
         {/* helper to render an editable list */}
-        {['PhD', 'Masters', 'Interns'].map((label) => {
+        {['Postdocs', 'PhD', 'Masters', 'Interns'].map((label) => {
           const tableMap = {
+            Postdocs: { current: ['postdocs', postdocs, setPostdocs], alumni: ['alumini_postdocs', alumniPostdocs, setAlumniPostdocs] },
             PhD: { current: ['phd_students', phd, setPhd], alumni: ['alumini_phd_students', alumniPhd, setAlumniPhd] },
             Masters: { current: ['masters_students', masters, setMasters], alumni: ['alumini_master_students', alumniMasters, setAlumniMasters] },
             Interns: { current: ['research_interns', interns, setInterns], alumni: ['alumini_research_interns', alumniInterns, setAlumniInterns] }
@@ -234,7 +258,7 @@ function TeamEditor() {
                   <h4 style={styles.heading}>{label} ({rows.length})</h4>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(600px, 1fr))', gap: 12 }}>
                     {rows.map((r, i) => (
-                      <div key={i} style={{ background: '#fff', border: '1px solid #e6edf0', borderRadius: 8, padding: 12, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                      <div key={r.__localId || r.id || i} style={{ background: '#fff', border: '1px solid #e6edf0', borderRadius: 8, padding: 12, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                         <div style={{ width: 120, flexShrink: 0 }}>
                           <div style={{ width: 120, height: 120, background: '#f3f4f6', borderRadius: 6, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {r.image ? (
@@ -257,6 +281,10 @@ function TeamEditor() {
                           <div style={{ display: 'flex', gap: 8 }}>
                             <input placeholder="Email" value={r.email || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, email: e.target.value } : p))} style={{ ...styles.input }} />
                             <input placeholder="LinkedIn" value={r.linkedinLink || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, linkedinLink: e.target.value } : p))} style={{ ...styles.input }} />
+                          </div>
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <input placeholder="GitHub" value={r.githubLink || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, githubLink: e.target.value } : p))} style={{ ...styles.input }} />
+                            <input placeholder="Google Scholar" value={r.googleScholarLink || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, googleScholarLink: e.target.value } : p))} style={{ ...styles.input }} />
                           </div>
                           <textarea placeholder="Content" value={r.content || ''} onChange={e => setRows(prev => prev.map((p, idx) => idx === i ? { ...p, content: e.target.value } : p))} style={{ ...styles.textarea, minHeight: 80 }} />
 

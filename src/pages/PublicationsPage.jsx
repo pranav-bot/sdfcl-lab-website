@@ -114,24 +114,24 @@ function PublicationsPage() {
     <div className="fade-in-up section-wrapper">
       <h2 style={headingfont}>Journals</h2>
       <div className="publications-container fade-in-up">
-        {Object.keys(publications)
-          .sort((a, b) => b - a) // Desc by year
-          .map((year) => {
-            const filteredPubs = publications[year].filter(matchesSearch);
-            if (filteredPubs.length === 0) return null;
-            return (
-              <div key={year} className="year-section fade-in-up">
-                <h2 style={headingfont}>{year}</h2>
-                <ol>
-                  {filteredPubs.map((pub, index) => (
-                    <li key={index} style={contentFont}>
-                      {`${pub.authors}, "${pub.title}," ${pub.journal}, ${pub.status}.`}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            );
-          })}
+        <ol>
+          {Object.keys(publications)
+            .sort((a, b) => Number(b) - Number(a))
+            .flatMap((year) =>
+              (publications[year] || []).map((pub, index) => ({
+                ...pub,
+                _year: Number(year) || 0,
+                _key: `${year}-${index}`,
+              })),
+            )
+            .sort((a, b) => b._year - a._year)
+            .filter(matchesSearch)
+            .map((pub) => (
+              <li key={pub._key} style={contentFont}>
+                {`${pub.authors}, "${pub.title}," ${pub.journal}, ${pub.status}.`}
+              </li>
+            ))}
+        </ol>
       </div>
     </div>
   );
@@ -141,26 +141,24 @@ function PublicationsPage() {
     <div className="fade-in-up section-wrapper">
       <h2 style={headingfont}>International Astronautical Congress (IAC)</h2>
       <div className="publications-container fade-in-up">
-        {Object.keys(congressPresentations)
-          .sort((a, b) => b - a)
-          .map((year) => {
-            const filteredPubs = congressPresentations[year].filter(
-              matchesSearch
-            );
-            if (filteredPubs.length === 0) return null;
-            return (
-              <div key={year} className="year-section fade-in-up">
-                <h2 style={headingfont}>{year}</h2>
-                <ol>
-                  {filteredPubs.map((pub, index) => (
-                    <li key={index} style={contentFont}>
-                      {`${pub.authors}, "${pub.title}," ${pub.event}, ${pub.location}.`}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            );
-          })}
+        <ol>
+          {Object.keys(congressPresentations)
+            .sort((a, b) => Number(b) - Number(a))
+            .flatMap((year) =>
+              (congressPresentations[year] || []).map((pub, index) => ({
+                ...pub,
+                _year: Number(year) || 0,
+                _key: `${year}-${index}`,
+              })),
+            )
+            .sort((a, b) => b._year - a._year)
+            .filter(matchesSearch)
+            .map((pub) => (
+              <li key={pub._key} style={contentFont}>
+                {`${pub.authors}, "${pub.title}," ${pub.event}, ${pub.location}.`}
+              </li>
+            ))}
+        </ol>
       </div>
     </div>
   );
@@ -170,24 +168,24 @@ function PublicationsPage() {
     <div className="fade-in-up section-wrapper">
       <h2 style={headingfont}>Conferences</h2>
       <div className="publications-container fade-in-up">
-        {Object.keys(conferences)
-          .sort((a, b) => b - a)
-          .map((year) => {
-            const filteredPubs = conferences[year].filter(matchesSearch);
-            if (filteredPubs.length === 0) return null;
-            return (
-              <div key={year} className="year-section fade-in-up">
-                <h2 style={headingfont}>{year}</h2>
-                <ol>
-                  {filteredPubs.map((pub, index) => (
-                    <li key={index} style={contentFont}>
-                      {`${pub.authors}, "${pub.title}," ${pub.conference}, ${pub.status}.`}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            );
-          })}
+        <ol>
+          {Object.keys(conferences)
+            .sort((a, b) => Number(b) - Number(a))
+            .flatMap((year) =>
+              (conferences[year] || []).map((pub, index) => ({
+                ...pub,
+                _year: Number(year) || 0,
+                _key: `${year}-${index}`,
+              })),
+            )
+            .sort((a, b) => b._year - a._year)
+            .filter(matchesSearch)
+            .map((pub) => (
+              <li key={pub._key} style={contentFont}>
+                {`${pub.authors}, "${pub.title}," ${pub.conference}, ${pub.status}.`}
+              </li>
+            ))}
+        </ol>
       </div>
     </div>
   );
