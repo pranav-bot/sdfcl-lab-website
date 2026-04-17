@@ -138,7 +138,9 @@ export default function OutreachEditor() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {filtered.map((it, i) => (
+            {filtered.map((it, i) => {
+              const originalIndex = items.indexOf(it)
+              return (
               <div key={it.id ?? `new-${i}`} style={{ border: '1px solid #e5e7eb', padding: 12, borderRadius: 8, background: '#fff' }}>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                   <div style={{ flex: 0, width: 220 }}>
@@ -152,23 +154,31 @@ export default function OutreachEditor() {
                       <input type="file" accept="image/*" onChange={(e) => {
                         const f = e.target.files?.[0]
                         if (!f) return
-                        uploadPhoto(f, i)
+                        if (originalIndex !== -1) uploadPhoto(f, originalIndex)
                       }} />
                     </div>
                   </div>
 
                   <div style={{ flex: 1 }}>
-                    <input value={it.title || ''} onChange={(e) => updateField(i, 'title', e.target.value)} placeholder="Title" style={{ width: '100%', padding: 8 }} />
-                    <textarea value={it.content || ''} onChange={(e) => updateField(i, 'content', e.target.value)} placeholder="Content" rows={5} style={{ width: '100%', padding: 8, marginTop: 8 }} />
+                    <input value={it.title || ''} onChange={(e) => {
+                      if (originalIndex !== -1) updateField(originalIndex, 'title', e.target.value)
+                    }} placeholder="Title" style={{ width: '100%', padding: 8 }} />
+                    <textarea value={it.content || ''} onChange={(e) => {
+                      if (originalIndex !== -1) updateField(originalIndex, 'content', e.target.value)
+                    }} placeholder="Content" rows={5} style={{ width: '100%', padding: 8, marginTop: 8 }} />
 
                     <div style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center' }}>
-                      <button onClick={() => saveItem(i)} disabled={saving} style={{ padding: '6px 10px' }}>{saving ? 'Saving...' : 'Save'}</button>
-                      <button onClick={() => removeItem(i)} style={{ background: '#ef4444', color: '#fff', padding: '6px 10px' }}>Delete</button>
+                      <button onClick={() => {
+                        if (originalIndex !== -1) saveItem(originalIndex)
+                      }} disabled={saving || originalIndex === -1} style={{ padding: '6px 10px' }}>{saving ? 'Saving...' : 'Save'}</button>
+                      <button onClick={() => {
+                        if (originalIndex !== -1) removeItem(originalIndex)
+                      }} disabled={originalIndex === -1} style={{ background: '#ef4444', color: '#fff', padding: '6px 10px' }}>Delete</button>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
       </div>

@@ -60,7 +60,7 @@ function TeamEditor() {
           supabase.from('research_interns').select('*').order('id', { ascending: true }),
           supabase.from('alumini_postdocs').select('*').order('id', { ascending: true }),
           supabase.from('alumini_phd_students').select('*').order('id', { ascending: true }),
-          supabase.from('alumini_master_students').select('*').order('id', { ascending: true }),
+          supabase.from('alumini_masters_students').select('*').order('id', { ascending: true }),
           supabase.from('alumini_research_interns').select('*').order('id', { ascending: true }),
         ])
 
@@ -248,7 +248,7 @@ function TeamEditor() {
           const tableMap = {
             Postdocs: { current: ['postdocs', postdocs, setPostdocs], alumni: ['alumini_postdocs', alumniPostdocs, setAlumniPostdocs] },
             PhD: { current: ['phd_students', phd, setPhd], alumni: ['alumini_phd_students', alumniPhd, setAlumniPhd] },
-            Masters: { current: ['masters_students', masters, setMasters], alumni: ['alumini_master_students', alumniMasters, setAlumniMasters] },
+            Masters: { current: ['masters_students', masters, setMasters], alumni: ['alumini_masters_students', alumniMasters, setAlumniMasters] },
             Interns: { current: ['research_interns', interns, setInterns], alumni: ['alumini_research_interns', alumniInterns, setAlumniInterns] }
           }
           const [table, rows, setRows] = tableMap[label][viewMode]

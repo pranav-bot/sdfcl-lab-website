@@ -355,7 +355,7 @@ function TeamPage() {
             paddingBottom: "20px",
           }}
         >
-          Post Docs
+          Postdocs and Researchers
         </h2>
         {viewMode === 'current' ? renderCards(postdocs) : renderCards(alumniPostdocs)}
 
