@@ -128,7 +128,10 @@ function PublicationsPage() {
             .filter(matchesSearch)
             .map((pub) => (
               <li key={pub._key} style={contentFont}>
-                {`${pub.authors}, "${pub.title}," ${pub.journal}, ${pub.status}.`}
+                <span>{pub.authors}, </span>
+                <span>&quot;{pub.title},&quot; </span>
+                <span className="publication-venue publication-venue-journal">{pub.journal}</span>
+                <span>, {pub.status}.</span>
               </li>
             ))}
         </ol>
@@ -155,7 +158,10 @@ function PublicationsPage() {
             .filter(matchesSearch)
             .map((pub) => (
               <li key={pub._key} style={contentFont}>
-                {`${pub.authors}, "${pub.title}," ${pub.event}, ${pub.location}.`}
+                <span>{pub.authors}, </span>
+                <span>&quot;{pub.title},&quot; </span>
+                <span className="publication-venue publication-venue-iac">{pub.event}</span>
+                <span>, {pub.location}.</span>
               </li>
             ))}
         </ol>
@@ -182,7 +188,10 @@ function PublicationsPage() {
             .filter(matchesSearch)
             .map((pub) => (
               <li key={pub._key} style={contentFont}>
-                {`${pub.authors}, "${pub.title}," ${pub.conference}, ${pub.status}.`}
+                <span>{pub.authors}, </span>
+                <span>&quot;{pub.title},&quot; </span>
+                <span className="publication-venue publication-venue-conference">{pub.conference}</span>
+                <span>, {pub.status}.</span>
               </li>
             ))}
         </ol>

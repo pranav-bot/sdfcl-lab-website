@@ -100,6 +100,38 @@ body {
   text-align: justify;
 }
 
+.publications-container li {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.publication-venue {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+}
+
+.publication-venue-journal {
+  color: #9ff3e1;
+  background: rgba(127, 255, 212, 0.12);
+  border-color: rgba(127, 255, 212, 0.35);
+}
+
+.publication-venue-conference {
+  color: #a5ddff;
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.publication-venue-iac {
+  color: #facc8b;
+  background: rgba(251, 191, 36, 0.12);
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
 /* Navigation Buttons */
 .nav-buttons {
   display: flex;
