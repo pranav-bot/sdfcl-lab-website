@@ -236,28 +236,31 @@ export default function ProjectsPage() {
 
   function renderFunding(project) {
     if (!project) return null;
+
+    const renderFundingItem = (f, idx) => {
+      const parsed = fundingParser(f);
+      const name = (parsed.name || "").trim();
+      const amount = (parsed.amount || "").trim();
+
+      // Keep support for legacy plain-string entries.
+      if (!name && !amount) {
+        const raw = typeof f === "string" ? f : "";
+        return <li key={idx}>{raw}</li>;
+      }
+
+      return (
+        <li key={idx}>
+          {name}
+          {amount ? `, Amount: ${amount}` : ""}
+        </li>
+      );
+    };
+
     const list = (arr) => (
       <div className="funding-list">
         <strong>Funded by:</strong>
         <ul>
-          {arr.map((f, idx) => {
-            if (fundingParser(f).link != "" || fundingParser(f).link != null) {
-              return (
-                <div key={idx}>
-                  <li key={idx}>
-                    <a href={fundingParser(f).link}>{fundingParser(f).name}</a>,
-                    Amount: {fundingParser(f).amount}
-                  </li>
-                </div>
-              );
-            } else {
-              return (
-                <li key={idx}>
-                  {fundingParser(f).name}, Amount:{fundingParser(f).amount}
-                </li>
-              );
-            }
-          })}
+          {arr.map((f, idx) => renderFundingItem(f, idx))}
         </ul>
       </div>
     );
