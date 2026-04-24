@@ -4,8 +4,12 @@
 .teaching-list { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px }
 .teaching-card { display: flex; gap: 16px; background: linear-gradient(180deg,#041818 0%, #031515 100%); padding: 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.04); align-items: flex-start; transition: transform .12s ease, box-shadow .12s ease }
 .teaching-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.5) }
-.teaching-card-left { flex: 0 0 90px; display:flex; align-items:center; justify-content:center }
-.teaching-year { background: rgba(5,50,51,0.95); color: #c7efe7; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif }
+.teaching-card-left { flex: 0 0 160px; display:flex; align-items:flex-start; justify-content:center }
+.teaching-years-box { width: 100%; background: rgba(4, 44, 46, 0.6); border: 1px solid rgba(131, 245, 225, 0.18); border-radius: 10px; padding: 10px }
+.teaching-years-label { color: #9fdbcf; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; font-weight: 700 }
+.teaching-years-list { display: flex; flex-wrap: wrap; gap: 6px }
+.teaching-year-chip { background: linear-gradient(180deg, #0a4f53 0%, #073a3d 100%); color: #ddfff7; padding: 4px 10px; border-radius: 999px; font-size: 0.86rem; font-weight: 700; border: 1px solid rgba(187, 255, 242, 0.22); line-height: 1.2 }
+.teaching-year-empty { color: #9fdbcf; font-size: 0.9rem; opacity: 0.85 }
 .teaching-card-right { flex: 1 }
 .teaching-course { margin: 0 0 8px 0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff }
 .teaching-desc { margin: 0 0 10px 0; color: #c7efe7; line-height: 1.4 }
@@ -14,6 +18,6 @@
 
 @media (max-width: 900px) {
   .teaching-card { flex-direction: column }
-  .teaching-card-left { flex: none }
-  .teaching-year { align-self: flex-start }
+  .teaching-card-left { flex: none; width: 100%; justify-content: flex-start }
+  .teaching-years-box { max-width: 320px }
 }

@@ -7,6 +7,11 @@ const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env
 
 const headingfont = { fontFamily: 'Space Mono', fontWeight: 800 }
 
+function normalizeYears(years) {
+  if (!Array.isArray(years)) return []
+  return [...new Set(years.map(Number).filter(Number.isInteger))].sort((a, b) => b - a)
+}
+
 export default function TeachingPage() {
   const [teaching, setTeaching] = useState([])
   const [loading, setLoading] = useState(false)
@@ -21,7 +26,6 @@ export default function TeachingPage() {
         const { data, error } = await supabase
           .from('teaching')
           .select('*')
-          .order('year', { ascending: false })
           .order('created_at', { ascending: false })
 
         if (error) throw error
@@ -53,7 +57,18 @@ export default function TeachingPage() {
           {teaching.map((t) => (
             <div key={t.id} className="teaching-card">
               <div className="teaching-card-left">
-                <div className="teaching-year">{t.year}</div>
+                <div className="teaching-years-box">
+                  <div className="teaching-years-label">Years</div>
+                  <div className="teaching-years-list">
+                    {normalizeYears(t.years).length > 0 ? (
+                      normalizeYears(t.years).map((year) => (
+                        <span key={`${t.id}-${year}`} className="teaching-year-chip">{year}</span>
+                      ))
+                    ) : (
+                      <span className="teaching-year-empty">N/A</span>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="teaching-card-right">
                 <h3 className="teaching-course">{t.course_name}</h3>
