@@ -6,41 +6,26 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
 
-function parseYearsInput(value) {
-  const tokens = String(value || '')
-    .split(/[\s,]+/)
-    .map(v => v.trim())
+function parseYearsFields(values) {
+  const sanitized = (Array.isArray(values) ? values : [])
+    .map(v => String(v ?? '').trim())
     .filter(Boolean)
 
-  if (tokens.length === 0) {
+  if (sanitized.length === 0) {
     return { years: [], error: 'At least one year is required' }
   }
 
-  const parsed = tokens.map(Number)
+  const parsed = sanitized.map(Number)
   if (parsed.some(v => !Number.isInteger(v) || v <= 0)) {
-    return { years: [], error: 'Years must be positive integers separated by commas' }
+    return { years: [], error: 'Each year must be a positive integer' }
   }
 
-  const years = [...new Set(parsed)].sort((a, b) => b - a)
-  return { years, error: null }
+  return { years: [...new Set(parsed)].sort((a, b) => b - a), error: null }
 }
 
-function formatYearsInput(years) {
-  if (!Array.isArray(years)) return ''
-  return [...new Set(years.map(Number).filter(Number.isInteger))].sort((a, b) => b - a).join(', ')
-}
-
-function getYearsPreview(value) {
-  const tokens = String(value || '')
-    .split(/[\s,]+/)
-    .map(v => v.trim())
-    .filter(Boolean)
-
-  const parsed = tokens
-    .map(Number)
-    .filter(v => Number.isInteger(v) && v > 0)
-
-  return [...new Set(parsed)].sort((a, b) => b - a)
+function toYearFields(years) {
+  if (!Array.isArray(years) || years.length === 0) return ['']
+  return [...new Set(years.map(Number).filter(Number.isInteger))].sort((a, b) => b - a).map(String)
 }
 
 export default function TeachingEditor() {
@@ -48,7 +33,7 @@ export default function TeachingEditor() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
-  const [newRow, setNewRow] = useState({ course_name: '', description: '', yearsInput: '' })
+  const [newRow, setNewRow] = useState({ course_name: '', description: '', yearsFields: [''] })
 
   async function loadRows() {
     setLoading(true)
@@ -57,7 +42,7 @@ export default function TeachingEditor() {
       const { data, error } = await supabase.from('teaching').select('*').order('created_at', { ascending: false }).limit(50)
       if (error) throw error
       const normalized = Array.isArray(data)
-        ? data.map(r => ({ ...r, yearsInput: formatYearsInput(r.years) }))
+        ? data.map(r => ({ ...r, yearsFields: toYearFields(r.years) }))
         : []
       setRows(normalized)
     } catch (err) {
@@ -77,11 +62,71 @@ export default function TeachingEditor() {
     })
   }
 
+  function updateRowYearField(rowIdx, yearIdx, value) {
+    setRows(prev => {
+      const copy = [...prev]
+      const row = copy[rowIdx]
+      if (!row) return prev
+      const yearsFields = Array.isArray(row.yearsFields) ? [...row.yearsFields] : ['']
+      yearsFields[yearIdx] = value
+      copy[rowIdx] = { ...row, yearsFields }
+      return copy
+    })
+  }
+
+  function addRowYearField(rowIdx) {
+    setRows(prev => {
+      const copy = [...prev]
+      const row = copy[rowIdx]
+      if (!row) return prev
+      const yearsFields = Array.isArray(row.yearsFields) ? [...row.yearsFields, ''] : ['']
+      copy[rowIdx] = { ...row, yearsFields }
+      return copy
+    })
+  }
+
+  function removeRowYearField(rowIdx, yearIdx) {
+    setRows(prev => {
+      const copy = [...prev]
+      const row = copy[rowIdx]
+      if (!row) return prev
+      const yearsFields = Array.isArray(row.yearsFields) ? [...row.yearsFields] : ['']
+      if (yearsFields.length <= 1) return prev
+      yearsFields.splice(yearIdx, 1)
+      copy[rowIdx] = { ...row, yearsFields }
+      return copy
+    })
+  }
+
+  function updateNewRowYearField(yearIdx, value) {
+    setNewRow(prev => {
+      const yearsFields = Array.isArray(prev.yearsFields) ? [...prev.yearsFields] : ['']
+      yearsFields[yearIdx] = value
+      return { ...prev, yearsFields }
+    })
+  }
+
+  function addNewRowYearField() {
+    setNewRow(prev => ({
+      ...prev,
+      yearsFields: Array.isArray(prev.yearsFields) ? [...prev.yearsFields, ''] : ['']
+    }))
+  }
+
+  function removeNewRowYearField(yearIdx) {
+    setNewRow(prev => {
+      const yearsFields = Array.isArray(prev.yearsFields) ? [...prev.yearsFields] : ['']
+      if (yearsFields.length <= 1) return prev
+      yearsFields.splice(yearIdx, 1)
+      return { ...prev, yearsFields }
+    })
+  }
+
   async function saveRow(idx) {
     const r = rows[idx]
     if (!r) return
     if (!r.course_name?.trim()) { setError('Course name required'); return }
-    const { years, error: yearsError } = parseYearsInput(r.yearsInput)
+    const { years, error: yearsError } = parseYearsFields(r.yearsFields)
     if (yearsError) { setError(yearsError); return }
     setSaving(true)
     try {
@@ -119,14 +164,14 @@ export default function TeachingEditor() {
 
   async function addRow() {
     if (!newRow.course_name?.trim()) { setError('Course name required'); return }
-    const { years, error: yearsError } = parseYearsInput(newRow.yearsInput)
+    const { years, error: yearsError } = parseYearsFields(newRow.yearsFields)
     if (yearsError) { setError(yearsError); return }
     setSaving(true)
     try {
       const payload = { course_name: newRow.course_name.trim(), description: newRow.description, years }
       const { error } = await supabase.from('teaching').insert(payload)
       if (error) throw error
-      setNewRow({ course_name: '', description: '', yearsInput: '' })
+      setNewRow({ course_name: '', description: '', yearsFields: [''] })
       await loadRows()
     } catch (err) {
       setError(err.message || String(err))
@@ -135,7 +180,7 @@ export default function TeachingEditor() {
     }
   }
 
-  const newYearsPreview = getYearsPreview(newRow.yearsInput)
+  const newYearsPreview = parseYearsFields(newRow.yearsFields).years
 
   return (
     <div style={{ color: '#000' }}>
@@ -146,8 +191,18 @@ export default function TeachingEditor() {
         <label style={{ fontWeight: 600 }}>Add New Course</label>
         <input placeholder="Course name" value={newRow.course_name} onChange={e => setNewRow(s => ({ ...s, course_name: e.target.value }))} style={{ width: '100%', padding: 8, margin: '6px 0' }} />
         <textarea placeholder="Description" value={newRow.description} onChange={e => setNewRow(s => ({ ...s, description: e.target.value }))} rows={2} style={{ width: '100%', padding: 8, margin: '6px 0' }} />
-        <input placeholder="Years (e.g. 2026, 2025)" value={newRow.yearsInput} onChange={e => setNewRow(s => ({ ...s, yearsInput: e.target.value }))} style={{ width: '100%', padding: 8, margin: '6px 0' }} />
-        <div style={{ marginTop: 2, marginBottom: 8, color: '#475569', fontSize: 12 }}>Use comma or space separated years. Example: 2026, 2025</div>
+        <div style={{ marginTop: 4, marginBottom: 4, color: '#475569', fontSize: 12 }}>Add one input per year</div>
+        <div style={{ display: 'grid', gap: 6, margin: '6px 0' }}>
+          {newRow.yearsFields.map((yearValue, yearIdx) => (
+            <div key={`new-year-${yearIdx}`} style={{ display: 'flex', gap: 8 }}>
+              <input placeholder="Year (e.g. 2026)" value={yearValue} onChange={e => updateNewRowYearField(yearIdx, e.target.value)} style={{ width: '100%', padding: 8 }} />
+              <button onClick={() => removeNewRowYearField(yearIdx)} disabled={saving || newRow.yearsFields.length <= 1} style={{ padding: '6px 10px', background: '#fff', border: '1px solid #d1d5db', borderRadius: 6 }}>Remove</button>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <button onClick={addNewRowYearField} disabled={saving} style={{ padding: '6px 10px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: 6 }}>+ Add Year Field</button>
+        </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
           {newYearsPreview.length > 0 ? newYearsPreview.map(year => (
             <span key={`new-${year}`} style={{ background: '#e0f2fe', color: '#075985', border: '1px solid #bae6fd', borderRadius: 999, padding: '3px 10px', fontSize: 12, fontWeight: 700 }}>{year}</span>
@@ -155,7 +210,7 @@ export default function TeachingEditor() {
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={addRow} disabled={saving} style={{ padding: '6px 10px', background: '#2563eb', color: 'white', borderRadius: 6 }}>Add</button>
-          <button onClick={() => setNewRow({ course_name: '', description: '', yearsInput: '' })} disabled={saving} style={{ padding: '6px 10px', background: '#fff', border: '1px solid #d1d5db', borderRadius: 6 }}>Clear</button>
+          <button onClick={() => setNewRow({ course_name: '', description: '', yearsFields: [''] })} disabled={saving} style={{ padding: '6px 10px', background: '#fff', border: '1px solid #d1d5db', borderRadius: 6 }}>Clear</button>
         </div>
       </div>
 
@@ -168,9 +223,20 @@ export default function TeachingEditor() {
               <div key={r.id || idx} style={{ padding: 10, borderRadius: 8, background: '#fff', border: '1px solid #eee' }}>
                 <input value={r.course_name || ''} onChange={e => updateField(idx, 'course_name', e.target.value)} style={{ width: '100%', padding: 6, fontWeight: 700, marginBottom: 6 }} />
                 <textarea value={r.description || ''} onChange={e => updateField(idx, 'description', e.target.value)} rows={2} style={{ width: '100%', padding: 6, marginBottom: 6 }} />
-                <input value={r.yearsInput || ''} onChange={e => updateField(idx, 'yearsInput', e.target.value)} placeholder="Years (e.g. 2026, 2025)" style={{ width: '100%', padding: 6, marginBottom: 6 }} />
+                <div style={{ marginTop: 2, marginBottom: 4, color: '#475569', fontSize: 12 }}>One field per year</div>
+                <div style={{ display: 'grid', gap: 6, marginBottom: 8 }}>
+                  {(r.yearsFields || ['']).map((yearValue, yearIdx) => (
+                    <div key={`${r.id || idx}-year-${yearIdx}`} style={{ display: 'flex', gap: 8 }}>
+                      <input value={yearValue} onChange={e => updateRowYearField(idx, yearIdx, e.target.value)} placeholder="Year (e.g. 2026)" style={{ width: '100%', padding: 6 }} />
+                      <button onClick={() => removeRowYearField(idx, yearIdx)} disabled={saving || (r.yearsFields || []).length <= 1} style={{ padding: '6px 10px', background: '#fff', border: '1px solid #d1d5db', borderRadius: 6 }}>Remove</button>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <button onClick={() => addRowYearField(idx)} disabled={saving} style={{ padding: '6px 10px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: 6 }}>+ Add Year Field</button>
+                </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
-                  {getYearsPreview(r.yearsInput).length > 0 ? getYearsPreview(r.yearsInput).map(year => (
+                  {parseYearsFields(r.yearsFields).years.length > 0 ? parseYearsFields(r.yearsFields).years.map(year => (
                     <span key={`${r.id || idx}-${year}`} style={{ background: '#eef2ff', color: '#3730a3', border: '1px solid #c7d2fe', borderRadius: 999, padding: '2px 9px', fontSize: 12, fontWeight: 700 }}>{year}</span>
                   )) : <span style={{ color: '#94a3b8', fontSize: 12 }}>No valid years parsed yet.</span>}
                 </div>
